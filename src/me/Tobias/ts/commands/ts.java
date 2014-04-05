@@ -1,5 +1,6 @@
 package me.Tobias.ts.commands;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Effect;
 import org.bukkit.Sound;
 import org.bukkit.World;
@@ -14,6 +15,7 @@ import me.Tobias.ts.Ts;
 
 public class ts implements CommandExecutor
 {
+	
 	public static Ts pl = Ts.instance;
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args)
@@ -34,6 +36,16 @@ public class ts implements CommandExecutor
 					p.sendMessage(pl.getConfig().getString("messages.no-permission"));
 				}
 			}
+			if(args[0].equalsIgnoreCase("update"))
+			{
+				if(p.hasPermission("ts.update"))
+				{
+					p.sendMessage(ChatColor.AQUA+"Kommt bald");
+					p.sendMessage(ChatColor.AQUA+"Schau Selber nach ;D");
+					p.sendMessage(ChatColor.BLUE+"http://dev.bukkit.org/bukkit-plugins/teamspeak-ip/");
+				}
+			}
+			  
 		}else
         {
 		  World w = p.getWorld();
@@ -59,4 +71,5 @@ public class ts implements CommandExecutor
 		return false;
 	}
 
+		
 }
