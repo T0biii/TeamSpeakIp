@@ -1,10 +1,6 @@
 name: TeamSpeakIP
 author: tobias the best
-<<<<<<< HEAD
 version: 1.2.2
-=======
-version: 1.0
->>>>>>> 74fa5629f807302315dfbfaee18b11184197a924
 website: http://dev.bukkit.org/bukkit-plugins/teamspeak-ip/
 
 main: me.Tobias.ts.Ts
