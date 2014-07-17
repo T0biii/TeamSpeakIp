@@ -1,6 +1,6 @@
 name: TeamSpeakIP
 author: tobias the best
-version: 1.2.2
+version: 1.4
 website: http://dev.bukkit.org/bukkit-plugins/teamspeak-ip/
 
 main: me.Tobias.ts.Ts
@@ -8,4 +8,5 @@ database: false
 commands:
   ts:
     description: /Ts
-    
+  tsupdate:
+    description: /tsupdate
