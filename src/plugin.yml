@@ -1,12 +1,9 @@
 name: TeamSpeakIP
-author: Tobiasthebest
-authors: [itzTobi_, TobiasTheBest]
-version: 2.0
+author: tobias the best
+version: 1.4
 website: http://dev.bukkit.org/bukkit-plugins/teamspeak-ip/
-description: Plugin Zeigt Die TeamSpeakIP
-prefix: TeamSpeakIP 
 
-main: me.itztobi.ts.Main
+main: me.Tobias.ts.Ts
 database: false
 commands:
   ts:
