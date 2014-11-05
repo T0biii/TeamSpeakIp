@@ -14,17 +14,20 @@ public class ConfigManager {
 	 //conf set up
 	 public void loadConfig()
 	 {
+		 //Nachrichten
    	 this.plugin.getConfig().options().header("Plugin by itzTobi_!\nChange at your own risk");
    	 this.plugin.getConfig().addDefault("messages.reload", "§3Reload Erfolgreich!");
    	 this.plugin.getConfig().addDefault("messages.ts3", "§3TeamSpeak3: §6TobiasTheBest.de");
    	 this.plugin.getConfig().addDefault("messages.konsole", "Dieser Befehl kann nur von einen Spieler ausgefürt werden!");
    	 this.plugin.getConfig().addDefault("messages.no-permission", "Du Hast keine Rechte dafür"); 
-   	 
+   	 //True or false
    	 this.plugin.getConfig().set("options.effects", true);
    	 this.plugin.getConfig().set("options.sounds", true);
    	 this.plugin.getConfig().set("options.Metrics", true);
    	 this.plugin.getConfig().set("options.update-check", true);
    	 this.plugin.getConfig().set("options.updateinfo", true);
+   	 this.plugin.getConfig().set("options.Titels", true);
+   	 
    	 
      this.plugin.getConfig().set("effect.AIR_BUBBLE", false);
      this.plugin.getConfig().set("effect.ANGRY_VILLAGER", false);

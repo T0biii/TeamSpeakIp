@@ -34,14 +34,17 @@ public class Main extends JavaPlugin
 	public String prefix = "[TeamSpeakIP] ";
     public static Main instance;
 	Logger log = Bukkit.getLogger();
-	
+	//Disable part
 	public void onDisable() 
     {
-          log.info(prefix +"Plugin disabeld ");       
+          log.info(prefix +"Plugin disabeld.");       
     }
+	//Enable part
     public void onEnable()
     { 	
-    	if(this.getConfig().getBoolean("options.Metrics")){
+    	//Metrics start
+    	if(this.getConfig().getBoolean("options.Metrics"))
+    	{
     	try {
     	    Metrics metrics = new Metrics(this);
     	    metrics.start();
@@ -49,13 +52,14 @@ public class Main extends JavaPlugin
     	    // Failed to submit the stats :-(
     	}
     	}
+    	
         startup();
         Updater();
-        log.info(prefix+"Plugin enabeld "); 	 
+        log.info(prefix+"Plugin enabeld."); 	 
     }
         
   
-
+          //Load Coammnds and Listener and Config
 	     public void startup()
 	     {
        	 instance = this;
@@ -82,9 +86,13 @@ public class Main extends JavaPlugin
            	  {
            		  log.info(prefix + "New version available! " + name);
            		  log.info(prefix + "Download at " + link2 +" or go InGame");  	
+           	  }else if (update == false){
+           		  log.info(prefix + "is up to date.");
            	  }
            	}
          }
+         
+         
          //Download version    
          public void froce()
          {
