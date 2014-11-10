@@ -64,7 +64,7 @@ public class Main extends JavaPlugin
 	     {
        	 instance = this;
       	 this.getCommand("ts").setExecutor(new ts());
-      	 this.getCommand("tsupdate").setExecutor(new tsupdate());
+      	// this.getCommand("tsupdate").setExecutor(new tsupdate());
       	 PluginManager pm = this.getServer().getPluginManager();
       	 pm.registerEvents(new join(), this); 
          cm.loadConfig();

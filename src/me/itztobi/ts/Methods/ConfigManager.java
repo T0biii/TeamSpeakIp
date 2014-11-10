@@ -17,9 +17,10 @@ public class ConfigManager {
 		 //Nachrichten
    	 this.plugin.getConfig().options().header("Plugin by itzTobi_!\nChange at your own risk");
    	 this.plugin.getConfig().addDefault("messages.reload", "§3Reload Erfolgreich!");
-   	 this.plugin.getConfig().addDefault("messages.ts3", "§3TeamSpeak3: §6TobiasTheBest.de");
+   	 this.plugin.getConfig().addDefault("messages.ts3", "§3TeamSpeak3: §DeineIPvomTS.de");
    	 this.plugin.getConfig().addDefault("messages.konsole", "Dieser Befehl kann nur von einen Spieler ausgefürt werden!");
    	 this.plugin.getConfig().addDefault("messages.no-permission", "Du Hast keine Rechte dafür"); 
+   	 this.plugin.getConfig().addDefault("messages.ip", "82.135.118.38:9987");
    	 //True or false
    	 this.plugin.getConfig().set("options.effects", true);
    	 this.plugin.getConfig().set("options.sounds", true);

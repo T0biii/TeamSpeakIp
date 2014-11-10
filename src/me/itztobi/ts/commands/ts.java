@@ -1,5 +1,7 @@
 package me.itztobi.ts.commands;
 
+import java.util.Arrays;
+
 import net.minecraft.server.v1_7_R4.ChatSerializer;
 import net.minecraft.server.v1_7_R4.IChatBaseComponent;
 
@@ -19,30 +21,33 @@ import org.bukkit.potion.PotionType;
 import org.spigotmc.ProtocolInjector.PacketTitle;
 import org.spigotmc.ProtocolInjector.PacketTitle.Action;
 
+import com.bobacadodl.JSONChatLib.*;
+
 import me.itztobi.ts.Main;
 import me.itztobi.ts.Methods.ParticleEffects;
 
 @SuppressWarnings("unused")
 public class ts implements CommandExecutor{
 
-	private boolean Titels = true;
-	
-	
-
 	public static Main pl = Main.instance;
+	
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args)
 	{
+		
 		Player cp = (Player) sender;
 		final CraftPlayer cPlayer = (CraftPlayer) cp;
 		if(sender instanceof Player)
 		{
-			Player p = (Player) sender;
+			final Player p = (Player) sender;
 			World w = p.getWorld();
 			if(args.length == 1)
             { 
 			if(args[0].equalsIgnoreCase("reload"))
 			{
+				
+				
+				//RELOAD COMMAND
 				if(p.hasPermission("ts.reload"))
 				{
 				 pl.reloadConfig();
@@ -55,9 +60,108 @@ public class ts implements CommandExecutor{
 				{
 					p.sendMessage(pl.getConfig().getString("messages.no-permission"));
 				}
+
+				
+				//HELP COMMAND
+			}else if(args[0].equalsIgnoreCase("help")){
+				if(p.hasPermission("ts.help") || p.isOp() ){
+					 p.sendMessage(ChatColor.YELLOW+"[]================"+ChatColor.GOLD +" TeamSpeak " +ChatColor.YELLOW+"===============[]");
+					 p.sendMessage("");
+				   //p.sendMessage(ChatColor.YELLOW+"/ts" + ChatColor.GRAY +"               | The TS IP appears");
+					 JSONChatMessage message = new JSONChatMessage("", null, null);
+					 JSONChatExtra extra = new JSONChatExtra(ChatColor.YELLOW+"/ts" + ChatColor.GRAY +"               | The TS IP appears", JSONChatColor.YELLOW, Arrays.asList(JSONChatFormat.BOLD));
+					 extra.setClickEvent(JSONChatClickEventType.RUN_COMMAND, "/ts");
+					 extra.setHoverEvent(JSONChatHoverEventType.SHOW_TEXT, "/ts");
+					 message.addExtra(extra);
+			         message.sendToPlayer(p.getPlayer());
+			       //p.sendMessage(ChatColor.YELLOW+"/ts help" + ChatColor.GRAY +"      | Shows you this Page");
+			         JSONChatMessage message1 = new JSONChatMessage("", null, null);
+					 JSONChatExtra extra1 = new JSONChatExtra(ChatColor.YELLOW+"/ts help" + ChatColor.GRAY +"      | Shows you this Page", JSONChatColor.YELLOW, Arrays.asList(JSONChatFormat.BOLD));
+					 extra1.setClickEvent(JSONChatClickEventType.RUN_COMMAND, "/ts help");
+					 extra1.setHoverEvent(JSONChatHoverEventType.SHOW_TEXT, "/ts help");
+					 message1.addExtra(extra1);
+			         message1.sendToPlayer(p.getPlayer());         
+	               //p.sendMessage(ChatColor.YELLOW+"/ts reload" + ChatColor.GRAY +"  | Config Reload");
+			         JSONChatMessage message11 = new JSONChatMessage("", null, null);
+					 JSONChatExtra extra11 = new JSONChatExtra(ChatColor.YELLOW+"/ts reload" + ChatColor.GRAY +"  | Config Reload", JSONChatColor.YELLOW, Arrays.asList(JSONChatFormat.BOLD));
+					 extra11.setClickEvent(JSONChatClickEventType.RUN_COMMAND, "/ts reload");
+					 extra11.setHoverEvent(JSONChatHoverEventType.SHOW_TEXT, "/ts reload");
+					 message11.addExtra(extra11);
+			         message11.sendToPlayer(p.getPlayer());
+	               //p.sendMessage(ChatColor.YELLOW+"/ts update" + ChatColor.GRAY +"  | AutoUpdate start");
+			         JSONChatMessage message111 = new JSONChatMessage("", null, null);
+					 JSONChatExtra extra111 = new JSONChatExtra(ChatColor.YELLOW+"/ts update" + ChatColor.GRAY +"  | AutoUpdate start", JSONChatColor.YELLOW, Arrays.asList(JSONChatFormat.BOLD));
+					 extra111.setClickEvent(JSONChatClickEventType.SUGGEST_COMMAND, "/ts update");
+					 extra111.setHoverEvent(JSONChatHoverEventType.SHOW_TEXT, "/ts update");
+					 message111.addExtra(extra111);
+			         message111.sendToPlayer(p.getPlayer());
+	               //p.sendMessage(ChatColor.YELLOW+"/tsupdate " + ChatColor.GRAY +"  | AutoUpdate start(Removing in V.3.0)");
+	               //REMOVED
+	                 p.sendMessage("");
+					 p.sendMessage(ChatColor.YELLOW+"[]================"+ChatColor.GOLD +" TeamSpeak " +ChatColor.YELLOW+"===============[]");
+				     
+					 
+					 
+				}else{
+					 p.sendMessage(ChatColor.YELLOW+"[]================"+ChatColor.GOLD +" TeamSpeak " +ChatColor.YELLOW+"===============[]");
+	           		 p.sendMessage("");
+	           		 
+	           		 JSONChatMessage message = new JSONChatMessage("", null, null);
+			         JSONChatExtra extra = new JSONChatExtra(pl.getConfig().getString("messages.ts3"), JSONChatColor.BLUE, Arrays.asList(JSONChatFormat.BOLD));
+			         extra.setHoverEvent(JSONChatHoverEventType.SHOW_TEXT, pl.getConfig().getString("messages.ip"));
+			         extra.setClickEvent(JSONChatClickEventType.SUGGEST_COMMAND, pl.getConfig().getString("messages.ip"));
+			         message.addExtra(extra);
+			         message.sendToPlayer(p.getPlayer());
+			         
+	           		 p.sendMessage("");
+	           		 p.sendMessage(ChatColor.YELLOW+"[]================"+ChatColor.GOLD +" TeamSpeak " +ChatColor.YELLOW+"===============[]");
+				}
+				 
+
+                
+             //UPDATE COMMAND    
+			}else if(args[0].equalsIgnoreCase("update")){
+				if( p.hasPermission("ts.update") || p.isOp() )
+				{
+				
+				ts.pl.froce();
+			    p.sendMessage(ChatColor.RED + "Update in progress");
+			    p.sendMessage(ChatColor.RED + "Wait "+ ChatColor.BLUE +"10"+ ChatColor.RED + " sek.");
+			   
+			    Bukkit.getScheduler().scheduleSyncDelayedTask(pl, new Runnable()
+			    {
+
+					@Override
+					public void run() 
+					{
+						Bukkit.dispatchCommand(p, "reload");	
+					}
+			    	
+			    }, 9*20L);
+			   
+			       
+				}else{
+					 p.sendMessage(ChatColor.YELLOW+"[]================"+ChatColor.GOLD +" TeamSpeak " +ChatColor.YELLOW+"===============[]");
+	           		 p.sendMessage("");
+	           		 
+	           		 JSONChatMessage message = new JSONChatMessage("", null, null);
+			         JSONChatExtra extra = new JSONChatExtra(pl.getConfig().getString("messages.ts3"), JSONChatColor.BLUE, Arrays.asList(JSONChatFormat.BOLD));
+			         extra.setHoverEvent(JSONChatHoverEventType.SHOW_TEXT, pl.getConfig().getString("messages.ip"));
+			         extra.setClickEvent(JSONChatClickEventType.SUGGEST_COMMAND, pl.getConfig().getString("messages.ip"));
+			         message.addExtra(extra);
+			         message.sendToPlayer(p.getPlayer());
+			         
+	           		 p.sendMessage("");
+	           		 p.sendMessage(ChatColor.YELLOW+"[]================"+ChatColor.GOLD +" TeamSpeak " +ChatColor.YELLOW+"===============[]");
+	           		    
+        		 
+	           		 
+				}
+		
 			}
 			
 	
+			
             }else if(cPlayer.getHandle().playerConnection.networkManager.getVersion() >= 47) {
             	
             	if(pl.getConfig().getBoolean("options.Titels")){
@@ -76,9 +180,16 @@ public class ts implements CommandExecutor{
         		
         	}, 5*20L);
             	}else {//if false
-            		 p.sendMessage(ChatColor.YELLOW+"[]================"+ChatColor.GOLD +" TeamSpeak " +ChatColor.YELLOW+"===============[]");
+            	  p.sendMessage(ChatColor.YELLOW+"[]================"+ChatColor.GOLD +" TeamSpeak " +ChatColor.YELLOW+"===============[]");
            		  p.sendMessage("");
-           		  p.sendMessage(pl.getConfig().getString("messages.ts3"));
+           		  
+           	   	  JSONChatMessage message = new JSONChatMessage("", null, null);
+		          JSONChatExtra extra = new JSONChatExtra(pl.getConfig().getString("messages.ts3"), JSONChatColor.BLUE, Arrays.asList(JSONChatFormat.BOLD));
+		          extra.setHoverEvent(JSONChatHoverEventType.SHOW_TEXT, pl.getConfig().getString("messages.ip"));
+		          extra.setClickEvent(JSONChatClickEventType.SUGGEST_COMMAND, pl.getConfig().getString("messages.ip"));
+		          message.addExtra(extra);
+		          message.sendToPlayer(p.getPlayer());
+		          
            		  p.sendMessage("");
            		  p.sendMessage(ChatColor.YELLOW+"[]================"+ChatColor.GOLD +" TeamSpeak " +ChatColor.YELLOW+"===============[]");
            		 
@@ -171,31 +282,31 @@ public class ts implements CommandExecutor{
                  	  if(pl.getConfig().getBoolean("effect.REDSTONE_DUST")){
                  	      ParticleEffects.sendToPlayer(ParticleEffects.REDSTONE_DUST, p, p.getLocation(), 0, 3, 0, 2, 3); }
            	     	  
-           	      if(pl.getConfig().getBoolean("effect.SLIME")){
-           	          ParticleEffects.sendToPlayer(ParticleEffects.SLIME, p, p.getLocation(), 0, 3, 0, 2, 3); }
+           	          if(pl.getConfig().getBoolean("effect.SLIME")){
+           	              ParticleEffects.sendToPlayer(ParticleEffects.SLIME, p, p.getLocation(), 0, 3, 0, 2, 3); }
               	  
-                     if(pl.getConfig().getBoolean("effect.SNOW_DIG")){  
-                   	 ParticleEffects.sendToPlayer(ParticleEffects.SNOW_DIG, p, p.getLocation(), 0, 3, 0, 2, 3); }
+                      if(pl.getConfig().getBoolean("effect.SNOW_DIG")){  
+                     	 ParticleEffects.sendToPlayer(ParticleEffects.SNOW_DIG, p, p.getLocation(), 0, 3, 0, 2, 3); }
                    
-                     if(pl.getConfig().getBoolean("effect.SNOWBALL_HIT")){
+                      if(pl.getConfig().getBoolean("effect.SNOWBALL_HIT")){
                         ParticleEffects.sendToPlayer(ParticleEffects.SNOWBALL_HIT, p, p.getLocation(), 0, 3, 0, 2, 3); }
                    
-                     if(pl.getConfig().getBoolean("effect.SPLASH")){
-                        ParticleEffects.sendToPlayer(ParticleEffects.SPLASH, p, p.getLocation(), 0, 3, 0, 2, 3); }
+                      if(pl.getConfig().getBoolean("effect.SPLASH")){
+                         ParticleEffects.sendToPlayer(ParticleEffects.SPLASH, p, p.getLocation(), 0, 3, 0, 2, 3); }
                    
-                     if(pl.getConfig().getBoolean("effect.SUSPEND")){
-                        ParticleEffects.sendToPlayer(ParticleEffects.SUSPEND, p, p.getLocation(), 0, 3, 0, 2, 3); }
+                      if(pl.getConfig().getBoolean("effect.SUSPEND")){
+                         ParticleEffects.sendToPlayer(ParticleEffects.SUSPEND, p, p.getLocation(), 0, 3, 0, 2, 3); }
                    
-                     if(pl.getConfig().getBoolean("effect.TILECRACK")){
-                        ParticleEffects.sendToPlayer(ParticleEffects.TILECRACK, p, p.getLocation(), 0, 3, 0, 2, 3); }
+                      if(pl.getConfig().getBoolean("effect.TILECRACK")){
+                         ParticleEffects.sendToPlayer(ParticleEffects.TILECRACK, p, p.getLocation(), 0, 3, 0, 2, 3); }
                    
-                     if(pl.getConfig().getBoolean("effect.TOWN_AURA")){
-                        ParticleEffects.sendToPlayer(ParticleEffects.TOWN_AURA, p, p.getLocation(), 0, 3, 0, 2, 3); }
+                      if(pl.getConfig().getBoolean("effect.TOWN_AURA")){
+                         ParticleEffects.sendToPlayer(ParticleEffects.TOWN_AURA, p, p.getLocation(), 0, 3, 0, 2, 3); }
            	      	  
                  	  //Sounds
                  	  if(pl.getConfig().getBoolean("options.sounds"))
                  	  {
-                     w.playSound(p.getPlayer().getLocation(), Sound.NOTE_PIANO, 25,1);
+                      w.playSound(p.getPlayer().getLocation(), Sound.NOTE_PIANO, 25,1);
                  	  w.playSound(p.getPlayer().getLocation(), Sound.ARROW_HIT, 25,1);
                  	  }
             	}
@@ -207,7 +318,14 @@ public class ts implements CommandExecutor{
 		  
 		  p.sendMessage(ChatColor.YELLOW+"[]================"+ChatColor.GOLD +" TeamSpeak " +ChatColor.YELLOW+"===============[]");
 		  p.sendMessage("");
-		  p.sendMessage(pl.getConfig().getString("messages.ts3"));
+		  
+		  JSONChatMessage message = new JSONChatMessage("", null, null);
+	      JSONChatExtra extra = new JSONChatExtra(pl.getConfig().getString("messages.ts3"), JSONChatColor.BLUE, Arrays.asList(JSONChatFormat.BOLD));
+	      extra.setHoverEvent(JSONChatHoverEventType.SHOW_TEXT, pl.getConfig().getString("messages.ip"));
+          extra.setClickEvent(JSONChatClickEventType.SUGGEST_COMMAND, pl.getConfig().getString("messages.ip"));
+          message.addExtra(extra);
+          message.sendToPlayer(p.getPlayer());
+          
 		  p.sendMessage("");
 		  p.sendMessage(ChatColor.YELLOW+"[]================"+ChatColor.GOLD +" TeamSpeak " +ChatColor.YELLOW+"===============[]");
 		 
@@ -304,22 +422,22 @@ public class ts implements CommandExecutor{
 	          ParticleEffects.sendToPlayer(ParticleEffects.SLIME, p, p.getLocation(), 0, 3, 0, 2, 3); }
    	  
           if(pl.getConfig().getBoolean("effect.SNOW_DIG")){  
-        	 ParticleEffects.sendToPlayer(ParticleEffects.SNOW_DIG, p, p.getLocation(), 0, 3, 0, 2, 3); }
+           	  ParticleEffects.sendToPlayer(ParticleEffects.SNOW_DIG, p, p.getLocation(), 0, 3, 0, 2, 3); }
         
           if(pl.getConfig().getBoolean("effect.SNOWBALL_HIT")){
-             ParticleEffects.sendToPlayer(ParticleEffects.SNOWBALL_HIT, p, p.getLocation(), 0, 3, 0, 2, 3); }
+              ParticleEffects.sendToPlayer(ParticleEffects.SNOWBALL_HIT, p, p.getLocation(), 0, 3, 0, 2, 3); }
         
           if(pl.getConfig().getBoolean("effect.SPLASH")){
-             ParticleEffects.sendToPlayer(ParticleEffects.SPLASH, p, p.getLocation(), 0, 3, 0, 2, 3); }
+              ParticleEffects.sendToPlayer(ParticleEffects.SPLASH, p, p.getLocation(), 0, 3, 0, 2, 3); }
         
           if(pl.getConfig().getBoolean("effect.SUSPEND")){
-             ParticleEffects.sendToPlayer(ParticleEffects.SUSPEND, p, p.getLocation(), 0, 3, 0, 2, 3); }
+              ParticleEffects.sendToPlayer(ParticleEffects.SUSPEND, p, p.getLocation(), 0, 3, 0, 2, 3); }
         
           if(pl.getConfig().getBoolean("effect.TILECRACK")){
-             ParticleEffects.sendToPlayer(ParticleEffects.TILECRACK, p, p.getLocation(), 0, 3, 0, 2, 3); }
+              ParticleEffects.sendToPlayer(ParticleEffects.TILECRACK, p, p.getLocation(), 0, 3, 0, 2, 3); }
         
           if(pl.getConfig().getBoolean("effect.TOWN_AURA")){
-             ParticleEffects.sendToPlayer(ParticleEffects.TOWN_AURA, p, p.getLocation(), 0, 3, 0, 2, 3); }
+              ParticleEffects.sendToPlayer(ParticleEffects.TOWN_AURA, p, p.getLocation(), 0, 3, 0, 2, 3); }
 	      	  
       	  //Sounds
       	  if(pl.getConfig().getBoolean("options.sounds"))
