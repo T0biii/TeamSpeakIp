@@ -28,7 +28,8 @@ public class JSONArray extends ArrayList implements List, JSONAware, JSONStreamA
      * @param out
      * @see JSONValue#writeJSONString(Object, java.io.Writer)
      */
-    public static void writeJSONString(List list, Writer out) throws IOException {
+    
+	public static void writeJSONString(List list, Writer out) throws IOException {
         if (list == null) {
             out.write("null");
             return;
@@ -67,7 +68,8 @@ public class JSONArray extends ArrayList implements List, JSONAware, JSONStreamA
      * @return JSON text, or "null" if list is null.
      * @see JSONValue#toJSONString(Object)
      */
-    public static String toJSONString(List list) {
+ 
+	public static String toJSONString(List list) {
         if (list == null)
             return "null";
 
@@ -103,4 +105,3 @@ public class JSONArray extends ArrayList implements List, JSONAware, JSONStreamA
 
 
 }
-

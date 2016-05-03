@@ -27,7 +27,8 @@ public class JSONObject extends HashMap implements Map, JSONAware, JSONStreamAwa
      * @param out
      * @see JSONValue#writeJSONString(Object, java.io.Writer)
      */
-    public static void writeJSONString(Map map, Writer out) throws IOException {
+    
+	public static void writeJSONString(Map map, Writer out) throws IOException {
         if (map == null) {
             out.write("null");
             return;
@@ -64,7 +65,8 @@ public class JSONObject extends HashMap implements Map, JSONAware, JSONStreamAwa
      * @return JSON text, or "null" if map is null.
      * @see JSONValue#toJSONString(Object)
      */
-    public static String toJSONString(Map map) {
+ 
+	public static String toJSONString(Map map) {
         if (map == null)
             return "null";
 

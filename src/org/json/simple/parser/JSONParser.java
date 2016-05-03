@@ -36,7 +36,8 @@ public class JSONParser {
     private Yytoken token = null;
     private int status = S_INIT;
 
-    private int peekStatus(@SuppressWarnings("rawtypes") LinkedList statusStack) {
+    @SuppressWarnings("rawtypes")
+	private int peekStatus(LinkedList statusStack) {
         if (statusStack.size() == 0)
             return -1;
         Integer status = (Integer) statusStack.getFirst();
@@ -108,9 +109,10 @@ public class JSONParser {
      * @throws org.json.simple.parser.ParseException
      *
      */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings({ "rawtypes", "unchecked" })
 	public Object parse(Reader in, ContainerFactory containerFactory) throws IOException, ParseException {
         reset(in);
+        
 		LinkedList statusStack = new LinkedList();
         LinkedList valueStack = new LinkedList();
 
