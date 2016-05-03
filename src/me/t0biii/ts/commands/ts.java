@@ -37,10 +37,6 @@ import me.t0biii.ts.Methods.TitleManager;
 
 @SuppressWarnings("unused")
 public class ts implements CommandExecutor{
-	/**
-	 *  tittle <player> title <Text>
-     *  tittle <player> subtitle <Text>
-	 */
 
 	public static Main pl = Main.instance;
 	
@@ -51,11 +47,11 @@ public class ts implements CommandExecutor{
 		final TS3Config config = new TS3Config();
 		final TS3Query query = new TS3Query(config);
 		
+		
 		if(sender instanceof Player)
 		{
 			final Player p = (Player) sender;
 			World w = p.getWorld();
-				
 			if(args.length == 1)
             { 
 			if(args[0].equalsIgnoreCase("reload"))
@@ -73,7 +69,6 @@ public class ts implements CommandExecutor{
 				{
 					p.sendMessage(pl.getConfig().getString("messages.no-permission"));
 				}
-
 				//HELP COMMAND
 			}else if(args[0].equalsIgnoreCase("help")){
 				if(p.hasPermission("ts.help") || p.isOp() ){
@@ -120,7 +115,6 @@ public class ts implements CommandExecutor{
 				}else{
 					tsipsend(p);
 				}	 
-
              /**
               * UPDATE COMMAND    
               */
@@ -161,12 +155,12 @@ public class ts implements CommandExecutor{
 					api.setNickname("TeamspeakIP");
 					error = false;
 					}catch(Exception e){
-						p.sendMessage(ChatColor.RED+pl.prefix+"Can´t connect to Teamspeak!");
+					p.sendMessage(ChatColor.RED+pl.prefix+"Can´t connect to Teamspeak!");
 					}						
 				}
 				if(error){			
 				}else{
-					// Get all channels and map their channel IDs to them
+				// Get all channels and map their channel IDs to them
 				List<Channel> channels = api.getChannels();
 				Map<Integer, Channel> channelMap = new HashMap<>(channels.size());
 				for (Channel channel : channels) {
@@ -192,22 +186,19 @@ public class ts implements CommandExecutor{
 				}				
 			}	
             }else if(pl.getConfig().getBoolean("options.Titels")) {
-            	
             	  String Pname = p.getName();
             	  TitleManager.sendTitles(p, pl.getConfig().getString("messages.ts3"), "", 20, 3*20, 20);
-     
             }else 
             {
             	 tsipsend(p);
             } 
 			return true;
-			} else
-			{
+			} else  {
 				sender.sendMessage(pl.getConfig().getString("messages.konsole"));	
 			}
 		return false;
 	}
-
+	
 	private void tsipsend(Player p){
 		p.sendMessage(ChatColor.YELLOW+"[]================"+ChatColor.GOLD +" TeamSpeak " +ChatColor.YELLOW+"===============[]");
  		p.sendMessage("");
@@ -222,9 +213,5 @@ public class ts implements CommandExecutor{
  		p.sendMessage("");
  		p.sendMessage(ChatColor.YELLOW+"[]================"+ChatColor.GOLD +" TeamSpeak " +ChatColor.YELLOW+"===============[]");
  		
-
- 		
-	}
-	
-		
+	}	
 }
