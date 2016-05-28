@@ -1,0 +1,13 @@
+name: TeamSpeakIP
+author: itzTobi
+version: 4.0
+website: http://dev.bukkit.org/bukkit-plugins/teamspeak-ip/
+description: Plugin zeigt dir die TeamSpeakIP an
+prefix: TeamSpeakIP 
+
+main: me.t0biii.ts.Main
+database: false
+commands:
+  ts:
+    description: /Ts
+    aliases: [teamspeak, ts3, teamspeakip]
