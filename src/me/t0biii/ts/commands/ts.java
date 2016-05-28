@@ -122,7 +122,7 @@ public class ts implements CommandExecutor{
 					 p.sendMessage(ChatColor.YELLOW+"[]================"+ChatColor.GOLD +" TeamSpeak " +ChatColor.YELLOW+"===============[]");
 				}else{
 					tsipsend(p);
-				}	 
+				}	  
              /**
               * UPDATE COMMAND    
               */
