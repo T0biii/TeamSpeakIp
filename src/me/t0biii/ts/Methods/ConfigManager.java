@@ -30,7 +30,7 @@ public class ConfigManager {
    	 
    	 
    	 //True or false
-   	 this.plugin.getConfig().set("options.Titels", true);
+   	 this.plugin.getConfig().set("options.Titels", false);
    	 this.plugin.getConfig().set("ts3.use", false);
    	  
    	 

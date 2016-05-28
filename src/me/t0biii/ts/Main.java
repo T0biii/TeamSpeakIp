@@ -13,6 +13,7 @@ import me.t0biii.ts.commands.ts;
 public class Main extends JavaPlugin{
 
 	public String prefix = "[TeamSpeakIP] ";
+	public String updateURL = "http://dev.bukkit.org/bukkit-plugins/teamspeak-ip/files/";
 	public static Main instance;
 	public ConfigManager cm = new ConfigManager(this);
 	Logger log = Bukkit.getLogger();

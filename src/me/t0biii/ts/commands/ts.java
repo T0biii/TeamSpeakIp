@@ -104,12 +104,20 @@ public class ts implements CommandExecutor{
 			         message11.sendToPlayer(p.getPlayer());
 	               //p.sendMessage(ChatColor.YELLOW+"/ts update" + ChatColor.GRAY +"  | AutoUpdate start");
 			         JSONChatMessage message111 = new JSONChatMessage("", null, null);
-					 JSONChatExtra extra111 = new JSONChatExtra(ChatColor.YELLOW+"/ts update" + ChatColor.GRAY +"  | AutoUpdate start", JSONChatColor.YELLOW, Arrays.asList(JSONChatFormat.BOLD));
+					 JSONChatExtra extra111 = new JSONChatExtra(ChatColor.YELLOW+"/ts update" + ChatColor.GRAY +"  | Update Link", JSONChatColor.YELLOW, Arrays.asList(JSONChatFormat.BOLD));
 					 extra111.setClickEvent(JSONChatClickEventType.SUGGEST_COMMAND, "/ts update");
 					 extra111.setHoverEvent(JSONChatHoverEventType.SHOW_TEXT, "/ts update");
 					 message111.addExtra(extra111);
 			         message111.sendToPlayer(p.getPlayer());
-	               
+	               //p.sendMessage(ChatColor.YELLOW+"/ts List" + ChatColor.Gray + "  | Online List");
+			         JSONChatMessage message4 = new JSONChatMessage("", null, null);
+			         JSONChatExtra extra4 = new JSONChatExtra(ChatColor.YELLOW+"/ts list"+ ChatColor.GRAY +"  | Online List" , JSONChatColor.YELLOW, Arrays.asList(JSONChatFormat.BOLD));
+			         extra4.setClickEvent(JSONChatClickEventType.RUN_COMMAND, "/ts list");
+			         extra4.setHoverEvent(JSONChatHoverEventType.SHOW_TEXT, "/ts list");
+			         message4.addExtra(extra4);
+			         message4.sendToPlayer(p.getPlayer());
+
+			         
 	                 p.sendMessage("");
 					 p.sendMessage(ChatColor.YELLOW+"[]================"+ChatColor.GOLD +" TeamSpeak " +ChatColor.YELLOW+"===============[]");
 				}else{
@@ -120,6 +128,14 @@ public class ts implements CommandExecutor{
               */
 			}else if(args[0].equalsIgnoreCase("update")){
 				//entfernt!
+				p.sendMessage(ChatColor.YELLOW+"[]================"+ChatColor.GOLD +" TeamSpeak " +ChatColor.YELLOW+"===============[]");
+				p.sendMessage("");
+				
+				p.sendMessage(ChatColor.AQUA +""+ ChatColor.BOLD+"You can find updates here:");
+				p.sendMessage(ChatColor.BLUE+pl.updateURL);
+				
+				p.sendMessage("");
+				p.sendMessage(ChatColor.YELLOW+"[]================"+ChatColor.GOLD +" TeamSpeak " +ChatColor.YELLOW+"===============[]");
 			}
 			else if(args[0].equalsIgnoreCase("getip")){
 				p.sendMessage(ChatColor.YELLOW+"[]================"+ChatColor.GOLD +" TeamSpeak " +ChatColor.YELLOW+"===============[]");

@@ -30,6 +30,7 @@ public class TsTapCompleter implements TabCompleter {
 		
 		tsnames.add("help");
 		tsnames.add("getIP");
+		tsnames.add("list");
 		tsnames.add("reload");
 		tsnames.add("update");
 		
