@@ -1,15 +1,18 @@
 package me.t0biii.ts;
 
+import java.io.IOException;
 import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.spigotmc.Metrics;
 
 import me.t0biii.ts.Methods.ConfigManager;
 import me.t0biii.ts.commands.TsTapCompleter;
 import me.t0biii.ts.commands.ts;
 
+@SuppressWarnings("unused")
 public class Main extends JavaPlugin{
 
 	public String prefix = "[TeamSpeakIP] ";
@@ -34,5 +37,14 @@ public class Main extends JavaPlugin{
     	
       	this.getCommand("ts").setExecutor(new ts());
      	this.getCommand("ts").setTabCompleter(new TsTapCompleter(this));
+	
+        try {
+            Metrics metrics = new Metrics();
+            metrics.start();
+        } catch (IOException e) {
+            // Failed to submit the stats :-(
+        }
+	
+	
 	}
 }
