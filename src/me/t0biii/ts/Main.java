@@ -5,7 +5,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.spigotmc.Metrics;
@@ -25,7 +24,6 @@ public class Main extends JavaPlugin{
 
 	public String prefix = "[TeamSpeakIP] ";
 	public String Prefix = "ß8[ß6TeamSpeakIPß8] ßf";
-	public String updateURL = "http://dev.bukkit.org/bukkit-plugins/teamspeak-ip/files/";
 	private int uid = 70774;
 	public Updater updater;
 	
@@ -34,8 +32,8 @@ public class Main extends JavaPlugin{
 	public ConfigManager cm = new ConfigManager(this);
 	Logger log = Bukkit.getLogger();
 
-	public boolean error = false;
-	     	
+	
+	public boolean error = false;   	
 	public final TS3Config config = new TS3Config();
 	public final TS3Query query = new TS3Query(config);
 	public final TS3Api api = query.getApi();
@@ -94,16 +92,19 @@ public class Main extends JavaPlugin{
 			}						
 		}
      	
-     	
      	/**
      	 * Metrics sarten
      	 */
-        try {
-            Metrics metrics = new Metrics();
-            metrics.start();
-        } catch (IOException e) {
-            // Failed to submit the stats :-(
-        }
+		
+		if(getConfig().getBoolean("options.Metrics")){
+				try {
+					Metrics metrics = new Metrics();
+					metrics.start();
+				} catch (IOException e) {
+					// Failed to submit the stats :-(
+				}
+		}
+        
         
         /**
          * Updater hinweiﬂ starten

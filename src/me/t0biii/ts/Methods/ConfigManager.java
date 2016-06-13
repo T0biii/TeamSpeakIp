@@ -44,7 +44,7 @@ public class ConfigManager {
    	  * Optionen
    	  */
    	 this.plugin.getConfig().addDefault("options.Update-info", true);
-   	 
+   	 this.plugin.getConfig().addDefault("options.Metrics", true);
 
    	 
    	 

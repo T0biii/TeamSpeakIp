@@ -2,7 +2,6 @@ package me.t0biii.ts.listener;
 
 import java.util.Arrays;
 
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
