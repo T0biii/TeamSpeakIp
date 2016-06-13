@@ -33,9 +33,10 @@ import de.navo.jsonchatlib.JSONChatFormat;
 import de.navo.jsonchatlib.JSONChatHoverEventType;
 import de.navo.jsonchatlib.JSONChatMessage;
 import me.t0biii.ts.Main;
-import me.t0biii.ts.Methods.TitleManager;
+import me.t0biii.ts.Methods.Updater;
+import me.t0biii.ts.Methods.Updater.UpdateResult;
 
-@SuppressWarnings("unused")
+
 public class ts implements CommandExecutor{
 
 	public static Main pl = Main.instance;
@@ -43,15 +44,12 @@ public class ts implements CommandExecutor{
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args)
 	{	
-		boolean error = false;
-		final TS3Config config = new TS3Config();
-		final TS3Query query = new TS3Query(config);
+
 		
 		
 		if(sender instanceof Player)
 		{
 			final Player p = (Player) sender;
-			World w = p.getWorld();
 			if(args.length == 1)
             { 
 			if(args[0].equalsIgnoreCase("reload"))
@@ -60,19 +58,19 @@ public class ts implements CommandExecutor{
 				if(p.hasPermission("ts.reload"))
 				{
 				 pl.reloadConfig();
-				 p.sendMessage(ChatColor.YELLOW+"[]================"+ChatColor.GOLD +" TeamSpeak " +ChatColor.YELLOW+"===============[]");
+				 prefixsend(p);
 				 p.sendMessage("");
-       		     p.sendMessage(pl.getConfig().getString("messages.reload"));
+       		     p.sendMessage(ChatColor.translateAlternateColorCodes('&', pl.getConfig().getString("messages.reload")));
        		     p.sendMessage("");
-       		     p.sendMessage(ChatColor.YELLOW+"[]================"+ChatColor.GOLD +" TeamSpeak " +ChatColor.YELLOW+"===============[]");		  
+       		     prefixsend(p);		  
 				}else
 				{
-					p.sendMessage(pl.getConfig().getString("messages.no-permission"));
+					p.sendMessage(ChatColor.translateAlternateColorCodes('&',  pl.getConfig().getString("messages.no-permission")));
 				}
 				//HELP COMMAND
 			}else if(args[0].equalsIgnoreCase("help")){
 				if(p.hasPermission("ts.help") || p.isOp() ){
-					 p.sendMessage(ChatColor.YELLOW+"[]================"+ChatColor.GOLD +" TeamSpeak " +ChatColor.YELLOW+"===============[]");
+					 prefixsend(p);	
 					 p.sendMessage("");
 				   //p.sendMessage(ChatColor.YELLOW+"/ts" + ChatColor.GRAY +"               | The TS IP appears");
 					 JSONChatMessage message = new JSONChatMessage("", null, null);
@@ -119,7 +117,7 @@ public class ts implements CommandExecutor{
 
 			         
 	                 p.sendMessage("");
-					 p.sendMessage(ChatColor.YELLOW+"[]================"+ChatColor.GOLD +" TeamSpeak " +ChatColor.YELLOW+"===============[]");
+	                 prefixsend(p);	
 				}else{
 					tsipsend(p);
 				}	  
@@ -127,83 +125,76 @@ public class ts implements CommandExecutor{
               * UPDATE COMMAND    
               */
 			}else if(args[0].equalsIgnoreCase("update")){
-				//entfernt!
-				p.sendMessage(ChatColor.YELLOW+"[]================"+ChatColor.GOLD +" TeamSpeak " +ChatColor.YELLOW+"===============[]");
-				p.sendMessage("");
 				
-				p.sendMessage(ChatColor.AQUA +""+ ChatColor.BOLD+"You can find updates here:");
-				p.sendMessage(ChatColor.BLUE+pl.updateURL);
-				
-				p.sendMessage("");
-				p.sendMessage(ChatColor.YELLOW+"[]================"+ChatColor.GOLD +" TeamSpeak " +ChatColor.YELLOW+"===============[]");
+				if(pl.updater.getResult() == Updater.UpdateResult.UPDATE_AVAILABLE){
+					prefixsend(p);
+					p.sendMessage("");
+					p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&4&l"+pl.getConfig().getString("messages.update-info")));
+					p.sendMessage("§2Download Link:");
+					p.sendMessage(ChatColor.BLUE+ pl.updater.getLatestFileLink());
+					p.sendMessage("");
+					prefixsend(p);
+				}else if(pl.updater.getResult() != UpdateResult.UPDATE_AVAILABLE){
+					prefixsend(p);
+					p.sendMessage("");
+					
+					p.sendMessage(ChatColor.translateAlternateColorCodes('&',  pl.getConfig().getString("messages.no-update")));
+					
+					p.sendMessage("");
+					prefixsend(p);
+				}
+					
 			}
 			else if(args[0].equalsIgnoreCase("getip")){
-				p.sendMessage(ChatColor.YELLOW+"[]================"+ChatColor.GOLD +" TeamSpeak " +ChatColor.YELLOW+"===============[]");
+				prefixsend(p);	
 				p.sendMessage("");
 				
 		        JSONChatMessage message = new JSONChatMessage("" , JSONChatColor.AQUA, null);
 		        JSONChatExtra extra = new JSONChatExtra("Click This", JSONChatColor.BLUE, Arrays.asList(JSONChatFormat.BOLD));
-		        extra.setHoverEvent(JSONChatHoverEventType.SHOW_TEXT, pl.getConfig().getString("messages.ip"));
-		        extra.setClickEvent(JSONChatClickEventType.SUGGEST_COMMAND, pl.getConfig().getString("messages.ip"));
+		        extra.setHoverEvent(JSONChatHoverEventType.SHOW_TEXT,ChatColor.translateAlternateColorCodes('&', pl.getConfig().getString("messages.ip")));
+		        extra.setClickEvent(JSONChatClickEventType.SUGGEST_COMMAND,ChatColor.translateAlternateColorCodes('&',  pl.getConfig().getString("messages.ip")));
 		        message.addExtra(extra);
 		        message.sendToPlayer(p.getPlayer()); 
 				
 				p.sendMessage("");
-				p.sendMessage(ChatColor.YELLOW+"[]================"+ChatColor.GOLD +" TeamSpeak " +ChatColor.YELLOW+"===============[]");	
+				prefixsend(p);		
 				
 			}else if(args[0].equalsIgnoreCase("list")){
-				
-				config.setHost(pl.getConfig().getString("ts3.ip"));
-				config.setQueryPort(pl.getConfig().getInt("ts3.queryport"));
-				config.setDebugLevel(Level.OFF);
-				config.setLoginCredentials(pl.getConfig().getString("ts3.querylogin.name"), pl.getConfig().getString("ts3.querylogin.pw"));
-				try{
-				query.connect();
-				}catch(Exception e){
-					p.sendMessage(ChatColor.RED+pl.prefix+"Can´t connect to Teamspeak!");
-				//	Bukkit.getLogger().info(pl.prefix+"Can´t connect to Teamspeak!");
-					error = true;
-				}
-				final TS3Api api = query.getApi();
-				if(!error){	
-					try{
-					api.selectVirtualServerByPort(pl.getConfig().getInt("ts3.port"));
-					api.setNickname("TeamspeakIP");
-					error = false;
-					}catch(Exception e){
-					p.sendMessage(ChatColor.RED+pl.prefix+"Can´t connect to Teamspeak!");
-					}						
-				}
-				if(error){			
+			
+				if(pl.error){			
 				}else{
 				// Get all channels and map their channel IDs to them
-				List<Channel> channels = api.getChannels();
+					try{
+							
+				List<Channel> channels = pl.api.getChannels();
 				Map<Integer, Channel> channelMap = new HashMap<>(channels.size());
 				for (Channel channel : channels) {
 					channelMap.put(channel.getId(), channel);
 				}
 				// List all clients in the console
-				p.sendMessage(ChatColor.YELLOW+"[]================"+ChatColor.GOLD +" TeamSpeak " +ChatColor.YELLOW+"===============[]");
-				p.sendMessage(ChatColor.AQUA+"Teamspeak: "+pl.getConfig().getString("ts3.ip")+":"+pl.getConfig().getString("ts3.port"));
-				p.sendMessage(ChatColor.AQUA+"Online: §2"+ (api.getClients().size()- 1) +" of " +api.getHostInfo().getTotalMaxClients());
+				prefixsend(p);	
+				p.sendMessage(ChatColor.AQUA+"Teamspeak: "+pl.getConfig().getString("messages.ip"));
+				p.sendMessage(ChatColor.AQUA+"Online: §2"+ (pl.api.getClients().size()- 1) +" of " + pl.api.getHostInfo().getTotalMaxClients());
 				p.sendMessage(ChatColor.AQUA+"List of People:");
-				for (Client c : api.getClients()) {
+				for (Client c : pl.api.getClients()) {
 					// Get the client's channel
 					Channel channel = channelMap.get(c.getChannelId());
-					if(c.getNickname().equals("TeamspeakIP")){		
-					}else{
+					if(!c.getNickname().equals("TeamspeakIP")){		
 						p.sendMessage("§2"+c.getNickname());
 					}
 				}
-				p.sendMessage(ChatColor.YELLOW+"[]================"+ChatColor.GOLD +" TeamSpeak " +ChatColor.YELLOW+"===============[]");
-				// We're done, disconnect!
-				api.logout();
-				query.exit();
+				prefixsend(p);		
+
+				}catch(Exception e){
+					
+					p.sendMessage(ChatColor.AQUA+"Online: §2- of -" );
+					p.sendMessage(ChatColor.AQUA+"List of People:");
+					p.sendMessage("§4Not enough permissions");
+					prefixsend(p);
+
+				}
 				}				
 			}	
-            }else if(pl.getConfig().getBoolean("options.Titels")) {
-            	  String Pname = p.getName();
-            	  TitleManager.sendTitles(p, pl.getConfig().getString("messages.ts3"), "", 20, 3*20, 20);
             }else 
             {
             	 tsipsend(p);
@@ -216,18 +207,23 @@ public class ts implements CommandExecutor{
 	}
 	
 	private void tsipsend(Player p){
-		p.sendMessage(ChatColor.YELLOW+"[]================"+ChatColor.GOLD +" TeamSpeak " +ChatColor.YELLOW+"===============[]");
+		prefixsend(p);	
  		p.sendMessage("");
  		  
  	   	JSONChatMessage message = new JSONChatMessage("", null, null);  
-        JSONChatExtra extra = new JSONChatExtra(pl.getConfig().getString("messages.ts3"), JSONChatColor.BLUE, Arrays.asList(JSONChatFormat.BOLD));
-        extra.setHoverEvent(JSONChatHoverEventType.SHOW_TEXT, pl.getConfig().getString("messages.ip"));
-        extra.setClickEvent(JSONChatClickEventType.SUGGEST_COMMAND, pl.getConfig().getString("messages.ip"));
+        JSONChatExtra extra = new JSONChatExtra(ChatColor.translateAlternateColorCodes('&',  pl.getConfig().getString("messages.ts3")), JSONChatColor.BLUE, Arrays.asList(JSONChatFormat.BOLD));
+        extra.setHoverEvent(JSONChatHoverEventType.SHOW_TEXT,ChatColor.translateAlternateColorCodes('&',  pl.getConfig().getString("messages.ip")));
+        extra.setClickEvent(JSONChatClickEventType.SUGGEST_COMMAND,ChatColor.translateAlternateColorCodes('&',  pl.getConfig().getString("messages.ip")));
         message.addExtra(extra);
         message.sendToPlayer(p.getPlayer());
         
  		p.sendMessage("");
- 		p.sendMessage(ChatColor.YELLOW+"[]================"+ChatColor.GOLD +" TeamSpeak " +ChatColor.YELLOW+"===============[]");
+ 		prefixsend(p);	
  		
-	}	
+	}
+	
+	public void prefixsend(Player p){
+		p.sendMessage(ChatColor.YELLOW+"[]================"+ChatColor.GOLD +" TeamSpeak " +ChatColor.YELLOW+"===============[]");
+	}
+	
 }
