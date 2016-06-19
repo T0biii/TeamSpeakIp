@@ -41,7 +41,7 @@
   
 
    <build>
-        <sourceDirectory>src/main/java</sourceDirectory>
+        <sourceDirectory>src</sourceDirectory>
         <defaultGoal>clean install</defaultGoal>
         <resources>
             <resource>
@@ -53,7 +53,7 @@
                 </includes>
             </resource>
             <resource>
-                <directory>src/main/resources</directory>
+                <directory>src</directory>
                 <!-- Keep filtering at false for other resources to prevent bad magic -->
                 <filtering>false</filtering>
                 <excludes>
@@ -67,8 +67,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.1</version>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <source>1.7</source>
+                    <target>1.7</target>
                 </configuration>
             </plugin>
         </plugins>
