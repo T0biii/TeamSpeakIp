@@ -47,7 +47,7 @@
         <defaultGoal>clean install</defaultGoal>
         <resources>
             <resource>
-                <directory>src/main/resources</directory>
+                <directory>src</directory>
                 <!-- Keeping filtering at true here reduces plugin.yml redundancy! -->
                 <filtering>true</filtering>
                 <includes>
