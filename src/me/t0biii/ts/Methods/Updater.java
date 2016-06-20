@@ -34,7 +34,7 @@ import org.json.simple.JSONValue;
  */
 
 public class Updater {
-
+ 
     /* Constants */
 
     // Remote file's title

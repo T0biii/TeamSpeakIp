@@ -37,7 +37,7 @@ public class Main extends JavaPlugin{
 	public final TS3Config config = new TS3Config();
 	public final TS3Query query = new TS3Query(config);
 	public final TS3Api api = query.getApi();
-	
+ 	
 	@Override
 	public void onDisable() {
 		log.info(prefix +"Plugin disabeld.");

@@ -39,7 +39,7 @@ public class ConfigManager {
    	 this.plugin.getConfig().addDefault("ts3.querylogin.name", "serveradmin");
    	 this.plugin.getConfig().addDefault("ts3.querylogin.pw", "YOUR_QUERY_PASSWORD");
    	 
-   	 
+   	  
    	 /**
    	  * Optionen
    	  */
