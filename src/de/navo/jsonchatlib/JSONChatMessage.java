@@ -9,7 +9,7 @@ import net.minecraft.server.v1_9_R2.IChatBaseComponent.ChatSerializer;
 import net.minecraft.server.v1_9_R2.PacketPlayOutChat;
 
 import java.util.List;
-
+ 
 public class JSONChatMessage {
     private final JSONObject chatObject;
 
