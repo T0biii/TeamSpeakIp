@@ -17,7 +17,7 @@ public class ConfigManager {
 	  
 	 public void loadConfig()
 	 {
-		 
+	 	 
 	 /**
 	  * Nachrichten
 	  */

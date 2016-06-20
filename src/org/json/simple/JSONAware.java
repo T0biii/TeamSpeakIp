@@ -11,3 +11,4 @@ public interface JSONAware {
      */
     String toJSONString();
 }
+ 

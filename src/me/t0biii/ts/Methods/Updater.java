@@ -32,7 +32,7 @@ import org.json.simple.JSONValue;
  * @author Gravity
  * @version 2.3
  */
-
+ 
 public class Updater {
  
     /* Constants */

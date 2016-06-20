@@ -28,7 +28,7 @@ public class PlayerJoin implements Listener{
 	public PlayerJoin(Main plugin) {
 		this.plugin = plugin;
 	}
-	
+	 
 	@EventHandler
 	public void onJoin(PlayerJoinEvent e){
 		Player p = e.getPlayer();

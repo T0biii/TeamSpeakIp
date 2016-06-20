@@ -33,7 +33,7 @@ public class ts implements CommandExecutor{
 	{	
 
 		
-		
+		 
 		if(sender instanceof Player)
 		{
 			final Player p = (Player) sender;

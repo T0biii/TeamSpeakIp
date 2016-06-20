@@ -13,7 +13,7 @@ class Yylex {
      * initial size of the lookahead buffer
      */
     private static final int ZZ_BUFFERSIZE = 16384;
-
+ 
     /**
      * lexical states
      */

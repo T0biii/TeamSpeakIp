@@ -13,3 +13,6 @@ Commands:
 /ts update
 /ts list
 ```
+
+Dev Builds:
+https://ci.t0biii.ovh/job/TeamSpeakIP/

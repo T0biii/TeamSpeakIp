@@ -14,4 +14,4 @@ public enum JSONChatHoverEventType {
         return type;
     }
 }
- 
+  

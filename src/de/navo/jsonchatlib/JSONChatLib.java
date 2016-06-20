@@ -11,4 +11,3 @@ public class JSONChatLib extends JavaPlugin implements Listener {
 	}
 	
 }
- 

@@ -14,3 +14,4 @@ public interface JSONStreamAware {
      */
     void writeJSONString(Writer out) throws IOException;
 }
+ 

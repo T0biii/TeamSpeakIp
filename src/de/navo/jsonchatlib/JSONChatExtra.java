@@ -38,7 +38,7 @@ public class JSONChatExtra {
         hoverEvent.put("action", action.getTypeString());
         hoverEvent.put("value", value);
         chatExtra.put("hoverEvent", hoverEvent);
-    }
+    } 
 
     public JSONObject toJSON() {
         return chatExtra;

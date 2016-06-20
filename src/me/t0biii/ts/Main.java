@@ -59,7 +59,7 @@ public class Main extends JavaPlugin{
     	 */
       	this.getCommand("ts").setExecutor(new ts());
      	this.getCommand("ts").setTabCompleter(new TsTapCompleter(this));
-     	
+      	
      	/**
      	 * Events registrieren
      	 */

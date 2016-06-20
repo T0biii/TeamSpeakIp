@@ -16,28 +16,30 @@
                 <url>https://T0biii.de</url>
         </developer>
 	</developers>
-  
+
   
   <repositories>
+   <!-- Craftbukkit -->
  	<repository> 
 	 	<id>elmakers-repo</id> 
  		<url>http://maven.elmakers.com/repository/</url> 
 	 </repository> 
-  
-    <repository>
     <!-- Spigot -->
+     <repository>
         <id>spigot-repo</id>
         <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
    	 </repository>
-   	 <!-- MCStats -->
+   	<!-- MCStats -->
    	 <repository>
             <id>Plugin Metrics</id>
             <url>http://repo.mcstats.org/content/repositories/public</url>
      </repository>
+    <!-- CI Server -->
      <repository>
             <id>upstream</id>
             <url>https://ci.t0biii.ovh/plugin/repository/everything/</url>
         </repository>
+    <!-- TeamSpeakIP -->
      <repository>
             <id>TeamSpeak-3-Java-API-mvn-repo</id>
             <url>https://raw.githubusercontent.com/TheHolyWaffle/TeamSpeak-3-Java-API/mvn-repo/</url>
@@ -50,44 +52,48 @@
 
 <dependencies>
     <!--Spigot API-->
-    <dependency>
+     <dependency>
            <groupId>org.spigotmc</groupId>
            <artifactId>spigot-api</artifactId>
            <version>1.9.4-R0.1-SNAPSHOT</version>
            <scope>provided</scope>
-    </dependency>
+     </dependency>
     <!--Bukkit API-->
-    <dependency>
+     <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>bukkit</artifactId>
             <version>1.9.4-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
-    </dependency>
+     </dependency>
     <!--MCStats -->
-    <dependency>
+     <dependency>
             <groupId>org.mcstats.bukkit</groupId>
             <artifactId>metrics</artifactId>
             <version>R8-SNAPSHOT</version>
             <scope>compile</scope>
-    </dependency>
+     </dependency>
     <!--TS3 -->
-    <dependency>
+     <dependency>
             <groupId>com.github.theholywaffle</groupId>
             <artifactId>teamspeak3-api</artifactId>
             <version>[1.0.0,2.0.0)</version>
-      </dependency>
-	
+     </dependency>
+	<!--CraftBukkit -->
 	 <dependency> 
  			<groupId>org.bukkit</groupId>
  			<artifactId>craftbukkit</artifactId>
  			<version>1.9.4-R0.1-SNAPSHOT</version>
     		<scope>provided</scope> 
- </dependency>   
+ 	</dependency>   
 </dependencies>
 
 
    <build>
-   		<finalName>TeamSpeakIP</finalName>
+   		
+   		<!--Datei Namen -->
+   		<finalName>TeamSpeak4.3.jar</finalName>
+        <!-- -->
+        
         <sourceDirectory>${basedir}/src</sourceDirectory>
         <defaultGoal>clean package</defaultGoal>
         <resources>
@@ -124,19 +130,18 @@
                     </execution>
                 </executions>
             </plugin>
-                        <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.4</version>
-                <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
-                    
-                </configuration>
-            </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>2.3.1</version>
+            	    <artifactId>maven-compiler-plugin</artifactId>
+            	    <version>2.4</version>
+            	    <configuration>
+            	        <source>1.7</source>
+            	        <target>1.7</target>  
+            	    </configuration>
+            	</plugin>
+            	<plugin>
+                	<groupId>org.apache.maven.plugins</groupId>
+                	<artifactId>maven-jar-plugin</artifactId>
+            	    <version>2.3.1</version>
             </plugin>     
         </plugins>
 	</build>
