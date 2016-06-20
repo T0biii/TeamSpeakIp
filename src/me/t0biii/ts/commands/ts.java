@@ -27,6 +27,7 @@ public class ts implements CommandExecutor{
 
 	public static Main pl = Main.instance;
 	
+	@SuppressWarnings("unused")
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args)
 	{	

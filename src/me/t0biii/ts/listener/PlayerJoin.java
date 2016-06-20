@@ -19,6 +19,7 @@ import me.t0biii.ts.Methods.Updater;
 public class PlayerJoin implements Listener{
 	
 	
+	@SuppressWarnings("unused")
 	private static Main pl = Main.instance;
 	
 	
