@@ -66,12 +66,7 @@
             <scope>provided</scope>
      </dependency>
     <!--MCStats -->
-     <dependency>
-            <groupId>org.mcstats.bukkit</groupId>
-            <artifactId>metrics</artifactId>
-            <version>R8-SNAPSHOT</version>
-            <scope>compile</scope>
-     </dependency>
+
     <!--TS3 -->
      <dependency>
             <groupId>com.github.theholywaffle</groupId>
@@ -84,7 +79,14 @@
  			<artifactId>craftbukkit</artifactId>
  			<version>1.9.4-R0.1-SNAPSHOT</version>
     		<scope>provided</scope> 
- 	</dependency>   
+ 	</dependency>
+   <!--Spigot -->  
+    	 <dependency> 
+ 			<groupId>org.spigotmc</groupId>
+ 			<artifactId>spigot</artifactId>
+ 			<version>1.9.4-R0.1-SNAPSHOT</version>
+    		<scope>provided</scope> 
+ 	</dependency>
 </dependencies>
 
 

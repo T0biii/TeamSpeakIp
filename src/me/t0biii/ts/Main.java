@@ -7,7 +7,7 @@ import java.util.logging.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.mcstats.Metrics;
+import org.spigotmc.Metrics;
 
 import com.github.theholywaffle.teamspeak3.TS3Api;
 import com.github.theholywaffle.teamspeak3.TS3Config;
@@ -98,7 +98,7 @@ public class Main extends JavaPlugin{
 		
 		if(getConfig().getBoolean("options.Metrics")){
 				try {
-					Metrics metrics = new Metrics(this);
+					Metrics metrics = new Metrics();
 					metrics.start();
 				} catch (IOException e) {
 					// Failed to submit the stats :-(
