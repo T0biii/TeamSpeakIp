@@ -26,8 +26,8 @@ public class Main extends JavaPlugin{
 	public String Prefix = "§8[§6TeamSpeakIP§8] §f";
 	private int uid = 70774;
 	public Updater updater;
-	
-	
+	 
+
 	public static Main instance;
 	public ConfigManager cm = new ConfigManager(this);
 	Logger log = Bukkit.getLogger();
