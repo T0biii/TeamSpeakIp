@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>me.t0biii.ts</groupId>
   <artifactId>Main</artifactId>
-  <version>4.3</version>
+  <version>4.4</version>
   <name>TeamSpeakIP</name>
   <description>TeamSpeak IP</description>
   <url>http://dev.T0biii.de</url>
@@ -93,7 +93,7 @@
    <build>
    		
    		<!--Datei Namen -->
-   		<finalName>TeamSpeak4.3</finalName>
+   		<finalName>TeamSpeak4.4</finalName>
         <!-- -->
         
         <sourceDirectory>${basedir}/src</sourceDirectory>
