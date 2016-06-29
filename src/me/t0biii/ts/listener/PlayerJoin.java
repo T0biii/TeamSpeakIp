@@ -36,17 +36,24 @@ public class PlayerJoin implements Listener{
 		//If Player has Permission or is op
 		if(p.hasPermission("ts.update") || p.isOp()){
 			if(this.plugin.updater.getResult() == Updater.UpdateResult.UPDATE_AVAILABLE){
-				if(this.plugin.getConfig().getBoolean("options.Update-info")){			
-					JSONChatMessage message = new JSONChatMessage("", null, null);
-					JSONChatExtra extra = new JSONChatExtra(this.plugin.Prefix+"§4"+ this.plugin.getConfig().getString("messages.update-info") , JSONChatColor.YELLOW, Arrays.asList(JSONChatFormat.BOLD));
-					extra.setClickEvent(JSONChatClickEventType.RUN_COMMAND, "/ts update");
-					extra.setHoverEvent(JSONChatHoverEventType.SHOW_TEXT, "§a/ts update");
-					message.addExtra(extra);
-					message.sendToPlayer(p);
+				if(this.plugin.getConfig().getBoolean("options.Update-info")){
+					
+					String UpdateinfoMes = this.plugin.Prefix+"§4"+this.plugin.getConfig().getString("messages.update-info");
+					sendChat(p, UpdateinfoMes, "/ts update", "§a/ts update");
+					
 				}
 			}
 			
 		}
+	}
+	
+	public void sendChat(Player p,String extraText ,String Click, String Hover ){
+		JSONChatMessage message = new JSONChatMessage("", null, null);
+		JSONChatExtra extra = new JSONChatExtra(extraText, JSONChatColor.YELLOW, Arrays.asList(JSONChatFormat.BOLD));
+		extra.setHoverEvent(JSONChatHoverEventType.SHOW_TEXT, Hover);
+		extra.setClickEvent(JSONChatClickEventType.RUN_COMMAND, Click);
+		message.addExtra(extra);
+		message.sendToPlayer(p);
 	}
 	
 	

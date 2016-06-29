@@ -26,9 +26,9 @@ public class ConfigManager {
    	 this.plugin.getConfig().addDefault("messages.reload", "&3Reload Erfolgreich!");
    	 this.plugin.getConfig().addDefault("messages.ts3", "&3TeamSpeak3: &2DeineIPvomTS.de");
    	 this.plugin.getConfig().addDefault("messages.ip", "127.0.0.1:9987");
-   	 this.plugin.getConfig().addDefault("messages.konsole", "Dieser Befehl kann nur von einen Spieler ausgefürt werden!");
+   	 this.plugin.getConfig().addDefault("messages.konsole", "Dieser Befehl kann nur von einen Spieler ausgefuert werden!");
    	 this.plugin.getConfig().addDefault("messages.no-permission", "&4Du Hast keine Rechte dafür!"); 
-   	 this.plugin.getConfig().addDefault("messages.update-info", "Neues Update ist verfügbar!");
+   	 this.plugin.getConfig().addDefault("messages.update-info", "Neues Update ist verfuegbar!");
    	 this.plugin.getConfig().addDefault("messages.no-update", "&aDu hast bereits die neuste Version!");
    	 /**
    	  * TS3 Zugangs Daten

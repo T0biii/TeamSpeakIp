@@ -148,7 +148,8 @@ public class ts implements CommandExecutor{
 				
 			}else if(args[0].equalsIgnoreCase("list")){
 			
-				if(pl.error){			
+				if(pl.error){
+					p.sendMessage("§cTeamspeak is unreachable!");
 				}else{
 				// Get all channels and map their channel IDs to them
 					try{
@@ -178,10 +179,11 @@ public class ts implements CommandExecutor{
 					p.sendMessage(ChatColor.AQUA+"List of People:");
 					p.sendMessage("§4Not enough permissions");
 					prefixsend(p);
-
 				}
 				}				
-			}	
+			}else{
+				tsipsend(p);
+			}
             }else 
             {
             	 tsipsend(p);
@@ -199,10 +201,12 @@ public class ts implements CommandExecutor{
  		  
  	   	JSONChatMessage message = new JSONChatMessage("", null, null);  
         JSONChatExtra extra = new JSONChatExtra(ChatColor.translateAlternateColorCodes('&',  pl.getConfig().getString("messages.ts3")), JSONChatColor.BLUE, Arrays.asList(JSONChatFormat.BOLD));
-        extra.setHoverEvent(JSONChatHoverEventType.SHOW_TEXT,ChatColor.translateAlternateColorCodes('&',  pl.getConfig().getString("messages.ip")));
-        extra.setClickEvent(JSONChatClickEventType.SUGGEST_COMMAND,ChatColor.translateAlternateColorCodes('&',  pl.getConfig().getString("messages.ip")));
+        extra.setHoverEvent(JSONChatHoverEventType.SHOW_TEXT, ChatColor.translateAlternateColorCodes('&',  pl.getConfig().getString("messages.ip")));
+        extra.setClickEvent(JSONChatClickEventType.SUGGEST_COMMAND, ChatColor.translateAlternateColorCodes('&',  pl.getConfig().getString("messages.ip")));
         message.addExtra(extra);
         message.sendToPlayer(p.getPlayer());
+        
+      
         
  		p.sendMessage("");
  		prefixsend(p);	
@@ -212,5 +216,5 @@ public class ts implements CommandExecutor{
 	public void prefixsend(Player p){
 		p.sendMessage(ChatColor.YELLOW+"[]================"+ChatColor.GOLD +" TeamSpeak " +ChatColor.YELLOW+"===============[]");
 	}
-	
+
 }
