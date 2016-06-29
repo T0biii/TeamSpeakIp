@@ -42,7 +42,7 @@ public class Main extends JavaPlugin{
  	int ts3port = getConfig().getInt("ts3.port");
 	String queryname = getConfig().getString("ts3.querylogin.name");
 	String querypw = getConfig().getString("ts3.querylogin.pw");
-	
+	 
 	@Override
 	public void onDisable() {
 		log.info(prefix +"Plugin disabeld.");
