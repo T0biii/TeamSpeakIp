@@ -37,7 +37,12 @@ public class Main extends JavaPlugin{
 	public final TS3Config config = new TS3Config();
 	public final TS3Query query = new TS3Query(config);
 	public final TS3Api api = query.getApi();
- 	
+ 	String host = getConfig().getString("ts3.ip");
+ 	int Queryport = getConfig().getInt("ts3.queryport");
+ 	int ts3port = getConfig().getInt("ts3.port");
+	String queryname = getConfig().getString("ts3.querylogin.name");
+	String querypw = getConfig().getString("ts3.querylogin.pw");
+	
 	@Override
 	public void onDisable() {
 		log.info(prefix +"Plugin disabeld.");
@@ -47,7 +52,7 @@ public class Main extends JavaPlugin{
 	public void onEnable() {
 		PluginManager pm = Bukkit.getPluginManager();
 		instance = this;
-		
+	    
 		/**
 		 * Config laden und speichern
 		 */
@@ -69,10 +74,10 @@ public class Main extends JavaPlugin{
      	 * TS3 Verbindung
      	 */
      	
-		config.setHost(this.getConfig().getString("ts3.ip"));
-		config.setQueryPort(this.getConfig().getInt("ts3.queryport"));
+		config.setHost(host);
+		config.setQueryPort(Queryport);
 		config.setDebugLevel(Level.OFF);
-		config.setLoginCredentials(this.getConfig().getString("ts3.querylogin.name"), this.getConfig().getString("ts3.querylogin.pw"));
+		config.setLoginCredentials(queryname, querypw);
 		try{
 		query.connect();
 		log.info(prefix+"Connectet to Teamspeak!");
@@ -84,7 +89,7 @@ public class Main extends JavaPlugin{
 		
 		if(!error){	
 			try{
-			api.selectVirtualServerByPort(getConfig().getInt("ts3.port"));
+			api.selectVirtualServerByPort(ts3port);
 			api.setNickname("TeamspeakIP");
 			error = false;
 			}catch(Exception e){
