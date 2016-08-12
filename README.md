@@ -1,4 +1,4 @@
-TeamSpeakIp
+TeamSpeakIP ![TeamSpeakIP](https://api.travis-ci.org/T0biii/TeamSpeakIp.svg)
 ===========
 
 This is a Bukkit Plugin for more information go to:
@@ -16,3 +16,4 @@ Commands:
 
 Dev Builds:
 https://ci.t0biii.ovh/job/TeamSpeakIP/
+
