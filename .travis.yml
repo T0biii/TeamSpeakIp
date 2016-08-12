@@ -1,0 +1,6 @@
+language: java
+mvn test
+jdk:
+  - oraclejdk8
+  - oraclejdk7
+  - openjdk6
