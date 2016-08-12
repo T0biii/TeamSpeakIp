@@ -3,5 +3,4 @@ machine:
     version: openjdk7
 general:
   artifacts:
-    - "target" 
-    - "TeamSpeak4.4.jar"
+    - "target/TeamSpeak4.4.jar" 
