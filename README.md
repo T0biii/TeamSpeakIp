@@ -2,7 +2,7 @@ TeamSpeakIP ![TeamSpeakIP](https://api.travis-ci.org/T0biii/TeamSpeakIp.svg)
 ===========
 
 This is a Bukkit Plugin for more information go to:
-http://dev.bukkit.org/bukkit-plugins/teamspeak-ip/
+http://dev.t0biii.de/
 
 Commands:
 ```
@@ -15,5 +15,5 @@ Commands:
 ```
 
 Dev Builds:
-https://ci.t0biii.ovh/job/TeamSpeakIP/
+https://ci.t0biii.de/job/TeamSpeakIP/
 
