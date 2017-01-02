@@ -113,7 +113,6 @@ public class Main extends JavaPlugin{
 				}
 		}
         
-        
         /**
          * Updater hinweiﬂ starten
          */
