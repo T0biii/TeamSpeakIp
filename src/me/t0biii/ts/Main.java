@@ -37,6 +37,9 @@ public class Main extends JavaPlugin{
 	public final TS3Config config = new TS3Config();
 	public final TS3Query query = new TS3Query(config);
 	public final TS3Api api = query.getApi();
+	/**
+	 * TS³ Login Daten laden
+	 */
  	String host = getConfig().getString("ts3.ip");
  	int Queryport = getConfig().getInt("ts3.queryport");
  	int ts3port = getConfig().getInt("ts3.port");
