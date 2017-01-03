@@ -19,6 +19,7 @@ import de.navo.jsonchatlib.JSONChatFormat;
 import de.navo.jsonchatlib.JSONChatHoverEventType;
 import de.navo.jsonchatlib.JSONChatMessage;
 import me.t0biii.ts.Main;
+import me.t0biii.ts.Methods.TSCacher;
 import me.t0biii.ts.Methods.Updater;
 import me.t0biii.ts.Methods.Updater.UpdateResult;
 
@@ -145,6 +146,10 @@ public class ts implements CommandExecutor{
 				
 				p.sendMessage("");
 				prefixsend(p);		
+				
+			}else if(args[0].equalsIgnoreCase("chache")){
+				TSCacher.tsCache();
+				p.sendMessage(""+TSCacher.Clients +"-" +TSCacher.MaxClients);
 				
 			}else if(args[0].equalsIgnoreCase("list")){
 			

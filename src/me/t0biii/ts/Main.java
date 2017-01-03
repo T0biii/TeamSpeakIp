@@ -13,7 +13,9 @@ import com.github.theholywaffle.teamspeak3.TS3Api;
 import com.github.theholywaffle.teamspeak3.TS3Config;
 import com.github.theholywaffle.teamspeak3.TS3Query;
 
+import me.t0biii.ts.Methods.Cache;
 import me.t0biii.ts.Methods.ConfigManager;
+import me.t0biii.ts.Methods.TSCacher;
 import me.t0biii.ts.Methods.Updater;
 import me.t0biii.ts.Methods.Updater.UpdateType;
 import me.t0biii.ts.commands.TsTapCompleter;
@@ -30,6 +32,7 @@ public class Main extends JavaPlugin{
 
 	public static Main instance;
 	public ConfigManager cm = new ConfigManager(this);
+	public Cache ca = new Cache(this);
 	Logger log = Bukkit.getLogger();
 
 	
@@ -60,6 +63,7 @@ public class Main extends JavaPlugin{
 		 * Config laden und speichern
 		 */
 		cm.loadConfig();
+		ca.loadCache();
       	saveConfig();
     	
       	/**
@@ -112,8 +116,8 @@ public class Main extends JavaPlugin{
 					// Failed to submit the stats :-(
 				}
 		}
-        
-        /**
+		
+		/**
          * Updater hinweiﬂ starten
          */
         updater = new Updater(this, uid, getFile(), UpdateType.NO_DOWNLOAD, true);       
