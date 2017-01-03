@@ -1,4 +1,4 @@
-TeamSpeakIP ![TeamSpeakIP](https://api.travis-ci.org/T0biii/TeamSpeakIp.svg)
+TeamSpeakIP ![TeamSpeakIP](https://api.travis-ci.org/T0biii/TeamSpeakIp.svg) | [![Build Status](http://vserver2.t0biii.de:8080/job/TeamSpeakIP/badge/icon)](http://vserver2.t0biii.de:8080/job/TeamSpeakIP/)
 ===========
 
 This is a Bukkit Plugin for more information go to:
