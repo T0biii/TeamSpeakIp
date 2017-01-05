@@ -11,13 +11,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import com.github.theholywaffle.teamspeak3.api.wrapper.Client;
 
-import de.navo.jsonchatlib.JSONChatClickEventType;
-import de.navo.jsonchatlib.JSONChatColor;
-import de.navo.jsonchatlib.JSONChatExtra;
-import de.navo.jsonchatlib.JSONChatFormat;
-import de.navo.jsonchatlib.JSONChatHoverEventType;
-import de.navo.jsonchatlib.JSONChatMessage;
 import me.t0biii.ts.Ts;
+import me.t0biii.ts.Methods.JsonMessage;
 import me.t0biii.ts.Methods.Updater;
 import me.t0biii.ts.Methods.Updater.UpdateResult;
 
@@ -25,14 +20,11 @@ import me.t0biii.ts.Methods.Updater.UpdateResult;
 public class ts implements CommandExecutor{
 
 	public static Ts pl = Ts.instance;
-	
-	@SuppressWarnings("unused")
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args)
 	{	
-
 		
-		 
+		
 		if(sender instanceof Player)
 		{
 			final Player p = (Player) sender;
@@ -59,49 +51,47 @@ public class ts implements CommandExecutor{
 					 prefixsend(p);	
 					 p.sendMessage("");
 				   //p.sendMessage(ChatColor.YELLOW+"/ts" + ChatColor.GRAY +"               | The TS IP appears");
-					 JSONChatMessage message = new JSONChatMessage("", null, null);
-					 JSONChatExtra extra = new JSONChatExtra(ChatColor.YELLOW+"/ts" + ChatColor.GRAY +"               | The TS IP appears", JSONChatColor.YELLOW, Arrays.asList(JSONChatFormat.BOLD));
-					 extra.setClickEvent(JSONChatClickEventType.RUN_COMMAND, "/ts");
-					 extra.setHoverEvent(JSONChatHoverEventType.SHOW_TEXT, "/ts");
-					 message.addExtra(extra);
-			         message.sendToPlayer(p.getPlayer());
+					 {
+						 JsonMessage jm = new JsonMessage();
+						 jm.append(ChatColor.YELLOW+"/ts" + ChatColor.GRAY +"               | The TS IP appears")
+						 .setHoverAsTooltip("/ts")
+						 .setClickAsExecuteCmd("/ts").save().send(p);
+					 }
 			       //p.sendMessage(ChatColor.YELLOW+"/ts help" + ChatColor.GRAY +"      | Shows you this Page");
-			         JSONChatMessage message1 = new JSONChatMessage("", null, null);
-					 JSONChatExtra extra1 = new JSONChatExtra(ChatColor.YELLOW+"/ts help" + ChatColor.GRAY +"      | Shows you this Page", JSONChatColor.YELLOW, Arrays.asList(JSONChatFormat.BOLD));
-					 extra1.setClickEvent(JSONChatClickEventType.RUN_COMMAND, "/ts help");
-					 extra1.setHoverEvent(JSONChatHoverEventType.SHOW_TEXT, "/ts help");
-					 message1.addExtra(extra1);
-			         message1.sendToPlayer(p.getPlayer());         
-				       //p.sendeMessage(ChatColor.YELLOW+"/ts getIP"+ ChatColor.GRAY+"    |  KlickTOgetIP");
-					 JSONChatMessage message2 = new JSONChatMessage("", null, null);
-					 JSONChatExtra extra2 = new JSONChatExtra(ChatColor.YELLOW+"/ts getIP" + ChatColor.GRAY +"      | This shows the ip in the Chat", JSONChatColor.YELLOW, Arrays.asList(JSONChatFormat.BOLD));
-					 extra2.setClickEvent(JSONChatClickEventType.RUN_COMMAND, "/ts getIP");
-					 extra2.setHoverEvent(JSONChatHoverEventType.SHOW_TEXT, "/ts getIP");
-					 message2.addExtra(extra2);
-				     message2.sendToPlayer(p.getPlayer());
+			         {
+			        	 JsonMessage jm = new JsonMessage();
+			        	 jm.append(ChatColor.YELLOW+"/ts help" + ChatColor.GRAY +"      | Shows you this Page")
+			        	 .setHoverAsTooltip("/ts help")
+			        	 .setClickAsExecuteCmd("/ts help").save().send(p);
+			         }    
+				       //p.sendeMessage(ChatColor.YELLOW+"/ts getIP"+ ChatColor.GRAY+"    |  This shows the IP in the Chat");
+			         {
+			        	 JsonMessage jm = new JsonMessage();
+			        	 jm.append(ChatColor.YELLOW+"/ts getIP" + ChatColor.GRAY +"      | This shows the IP in the Chat")
+			        	 .setHoverAsTooltip("/ts getIP")
+			        	 .setClickAsExecuteCmd("/ts getIP").save().send(p);
+			         }
 	               //p.sendMessage(ChatColor.YELLOW+"/ts reload" + ChatColor.GRAY +"  | Config Reload");
-			         JSONChatMessage message11 = new JSONChatMessage("", null, null);
-					 JSONChatExtra extra11 = new JSONChatExtra(ChatColor.YELLOW+"/ts reload" + ChatColor.GRAY +"  | Config Reload", JSONChatColor.YELLOW, Arrays.asList(JSONChatFormat.BOLD));
-					 extra11.setClickEvent(JSONChatClickEventType.RUN_COMMAND, "/ts reload");
-					 extra11.setHoverEvent(JSONChatHoverEventType.SHOW_TEXT, "/ts reload");
-					 message11.addExtra(extra11);
-			         message11.sendToPlayer(p.getPlayer());
-	               //p.sendMessage(ChatColor.YELLOW+"/ts update" + ChatColor.GRAY +"  | AutoUpdate start");
-			         JSONChatMessage message111 = new JSONChatMessage("", null, null);
-					 JSONChatExtra extra111 = new JSONChatExtra(ChatColor.YELLOW+"/ts update" + ChatColor.GRAY +"  | Update Link", JSONChatColor.YELLOW, Arrays.asList(JSONChatFormat.BOLD));
-					 extra111.setClickEvent(JSONChatClickEventType.SUGGEST_COMMAND, "/ts update");
-					 extra111.setHoverEvent(JSONChatHoverEventType.SHOW_TEXT, "/ts update");
-					 message111.addExtra(extra111);
-			         message111.sendToPlayer(p.getPlayer());
+				     {
+				    	 JsonMessage jm = new JsonMessage();
+				     	jm.append(ChatColor.YELLOW+"/ts reload" + ChatColor.GRAY +"  | Config Reload")
+				     	.setHoverAsTooltip("/ts reload")
+				     	.setClickAsExecuteCmd("/ts reload").save().send(p);
+				     }		         
+	               //p.sendMessage(ChatColor.YELLOW+"/ts update" + ChatColor.GRAY +"  | Get Update Link");
+				     {
+				    	 JsonMessage jm = new JsonMessage();
+			         	jm.append(ChatColor.YELLOW+"/ts update" + ChatColor.GRAY +"  | Get Update Link")
+			         	.setHoverAsTooltip("/ts update")
+			         	.setClickAsSuggestCmd("/ts update").save().send(p); 
+				     }
 	               //p.sendMessage(ChatColor.YELLOW+"/ts List" + ChatColor.Gray + "  | Online List");
-			         JSONChatMessage message4 = new JSONChatMessage("", null, null);
-			         JSONChatExtra extra4 = new JSONChatExtra(ChatColor.YELLOW+"/ts list"+ ChatColor.GRAY +"  | Online List" , JSONChatColor.YELLOW, Arrays.asList(JSONChatFormat.BOLD));
-			         extra4.setClickEvent(JSONChatClickEventType.RUN_COMMAND, "/ts list");
-			         extra4.setHoverEvent(JSONChatHoverEventType.SHOW_TEXT, "/ts list");
-			         message4.addExtra(extra4);
-			         message4.sendToPlayer(p.getPlayer());
-
-			         
+				     {
+				    	 JsonMessage jm = new JsonMessage();
+				    	 jm.append(ChatColor.YELLOW+"/ts list"+ ChatColor.GRAY +"  | Online List")
+				    	 .setHoverAsTooltip("/ts list")
+				    	 .setClickAsExecuteCmd("/ts list").save().send(p); 
+				     }
 	                 p.sendMessage("");
 	                 prefixsend(p);	
 				}else{
@@ -111,8 +101,7 @@ public class ts implements CommandExecutor{
               * UPDATE COMMAND    
               */
 			}else if(args[0].equalsIgnoreCase("update")){
-				if(p.hasPermission("ts.update") || p.isOp()){
-					
+				if(p.hasPermission("ts.update") || p.isOp()){		
 					if(pl.updater.getResult() == Updater.UpdateResult.UPDATE_AVAILABLE){
 						prefixsend(p);
 						p.sendMessage("");
@@ -135,14 +124,12 @@ public class ts implements CommandExecutor{
 			else if(args[0].equalsIgnoreCase("getip")){
 				prefixsend(p);	
 				p.sendMessage("");
-				
-		        JSONChatMessage message = new JSONChatMessage("" , JSONChatColor.AQUA, null);
-		        JSONChatExtra extra = new JSONChatExtra("Click This", JSONChatColor.BLUE, Arrays.asList(JSONChatFormat.BOLD));
-		        extra.setHoverEvent(JSONChatHoverEventType.SHOW_TEXT,ChatColor.translateAlternateColorCodes('&', pl.getConfig().getString("messages.ip")));
-		        extra.setClickEvent(JSONChatClickEventType.SUGGEST_COMMAND,ChatColor.translateAlternateColorCodes('&',  pl.getConfig().getString("messages.ip")));
-		        message.addExtra(extra);
-		        message.sendToPlayer(p.getPlayer()); 
-				
+				{
+					JsonMessage jm = new JsonMessage();
+					jm.append("§1§lClick This")
+					.setClickAsSuggestCmd(ChatColor.translateAlternateColorCodes('&',  pl.getConfig().getString("messages.ip")))
+					.setHoverAsTooltip(ChatColor.translateAlternateColorCodes('&', pl.getConfig().getString("messages.ip"))).save().send(p);	
+				}
 				p.sendMessage("");
 				prefixsend(p);		
 				
@@ -193,16 +180,12 @@ public class ts implements CommandExecutor{
 	private void tsipsend(Player p){
 		prefixsend(p);	
  		p.sendMessage("");
- 		  
- 	   	JSONChatMessage message = new JSONChatMessage("", null, null);  
-        JSONChatExtra extra = new JSONChatExtra(ChatColor.translateAlternateColorCodes('&',  pl.getConfig().getString("messages.ts3")), JSONChatColor.BLUE, Arrays.asList(JSONChatFormat.BOLD));
-        extra.setHoverEvent(JSONChatHoverEventType.SHOW_TEXT, ChatColor.translateAlternateColorCodes('&',  pl.getConfig().getString("messages.ip")));
-        extra.setClickEvent(JSONChatClickEventType.SUGGEST_COMMAND, ChatColor.translateAlternateColorCodes('&',  pl.getConfig().getString("messages.ip")));
-        message.addExtra(extra);
-        message.sendToPlayer(p.getPlayer());
-        
-      
-        
+ 		{
+ 			JsonMessage jm = new JsonMessage();
+ 			jm.append(ChatColor.translateAlternateColorCodes('&',  pl.getConfig().getString("messages.ts3")))
+ 			.setHoverAsTooltip(ChatColor.translateAlternateColorCodes('&',  pl.getConfig().getString("messages.ip")))
+ 			.setClickAsSuggestCmd(ChatColor.translateAlternateColorCodes('&',  pl.getConfig().getString("messages.ip"))).save().send(p);
+ 		}   
  		p.sendMessage("");
  		prefixsend(p);	
  		

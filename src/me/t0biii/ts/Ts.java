@@ -18,7 +18,6 @@ import me.t0biii.ts.Methods.Updater;
 import me.t0biii.ts.Methods.Updater.UpdateType;
 import me.t0biii.ts.commands.TsTapCompleter;
 import me.t0biii.ts.commands.ts;
-import me.t0biii.ts.commands.ts2;
 import me.t0biii.ts.listener.PlayerJoin;
 
 public class Ts extends JavaPlugin{
@@ -69,7 +68,7 @@ public class Ts extends JavaPlugin{
       	/**
     	 * TS Command and TapCompleter
     	 */
-      	this.getCommand("ts").setExecutor(new ts2());
+      	this.getCommand("ts").setExecutor(new ts());
      	this.getCommand("ts").setTabCompleter(new TsTapCompleter(this));
       	
      	/**
