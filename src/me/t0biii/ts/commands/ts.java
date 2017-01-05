@@ -146,8 +146,8 @@ public class ts implements CommandExecutor{
 				p.sendMessage("");
 				prefixsend(p);		
 				
-			}else if(args[0].equalsIgnoreCase("chache")){
-				
+			}else if(args[0].equalsIgnoreCase("cache")){
+				 
 				
 			}else if(args[0].equalsIgnoreCase("list")){
 			
