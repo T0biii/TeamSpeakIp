@@ -1,17 +1,18 @@
 package me.t0biii.ts.commands;
 
-import java.util.Arrays;
-import java.util.HashMap;
+import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import com.github.theholywaffle.teamspeak3.api.wrapper.Client;
 
 import me.t0biii.ts.TeamSpeak;
+import me.t0biii.ts.Methods.Filter;
 import me.t0biii.ts.Methods.JsonMessage;
 import me.t0biii.ts.Methods.Updater;
 import me.t0biii.ts.Methods.Updater.UpdateResult;
@@ -133,28 +134,67 @@ public class ts implements CommandExecutor{
 				p.sendMessage("");
 				prefixsend(p);		
 				
-			}else if(args[0].equalsIgnoreCase("cache")){
-				 
+			}else if(args[0].equalsIgnoreCase("rl-filter")){
 				
+			}else if(args[0].equalsIgnoreCase("add-filter")){
+				
+			}else if(args[0].equalsIgnoreCase("cache")){
+				 pl.ca.cachetoconfig(pl.api);
+				 prefixsend(p);
+				 {
+					 JsonMessage jm = new JsonMessage();
+					 jm.append("§cDer Cache wurde neu befüllt").save().send(p);;
+				 }
+				 prefixsend(p);
 			}else if(args[0].equalsIgnoreCase("list")){
 			
 				if(pl.error){
 					p.sendMessage("§cTeamspeak is unreachable!");
 				}else{
-				
-					try{			
-				prefixsend(p);	
-				p.sendMessage(ChatColor.AQUA+"Teamspeak: "+pl.getConfig().getString("messages.ip"));
-				p.sendMessage(ChatColor.AQUA+"Online: §2"+ (pl.api.getClients().size()- 1) +" of " + pl.api.getHostInfo().getTotalMaxClients());
-				p.sendMessage(ChatColor.AQUA+"List of People:");
-				for (Client c : pl.api.getClients()) {
-					// Get the client's channel	
-					if(!c.getNickname().equals("TeamspeakIP")){		
-						p.sendMessage("§2"+c.getNickname());
+					try{
+						File cachefile = new File("plugins/TeamspeakIP/cache.yml");
+						YamlConfiguration cfg = YamlConfiguration.loadConfiguration(cachefile);
+						File filterfile = new File("plugins/TeamspeakIP/filter.yml");
+						YamlConfiguration fcfg = YamlConfiguration.loadConfiguration(filterfile);
+						int anzahl = cfg.getInt("ts.anzahl");
+						int max = cfg.getInt("ts.max");
+						int minusfilter = 0;
+						List<String> filter = fcfg.getStringList("ignore");
+						List<String> cachelist = cfg.getStringList("ts.cache");
+						
+				if(!pl.getConfig().getBoolean("ts.realtime")){
+					for(String Users : cachelist){
+						if(filter.contains(Users)){
+							minusfilter++;
+						}
 					}
+					prefixsend(p);	
+					p.sendMessage(ChatColor.AQUA+"Teamspeak: "+pl.getConfig().getString("messages.ip"));
+					p.sendMessage(ChatColor.AQUA+"Online: §2"+ (anzahl- minusfilter) +" of " +max);
+					p.sendMessage(ChatColor.AQUA+"List of People:");
+					for(String Users : cachelist){
+						if(!filter.contains(Users)){
+							p.sendMessage("§2"+Users);
+						}
+					}
+					prefixsend(p);	
+				}else{
+					for(Client c : pl.api.getClients()){
+						if(filter.contains(c)){
+							minusfilter++;
+						}
+					}
+					prefixsend(p);	
+					p.sendMessage(ChatColor.AQUA+"Teamspeak: "+pl.getConfig().getString("messages.ip"));
+					p.sendMessage(ChatColor.AQUA+"Online: §2"+ (pl.api.getClients().size()- minusfilter) +" of " + pl.api.getHostInfo().getTotalMaxClients());
+					p.sendMessage(ChatColor.AQUA+"List of People:");
+					for (Client c : pl.api.getClients()) {
+						if(!filter.contains(c.getNickname())){		
+							p.sendMessage("§2"+c.getNickname());
+						}
+					}
+					prefixsend(p);
 				}
-				prefixsend(p);		
-
 				}catch(Exception e){
 					
 					p.sendMessage(ChatColor.AQUA+"Online: §2- of -" );
