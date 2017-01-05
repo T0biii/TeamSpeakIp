@@ -5,7 +5,7 @@ website: http://dev.bukkit.org/bukkit-plugins/teamspeak-ip/
 description: Plugin zeigt dir die TeamspeakIP
 prefix: TeamSpeakIP 
 
-main: me.t0biii.ts.Ts
+main: me.t0biii.ts.TeamSpeak
 database: false
 commands:
   ts:

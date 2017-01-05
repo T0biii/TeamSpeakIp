@@ -1,13 +1,12 @@
 package me.t0biii.ts.Methods;
 
-import me.t0biii.ts.Main;
-
+import me.t0biii.ts.TeamSpeak;
 
 public class ConfigManager {
 	
 	  //Import
-	  private Main plugin;
-	  public ConfigManager(Main plugin)
+	  private TeamSpeak plugin;
+	  public ConfigManager(TeamSpeak plugin)
 	  {
 		  this.plugin = plugin; 
 	  }	

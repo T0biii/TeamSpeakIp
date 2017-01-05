@@ -11,7 +11,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import com.github.theholywaffle.teamspeak3.api.wrapper.Client;
 
-import me.t0biii.ts.Main;
+import me.t0biii.ts.TeamSpeak;
 import me.t0biii.ts.Methods.JsonMessage;
 import me.t0biii.ts.Methods.Updater;
 import me.t0biii.ts.Methods.Updater.UpdateResult;
@@ -19,7 +19,7 @@ import me.t0biii.ts.Methods.Updater.UpdateResult;
 
 public class ts implements CommandExecutor{
 
-	public static Main pl = Main.instance;
+	public static TeamSpeak pl = TeamSpeak.instance;
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args)
 	{	
