@@ -5,8 +5,9 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import org.bukkit.configuration.file.YamlConfiguration;
 
+import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.YamlConfiguration;
 import com.github.theholywaffle.teamspeak3.TS3Api;
 import com.github.theholywaffle.teamspeak3.api.wrapper.Client;
 
@@ -16,8 +17,7 @@ import me.t0biii.ts.TeamSpeak;
 * Created by Tobias on 05.01.2017.
 */
 public class Cache {
-	  @SuppressWarnings("unused")
-	private TeamSpeak plugin;
+	  private TeamSpeak plugin;
 	  public Cache(TeamSpeak plugin)
 	  {
 		  this.plugin = plugin; 
@@ -25,9 +25,7 @@ public class Cache {
 		Date dt = new Date();
 		SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
 	  
-	  
 	public  void loadCache(TS3Api api){
-
 		File file = new File("plugins/TeamspeakIP/cache.yml");
 		if(!file.exists()){
 			try {
@@ -36,7 +34,6 @@ public class Cache {
 			}
 		}
 		cachetoconfig(api);
-		
 	}
 	
 	public void cachetoconfig(TS3Api api){
@@ -58,6 +55,12 @@ public class Cache {
 		}	
 	}
 
-	
-	
+	public void updatecache(){
+		Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
+			@Override
+			public void run() {
+				cachetoconfig(plugin.api);	
+			}
+		}, 20L, 60*20L);
+	}
 }

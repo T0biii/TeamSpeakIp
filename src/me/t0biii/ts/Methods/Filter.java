@@ -2,10 +2,7 @@ package me.t0biii.ts.Methods;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import me.t0biii.ts.TeamSpeak;
@@ -21,9 +18,6 @@ public class Filter {
 	  {
 		  this.plugin = plugin; 
 	  }	
-		Date dt = new Date();
-		SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
-	  
 	  
 	public  void loadFilter(){
 
@@ -41,9 +35,6 @@ public class Filter {
 		cfg.options().copyDefaults(true);
 		save(file, cfg);
 	}
-	
-
-	
 	public void save(File file, YamlConfiguration cfg){
 		try {
 			cfg.save(file);

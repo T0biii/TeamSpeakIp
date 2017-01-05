@@ -31,7 +31,7 @@ public class TsTapCompleter implements TabCompleter {
 		if(sender instanceof Player){
 			final Player p = (Player) sender;
 			if(p.isOp() || p.hasPermission("ts.reload"))
-			tsnames.add("reload");
+			tsnames.add("rl");
 			
 			if(p.isOp() || p.hasPermission("ts.help"))
 			tsnames.add("help");
@@ -41,6 +41,10 @@ public class TsTapCompleter implements TabCompleter {
 			
 			if(p.isOp() || p.hasPermission("ts.cache"))
 			tsnames.add("cache");
+			
+			tsnames.add("add-filter");
+			tsnames.add("rl-filter");
+			
 			
 			tsnames.add("getIP");
 			tsnames.add("list");

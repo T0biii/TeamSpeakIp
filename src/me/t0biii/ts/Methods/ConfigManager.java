@@ -24,8 +24,8 @@ public class ConfigManager {
    	 this.plugin.getConfig().options().header("Plugin by T0biii!\nChange at your own risk");
    	 
    	 this.plugin.getConfig().addDefault("messages.reload", "&3Reload Erfolgreich!");
+   	 this.plugin.getConfig().addDefault("messages.reloadfilter", "&3Reload von Filter Erfolgreich!");
    	 this.plugin.getConfig().addDefault("messages.ts3", "&3TeamSpeak3: &2DeineIPvomTS.de");
-   	 this.plugin.getConfig().addDefault("messages.ip", "127.0.0.1:9987");
    	 this.plugin.getConfig().addDefault("messages.konsole", "Dieser Befehl kann nur von einen Spieler ausgefuert werden!");
    	 this.plugin.getConfig().addDefault("messages.no-permission", "&4Du Hast keine Rechte dafür!"); 
    	 this.plugin.getConfig().addDefault("messages.update-info", "Neues Update ist verfuegbar!");
@@ -43,7 +43,7 @@ public class ConfigManager {
    	 /**
    	  * Optionen
    	  */
-   	 this.plugin.getConfig().addDefault("ts.realtime", false);
+   	 this.plugin.getConfig().addDefault("options.realtime", true);
    	 this.plugin.getConfig().addDefault("options.Update-info", true);
    	 this.plugin.getConfig().addDefault("options.Metrics", true);
 

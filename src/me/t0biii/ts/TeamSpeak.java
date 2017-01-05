@@ -127,6 +127,17 @@ public class TeamSpeak extends JavaPlugin{
 		/**
          * Updater hinweiﬂ starten
          */
-        updater = new Updater(this, uid, getFile(), UpdateType.NO_DOWNLOAD, true);       
+        updater = new Updater(this, uid, getFile(), UpdateType.NO_DOWNLOAD, true);
+        if(!getConfig().getBoolean("options.realtime")){
+        			Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
+			@Override
+			public void run() {
+				ca.cachetoconfig(api);	
+				Bukkit.broadcastMessage("!3qdada");
+			}
+		}, 20L, 60*20L);
+        }
+
+        
 	}
 }
