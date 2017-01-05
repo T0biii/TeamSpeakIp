@@ -20,7 +20,7 @@ import me.t0biii.ts.commands.TsTapCompleter;
 import me.t0biii.ts.commands.ts;
 import me.t0biii.ts.listener.PlayerJoin;
 
-public class Main extends JavaPlugin{
+public class Ts extends JavaPlugin{
 
 	public String prefix = "[TeamSpeakIP] ";
 	public String Prefix = "§8[§6TeamSpeakIP§8] §f";
@@ -28,7 +28,7 @@ public class Main extends JavaPlugin{
 	public Updater updater;
 	 
 
-	public static Main instance;
+	public static Ts instance;
 	public ConfigManager cm = new ConfigManager(this);
 	Logger log = Bukkit.getLogger();
 
@@ -94,8 +94,8 @@ public class Main extends JavaPlugin{
 			try{
 			api.selectVirtualServerByPort(ts3port);
 			api.setNickname("TeamspeakIP");
-			error = false;
 			}catch(Exception e){
+				error = true;
 				log.info(prefix+"Can´t connect to Teamspeak!");
 			}						
 		}

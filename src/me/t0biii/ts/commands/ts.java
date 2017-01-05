@@ -9,7 +9,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import com.github.theholywaffle.teamspeak3.api.wrapper.Channel;
 import com.github.theholywaffle.teamspeak3.api.wrapper.Client;
 
 import de.navo.jsonchatlib.JSONChatClickEventType;
@@ -18,14 +17,14 @@ import de.navo.jsonchatlib.JSONChatExtra;
 import de.navo.jsonchatlib.JSONChatFormat;
 import de.navo.jsonchatlib.JSONChatHoverEventType;
 import de.navo.jsonchatlib.JSONChatMessage;
-import me.t0biii.ts.Main;
+import me.t0biii.ts.Ts;
 import me.t0biii.ts.Methods.Updater;
 import me.t0biii.ts.Methods.Updater.UpdateResult;
 
 
 public class ts implements CommandExecutor{
 
-	public static Main pl = Main.instance;
+	public static Ts pl = Ts.instance;
 	
 	@SuppressWarnings("unused")
 	@Override
@@ -112,25 +111,26 @@ public class ts implements CommandExecutor{
               * UPDATE COMMAND    
               */
 			}else if(args[0].equalsIgnoreCase("update")){
-				
-				if(pl.updater.getResult() == Updater.UpdateResult.UPDATE_AVAILABLE){
-					prefixsend(p);
-					p.sendMessage("");
-					p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&4&l"+pl.getConfig().getString("messages.update-info")));
-					p.sendMessage("§2Download Link:");
-					p.sendMessage(ChatColor.BLUE+ pl.updater.getLatestFileLink());
-					p.sendMessage("");
-					prefixsend(p);
-				}else if(pl.updater.getResult() != UpdateResult.UPDATE_AVAILABLE){
-					prefixsend(p);
-					p.sendMessage("");
+				if(p.hasPermission("ts.update") || p.isOp()){
 					
-					p.sendMessage(ChatColor.translateAlternateColorCodes('&',  pl.getConfig().getString("messages.no-update")));
+					if(pl.updater.getResult() == Updater.UpdateResult.UPDATE_AVAILABLE){
+						prefixsend(p);
+						p.sendMessage("");
+						p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&4&l"+pl.getConfig().getString("messages.update-info")));
+						p.sendMessage("§2Download Link:");
+						p.sendMessage(ChatColor.BLUE+ pl.updater.getLatestFileLink());
+						p.sendMessage("");
+						prefixsend(p);
+					}else if(pl.updater.getResult() != UpdateResult.UPDATE_AVAILABLE){
+						prefixsend(p);
+						p.sendMessage("");
 					
-					p.sendMessage("");
-					prefixsend(p);
-				}
+						p.sendMessage(ChatColor.translateAlternateColorCodes('&',  pl.getConfig().getString("messages.no-update")));
 					
+						p.sendMessage("");
+						prefixsend(p);
+					}
+				}		
 			}
 			else if(args[0].equalsIgnoreCase("getip")){
 				prefixsend(p);	
@@ -154,22 +154,14 @@ public class ts implements CommandExecutor{
 				if(pl.error){
 					p.sendMessage("§cTeamspeak is unreachable!");
 				}else{
-				// Get all channels and map their channel IDs to them
-					try{
-							
-				List<Channel> channels = pl.api.getChannels();
-				Map<Integer, Channel> channelMap = new HashMap<>(channels.size());
-				for (Channel channel : channels) {
-					channelMap.put(channel.getId(), channel);
-				}
-				// List all clients in the console
+				
+					try{			
 				prefixsend(p);	
 				p.sendMessage(ChatColor.AQUA+"Teamspeak: "+pl.getConfig().getString("messages.ip"));
 				p.sendMessage(ChatColor.AQUA+"Online: §2"+ (pl.api.getClients().size()- 1) +" of " + pl.api.getHostInfo().getTotalMaxClients());
 				p.sendMessage(ChatColor.AQUA+"List of People:");
 				for (Client c : pl.api.getClients()) {
-					// Get the client's channel
-					Channel channel = channelMap.get(c.getChannelId());
+					// Get the client's channel	
 					if(!c.getNickname().equals("TeamspeakIP")){		
 						p.sendMessage("§2"+c.getNickname());
 					}

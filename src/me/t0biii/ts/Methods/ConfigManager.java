@@ -1,12 +1,12 @@
 package me.t0biii.ts.Methods;
 
-import me.t0biii.ts.Main;
+import me.t0biii.ts.Ts;
 
 public class ConfigManager {
 	
 	  //Import
-	  private Main plugin;
-	  public ConfigManager(Main plugin)
+	  private Ts plugin;
+	  public ConfigManager(Ts plugin)
 	  {
 		  this.plugin = plugin; 
 	  }	
