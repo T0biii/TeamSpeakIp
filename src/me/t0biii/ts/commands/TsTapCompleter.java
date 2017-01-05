@@ -8,14 +8,14 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
-import me.t0biii.ts.Ts;
+import me.t0biii.ts.Main;
 
 public class TsTapCompleter implements TabCompleter {
 	
 	@SuppressWarnings("unused")
-	private Ts plugin;
+	private Main plugin;
 	
-	public TsTapCompleter(Ts main){
+	public TsTapCompleter(Main main){
 		this.plugin = main;
 	}
 	

@@ -20,7 +20,7 @@ import me.t0biii.ts.commands.TsTapCompleter;
 import me.t0biii.ts.commands.ts;
 import me.t0biii.ts.listener.PlayerJoin;
 
-public class Ts extends JavaPlugin{
+public class Main extends JavaPlugin{
 
 	public String prefix = "[TeamSpeakIP] ";
 	public String Prefix = "§8[§6TeamSpeakIP§8] §f";
@@ -28,7 +28,7 @@ public class Ts extends JavaPlugin{
 	public Updater updater;
 	 
 
-	public static Ts instance;
+	public static Main instance;
 	public ConfigManager cm = new ConfigManager(this);
 	Logger log = Bukkit.getLogger();
 

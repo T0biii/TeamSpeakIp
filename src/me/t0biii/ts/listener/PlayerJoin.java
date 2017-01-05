@@ -13,19 +13,19 @@ import de.navo.jsonchatlib.JSONChatExtra;
 import de.navo.jsonchatlib.JSONChatFormat;
 import de.navo.jsonchatlib.JSONChatHoverEventType;
 import de.navo.jsonchatlib.JSONChatMessage;
-import me.t0biii.ts.Ts;
+import me.t0biii.ts.Main;
 import me.t0biii.ts.Methods.Updater;
 
 public class PlayerJoin implements Listener{
 	
 	
 	@SuppressWarnings("unused")
-	private static Ts pl = Ts.instance;
+	private static Main pl = Main.instance;
 	
 	
-	private Ts plugin;
+	private Main plugin;
 	
-	public PlayerJoin(Ts plugin) {
+	public PlayerJoin(Main plugin) {
 		this.plugin = plugin;
 	}
 	 
