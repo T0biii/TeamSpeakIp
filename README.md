@@ -9,9 +9,13 @@ Commands:
 /ts
 /ts help
 /ts getip
-/ts reload
+/ts rl
 /ts update
 /ts list
+/ts rl-filter
+/ts cache
+/ts cache-off
+/ts cache-on
 ```
 
 Dev Builds:
