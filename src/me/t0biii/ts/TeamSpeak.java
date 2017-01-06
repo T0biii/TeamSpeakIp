@@ -113,6 +113,7 @@ public class TeamSpeak extends JavaPlugin{
 		/**
 		 * Load Configurations
 		 */
+		if(!error)
      	ca.loadCache(api);
      	fi.loadFilter();
      	
