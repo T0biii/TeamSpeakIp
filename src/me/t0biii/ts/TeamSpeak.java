@@ -106,7 +106,7 @@ public class TeamSpeak extends JavaPlugin{
 				error = true;
 				log.info(prefix+"Can´t connect to Teamspeak!");
 			}						
-		}
+		} 
 		/**
 		 * Load Configurations
 		 */
