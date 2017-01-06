@@ -24,13 +24,16 @@ import me.t0biii.ts.commands.Ts;
 import me.t0biii.ts.listener.PlayerJoin;
 
 public class TeamSpeak extends JavaPlugin{
-
+	
+	/**
+	 * TS3 Prefix and Updater id
+	 */
 	public String prefix = "[TeamSpeakIP] ";
 	public String Prefix = "§8[§6TeamSpeakIP§8] §f";
 	private int uid = 70774;
 	public Updater updater;
 	
-
+	
 	public static TeamSpeak instance;
 	public ConfigManager cm = new ConfigManager(this);
  	public Cache ca = new Cache(this);
@@ -38,7 +41,9 @@ public class TeamSpeak extends JavaPlugin{
  	public Filter fi = new Filter(this);
 	public Logger log = Bukkit.getLogger();
 
-	
+	/**
+	 * TS Api
+	 */
 	public boolean error = false;   	
 	public final TS3Config config = new TS3Config();
 	public final TS3Query query = new TS3Query(config);
@@ -51,7 +56,10 @@ public class TeamSpeak extends JavaPlugin{
  	int ts3port = getConfig().getInt("ts3.port");
 	String queryname = getConfig().getString("ts3.querylogin.name");
 	String querypw = getConfig().getString("ts3.querylogin.pw");
-	 
+	
+	/**
+	 * Disable Part
+	 */
 	@Override
 	public void onDisable() {
 		if(!error){
@@ -60,7 +68,10 @@ public class TeamSpeak extends JavaPlugin{
 		}
 		log.info(prefix +"Plugin disabeld.");
 	}
-
+	
+	/**
+	 * Enable Part
+	 */
 	@Override
 	public void onEnable() {
 		PluginManager pm = Bukkit.getPluginManager();
