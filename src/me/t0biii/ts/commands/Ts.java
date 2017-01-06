@@ -25,14 +25,13 @@ public class Ts implements CommandExecutor{
 	
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args)
-	{	
+	{
 		
 		if(pl.getConfig().getInt("ts3.port") == 9987){
 			tsip = pl.getConfig().getString("ts3.ip");
 		}else{
 			 tsip = pl.getConfig().getString("ts3.ip") + ":" + pl.getConfig().getString("ts3.port");
 		}
-		
 		
 		if(sender instanceof Player)
 		{
