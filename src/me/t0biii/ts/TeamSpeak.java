@@ -16,6 +16,7 @@ import com.github.theholywaffle.teamspeak3.TS3Query;
 import me.t0biii.ts.Methods.Cache;
 import me.t0biii.ts.Methods.ConfigManager;
 import me.t0biii.ts.Methods.Filter;
+import me.t0biii.ts.Methods.Languages;
 import me.t0biii.ts.Methods.Updater;
 import me.t0biii.ts.Methods.Updater.UpdateType;
 import me.t0biii.ts.commands.TsTapCompleter;
@@ -33,6 +34,7 @@ public class TeamSpeak extends JavaPlugin{
 	public static TeamSpeak instance;
 	public ConfigManager cm = new ConfigManager(this);
  	public Cache ca = new Cache(this);
+ 	public Languages la = new Languages(this);
  	public Filter fi = new Filter(this);
 	Logger log = Bukkit.getLogger();
 
@@ -52,7 +54,6 @@ public class TeamSpeak extends JavaPlugin{
 	 
 	@Override
 	public void onDisable() {
-		
 		api.logout();
 		query.exit();
 		log.info(prefix +"Plugin disabeld.");
@@ -67,6 +68,7 @@ public class TeamSpeak extends JavaPlugin{
 		 * Config laden und speichern
 		 */
 		cm.loadConfig();
+	//	la.loadLanguages();
       	saveConfig();
     	
       	/**
@@ -83,7 +85,6 @@ public class TeamSpeak extends JavaPlugin{
      	/**
      	 * TS3 Verbindung
      	 */
-     	
 		config.setHost(host);
 		config.setQueryPort(Queryport);
 		config.setDebugLevel(Level.OFF);
@@ -128,16 +129,20 @@ public class TeamSpeak extends JavaPlugin{
          * Updater hinweiﬂ starten
          */
         updater = new Updater(this, uid, getFile(), UpdateType.NO_DOWNLOAD, true);
-		//int interval = 60;
-		int interval = getConfig().getInt("options.realtime.update");
-       Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
+        
+        /**
+         * Cache Update Starten
+         */
+		int interval = 60;
+		interval = getConfig().getInt("options.realtime.update");
+		
+		if(!error){
+		Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
 			@Override
 			public void run() {
 				ca.cachetoconfig(api);
 			}
 		}, 20L, interval*20L);
-        
-
-        
+		} 
 	}
 }
