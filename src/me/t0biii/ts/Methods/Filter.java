@@ -20,7 +20,6 @@ public class Filter {
 	  }	
 	  
 	public  void loadFilter(){
-
 		File file = new File("plugins/TeamspeakIP/filter.yml");
 		YamlConfiguration cfg = YamlConfiguration.loadConfiguration(file);
 		if(!file.exists()){
@@ -35,6 +34,7 @@ public class Filter {
 		cfg.options().copyDefaults(true);
 		save(file, cfg);
 	}
+	
 	public void save(File file, YamlConfiguration cfg){
 		try {
 			cfg.save(file);

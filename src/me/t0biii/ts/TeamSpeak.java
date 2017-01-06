@@ -128,14 +128,15 @@ public class TeamSpeak extends JavaPlugin{
          * Updater hinweiﬂ starten
          */
         updater = new Updater(this, uid, getFile(), UpdateType.NO_DOWNLOAD, true);
-        if(!getConfig().getBoolean("options.realtime")){
-        			Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
+		//int interval = 60;
+		int interval = getConfig().getInt("options.realtime.update");
+       Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
 			@Override
 			public void run() {
-				ca.cachetoconfig(api);	
+				ca.cachetoconfig(api);
 			}
-		}, 20L, 60*20L);
-        }
+		}, 20L, interval*20L);
+        
 
         
 	}
