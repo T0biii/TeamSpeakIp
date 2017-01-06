@@ -14,7 +14,7 @@ public class ConfigManager {
 	 /**
 	  * Conf set up
 	  */
-	  
+	   
 	 public void loadConfig()
 	 {
 	 	 

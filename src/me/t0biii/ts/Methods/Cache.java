@@ -19,7 +19,7 @@ public class Cache {
 	  {
 		  this.plugin = plugin; 
 	  }	
-	  
+	   
 	public  void loadCache(TS3Api api){
 		File file = new File("plugins/TeamspeakIP/cache.yml");
 		YamlConfiguration cfg = YamlConfiguration.loadConfiguration(file);

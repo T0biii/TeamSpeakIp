@@ -18,7 +18,7 @@ public class TsTapCompleter implements TabCompleter {
 	public TsTapCompleter(TeamSpeak main){
 		this.plugin = main;
 	}
-	
+	 
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
 		

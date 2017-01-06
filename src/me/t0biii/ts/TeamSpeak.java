@@ -29,7 +29,7 @@ public class TeamSpeak extends JavaPlugin{
 	public String Prefix = "§8[§6TeamSpeakIP§8] §f";
 	private int uid = 70774;
 	public Updater updater;
-	 
+	
 
 	public static TeamSpeak instance;
 	public ConfigManager cm = new ConfigManager(this);

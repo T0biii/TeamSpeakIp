@@ -13,7 +13,7 @@ public class SendHelp {
 	public void sendHelp(Player p){
 		if(p.hasPermission("ts.help") || p.isOp() ){
 			 Ts.prefixsend(p);	
-			 p.sendMessage("");
+			 p.sendMessage(""); 
 		   //p.sendMessage(ChatColor.YELLOW+"/ts" + ChatColor.GRAY +"               | The TS IP appears");
 			 {
 				 JsonMessage jm = new JsonMessage();

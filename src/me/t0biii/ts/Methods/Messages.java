@@ -15,7 +15,7 @@ public class Messages {
 	  public Messages(TeamSpeak plugin)
 	  {
 		  this.plugin = plugin; 
-	  }	
+	  }
 	  
 	public  void loadMessages(){
 		File file = new File("plugins/TeamspeakIP/messages.yml");

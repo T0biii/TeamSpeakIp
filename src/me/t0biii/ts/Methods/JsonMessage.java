@@ -16,7 +16,7 @@ import org.json.simple.JSONObject;
  * 
  */
 
-public class JsonMessage {
+public class JsonMessage { 
 
 	private String msg;
 
