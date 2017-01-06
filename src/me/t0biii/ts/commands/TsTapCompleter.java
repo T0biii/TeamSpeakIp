@@ -41,8 +41,7 @@ public class TsTapCompleter implements TabCompleter {
 			
 			if(p.isOp() || p.hasPermission("ts.cache"))
 			tsnames.add("cache");
-			
-			tsnames.add("add-filter");
+			if(p.isOp() || p.hasPermission("ts.filter"))
 			tsnames.add("rl-filter");
 			
 			

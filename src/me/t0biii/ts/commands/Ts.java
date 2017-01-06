@@ -12,12 +12,13 @@ import com.github.theholywaffle.teamspeak3.api.wrapper.Client;
 
 import me.t0biii.ts.TeamSpeak;
 import me.t0biii.ts.Methods.JsonMessage;
+import me.t0biii.ts.Methods.SendHelp;
 import me.t0biii.ts.Methods.Updater;
 import me.t0biii.ts.Methods.Updater.UpdateResult;
 
 
-public class ts implements CommandExecutor{
-	String tsip = "";
+public class Ts implements CommandExecutor{
+	static String tsip = "";
 	public static TeamSpeak pl = TeamSpeak.instance;
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args)
@@ -52,64 +53,8 @@ public class ts implements CommandExecutor{
 				}
 				//HELP COMMAND
 			}else if(args[0].equalsIgnoreCase("help")){
-				if(p.hasPermission("ts.help") || p.isOp() ){
-					 prefixsend(p);	
-					 p.sendMessage("");
-				   //p.sendMessage(ChatColor.YELLOW+"/ts" + ChatColor.GRAY +"               | The TS IP appears");
-					 {
-						 JsonMessage jm = new JsonMessage();
-						 jm.append(ChatColor.YELLOW+"/ts" + ChatColor.GRAY +"               | The TS IP appears")
-						 .setHoverAsTooltip("/ts")
-						 .setClickAsExecuteCmd("/ts").save().send(p);
-					 }
-			       //p.sendMessage(ChatColor.YELLOW+"/ts help" + ChatColor.GRAY +"      | Shows you this Page");
-			         {
-			        	 JsonMessage jm = new JsonMessage();
-			        	 jm.append(ChatColor.YELLOW+"/ts help" + ChatColor.GRAY +"      | Shows you this Page")
-			        	 .setHoverAsTooltip("/ts help")
-			        	 .setClickAsExecuteCmd("/ts help").save().send(p);
-			         }    
-				       //p.sendeMessage(ChatColor.YELLOW+"/ts getIP"+ ChatColor.GRAY+"    |  This shows the IP in the Chat");
-			         {
-			        	 JsonMessage jm = new JsonMessage();
-			        	 jm.append(ChatColor.YELLOW+"/ts getIP" + ChatColor.GRAY +"      | This shows the IP in the Chat")
-			        	 .setHoverAsTooltip("/ts getIP")
-			        	 .setClickAsExecuteCmd("/ts getIP").save().send(p);
-			         }
-	               //p.sendMessage(ChatColor.YELLOW+"/ts reload" + ChatColor.GRAY +"  | Config Reload");
-				     {
-				    	 JsonMessage jm = new JsonMessage();
-				     	jm.append(ChatColor.YELLOW+"/ts rl" + ChatColor.GRAY +"  | Config Reload")
-				     	.setHoverAsTooltip("/ts rl")
-				     	.setClickAsExecuteCmd("/ts rl").save().send(p);
-				     }		         
-	               //p.sendMessage(ChatColor.YELLOW+"/ts update" + ChatColor.GRAY +"  | Get Update Link");
-				     {
-				    	 JsonMessage jm = new JsonMessage();
-			         	jm.append(ChatColor.YELLOW+"/ts update" + ChatColor.GRAY +"  | Get Update Link")
-			         	.setHoverAsTooltip("/ts update")
-			         	.setClickAsSuggestCmd("/ts update").save().send(p); 
-				     }
-	               //p.sendMessage(ChatColor.YELLOW+"/ts List" + ChatColor.Gray + "  | Online List");
-				     {
-				    	 JsonMessage jm = new JsonMessage();
-				    	 jm.append(ChatColor.YELLOW+"/ts list"+ ChatColor.GRAY +"  | Online List")
-				    	 .setHoverAsTooltip("/ts list")
-				    	 .setClickAsExecuteCmd("/ts list").save().send(p); 
-				     }
-				     p.sendMessage(ChatColor.YELLOW+"/ts add-filter <args>" + ChatColor.GRAY + "  | Add a Name to the Filter list");
-				     {
-				    	
-				     }
-				     p.sendMessage(ChatColor.YELLOW+"/ts rl-filter" + ChatColor.GRAY + "  | Reload the Filter list");
-				     {
-				    	 
-				     }
-	                 p.sendMessage("");
-	                 prefixsend(p);	
-				}else{
-					tsipsend(p);
-				}	  
+				SendHelp sh = new SendHelp();
+				sh.sendHelp(p);
              /**
               * UPDATE COMMAND    
               */
@@ -147,12 +92,38 @@ public class ts implements CommandExecutor{
 				prefixsend(p);		
 				
 			}else if(args[0].equalsIgnoreCase("rl-filter")){
+				if(p.isOp() || p.hasPermission("ts.filter")){
 				pl.fi.loadFilter();
 				prefixsend(p);
 				p.sendMessage(ChatColor.translateAlternateColorCodes('&', pl.getConfig().getString("messages.reloadfilter")));
 				prefixsend(p);
+				}else{
+					tsipsend(p);
+				}
+
 				
+			}else if(args[0].equalsIgnoreCase("cache-off")){
+				if(p.isOp() || p.hasPermission("ts.cache")){
+				pl.getConfig().set("options.realtime", true);
+				prefixsend(p);
+				p.sendMessage("§3Live data §2Activated. \n§3Cache §cDisabled.");
+				prefixsend(p);
+				}else{
+					tsipsend(p);
+				}
+
+			}else if(args[0].equalsIgnoreCase("cache-on")){
+				if(p.isOp() || p.hasPermission("ts.cache")){
+				pl.getConfig().set("options.realtime", false);
+				prefixsend(p);
+				p.sendMessage("§3Live data §cDisabled. \n§3Cache §2Activated.");
+				prefixsend(p);					
+				}else{
+					tsipsend(p);
+				}
+
 			}else if(args[0].equalsIgnoreCase("cache")){
+				if(p.isOp() || p.hasPermission("ts.cache")){
 				 pl.ca.cachetoconfig(pl.api);
 				 prefixsend(p);
 				 {
@@ -160,6 +131,8 @@ public class ts implements CommandExecutor{
 					 jm.append("§cDer Cache wurde neu befüllt").save().send(p);;
 				 }
 				 prefixsend(p);
+				}
+
 			}else if(args[0].equalsIgnoreCase("list")){
 			
 				if(pl.error){
@@ -231,7 +204,7 @@ public class ts implements CommandExecutor{
 		return false;
 	}
 	
-	private void tsipsend(Player p){
+	public static void tsipsend(Player p){
 		prefixsend(p);	
  		p.sendMessage("");
  		{
@@ -244,7 +217,7 @@ public class ts implements CommandExecutor{
  		prefixsend(p);	
 	}
 	
-	public void prefixsend(Player p){
+	public static void prefixsend(Player p){
 		p.sendMessage(ChatColor.YELLOW+"[]================"+ChatColor.GOLD +" TeamSpeak " +ChatColor.YELLOW+"===============[]");
 	}
 }
