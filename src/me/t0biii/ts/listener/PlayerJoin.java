@@ -8,8 +8,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 import me.t0biii.ts.TeamSpeak;
-import me.t0biii.ts.Methods.JsonMessage;
-import me.t0biii.ts.Methods.Updater;
+import me.t0biii.ts.methods.JsonMessage;
+import me.t0biii.ts.methods.Updater;
 
 public class PlayerJoin implements Listener{
 	File file = new File("plugins/TeamspeakIP/messages.yml");

@@ -1,4 +1,4 @@
-package me.t0biii.ts.Methods;
+package me.t0biii.ts.methods;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;

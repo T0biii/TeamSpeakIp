@@ -13,12 +13,12 @@ import com.github.theholywaffle.teamspeak3.TS3Api;
 import com.github.theholywaffle.teamspeak3.TS3Config;
 import com.github.theholywaffle.teamspeak3.TS3Query;
 
-import me.t0biii.ts.Methods.Cache;
-import me.t0biii.ts.Methods.ConfigManager;
-import me.t0biii.ts.Methods.Filter;
-import me.t0biii.ts.Methods.Messages;
-import me.t0biii.ts.Methods.Updater;
-import me.t0biii.ts.Methods.Updater.UpdateType;
+import me.t0biii.ts.methods.Cache;
+import me.t0biii.ts.methods.ConfigManager;
+import me.t0biii.ts.methods.Filter;
+import me.t0biii.ts.methods.Messages;
+import me.t0biii.ts.methods.Updater;
+import me.t0biii.ts.methods.Updater.UpdateType;
 import me.t0biii.ts.commands.TsTapCompleter;
 import me.t0biii.ts.commands.Ts;
 import me.t0biii.ts.listener.PlayerJoin;

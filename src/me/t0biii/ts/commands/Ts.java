@@ -11,10 +11,10 @@ import org.bukkit.entity.Player;
 import com.github.theholywaffle.teamspeak3.api.wrapper.Client;
 
 import me.t0biii.ts.TeamSpeak;
-import me.t0biii.ts.Methods.JsonMessage;
-import me.t0biii.ts.Methods.SendHelp;
-import me.t0biii.ts.Methods.Updater;
-import me.t0biii.ts.Methods.Updater.UpdateResult;
+import me.t0biii.ts.methods.JsonMessage;
+import me.t0biii.ts.methods.SendHelp;
+import me.t0biii.ts.methods.Updater;
+import me.t0biii.ts.methods.Updater.UpdateResult;
 
 
 public class Ts implements CommandExecutor{
@@ -171,7 +171,6 @@ public class Ts implements CommandExecutor{
 					prefixsend(p);
 				}
 				}catch(Exception e){
-					
 					p.sendMessage(ChatColor.AQUA+"Online: §2- of -" );
 					p.sendMessage(ChatColor.AQUA+"List of People:");
 					p.sendMessage("§4Not enough permissions");
