@@ -16,7 +16,7 @@ import com.github.theholywaffle.teamspeak3.TS3Query;
 import me.t0biii.ts.Methods.Cache;
 import me.t0biii.ts.Methods.ConfigManager;
 import me.t0biii.ts.Methods.Filter;
-import me.t0biii.ts.Methods.Languages;
+import me.t0biii.ts.Methods.Messages;
 import me.t0biii.ts.Methods.Updater;
 import me.t0biii.ts.Methods.Updater.UpdateType;
 import me.t0biii.ts.commands.TsTapCompleter;
@@ -34,9 +34,9 @@ public class TeamSpeak extends JavaPlugin{
 	public static TeamSpeak instance;
 	public ConfigManager cm = new ConfigManager(this);
  	public Cache ca = new Cache(this);
- 	public Languages la = new Languages(this);
+ 	public Messages la = new Messages(this);
  	public Filter fi = new Filter(this);
-	Logger log = Bukkit.getLogger();
+	public Logger log = Bukkit.getLogger();
 
 	
 	public boolean error = false;   	

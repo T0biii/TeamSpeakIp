@@ -71,9 +71,7 @@ public class Ts implements CommandExecutor{
 					}else if(pl.updater.getResult() != UpdateResult.UPDATE_AVAILABLE){
 						prefixsend(p);
 						p.sendMessage("");
-					
 						p.sendMessage(ChatColor.translateAlternateColorCodes('&',  pl.getConfig().getString("messages.no-update")));
-					
 						p.sendMessage("");
 						prefixsend(p);
 					}
