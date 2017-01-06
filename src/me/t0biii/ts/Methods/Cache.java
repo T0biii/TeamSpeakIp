@@ -2,10 +2,7 @@ package me.t0biii.ts.Methods;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-
 import org.bukkit.configuration.file.YamlConfiguration;
 import com.github.theholywaffle.teamspeak3.TS3Api;
 import com.github.theholywaffle.teamspeak3.api.wrapper.Client;
@@ -22,17 +19,18 @@ public class Cache {
 	  {
 		  this.plugin = plugin; 
 	  }	
-		Date dt = new Date();
-		SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
 	  
 	public  void loadCache(TS3Api api){
 		File file = new File("plugins/TeamspeakIP/cache.yml");
+		YamlConfiguration cfg = YamlConfiguration.loadConfiguration(file);
 		if(!file.exists()){
 			try {
 				file.createNewFile();
 			} catch (IOException e) {
 			}
 		}
+		cfg.options().header("Dont touch this File!!! Plugins Update this file automatically!");
+		save(file, cfg);
 		cachetoconfig(api);
 	}
 	
@@ -45,13 +43,15 @@ public class Cache {
 		}
 		int i = api.getClients().size();
 		int t = api.getHostInfo().getTotalMaxClients();
-		cfg.set("ts.time", df.format(dt));
 		cfg.set("ts.anzahl", i);
 		cfg.set("ts.max", t);
 		cfg.set("ts.cache", list);
+		save(file, cfg);
+	}
+	private void save(File file, YamlConfiguration cfg){
 		try {
 			cfg.save(file);
 		} catch (IOException e) {
-		}	
+		}
 	}
 }
