@@ -19,15 +19,10 @@ public class TsTapCompleter implements TabCompleter {
 		this.plugin = main;
 	}
 	
-
-	
-
- 
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
 		
 		List<String> tsnames = new ArrayList<String>();
-		
 		if(sender instanceof Player){
 			final Player p = (Player) sender;
 			if(p.isOp() || p.hasPermission("ts.reload"))
@@ -47,8 +42,7 @@ public class TsTapCompleter implements TabCompleter {
 			
 			if(p.isOp() || p.hasPermission("ts.filter"))
 			tsnames.add("rl-filter");
-			
-			
+				
 			tsnames.add("getIP");
 			tsnames.add("list");
 		}

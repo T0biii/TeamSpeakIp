@@ -20,6 +20,9 @@ import me.t0biii.ts.Methods.Updater.UpdateResult;
 public class Ts implements CommandExecutor{
 	static String tsip = "";
 	public static TeamSpeak pl = TeamSpeak.instance;
+	static File file = new File("plugins/TeamspeakIP/messages.yml");
+	static YamlConfiguration cfg = YamlConfiguration.loadConfiguration(file);
+	
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args)
 	{	
@@ -44,12 +47,12 @@ public class Ts implements CommandExecutor{
 				 pl.reloadConfig();
 				 prefixsend(p);
 				 p.sendMessage("");
-       		     p.sendMessage(ChatColor.translateAlternateColorCodes('&', pl.getConfig().getString("messages.reload")));
+				 p.sendMessage(ChatColor.translateAlternateColorCodes('&', cfg.getString("messages.reload")));
        		     p.sendMessage("");
        		     prefixsend(p);		  
 				}else
 				{
-					p.sendMessage(ChatColor.translateAlternateColorCodes('&',  pl.getConfig().getString("messages.no-permission")));
+					p.sendMessage(ChatColor.translateAlternateColorCodes('&',  cfg.getString("messages.no-permission")));
 				}
 				//HELP COMMAND
 			}else if(args[0].equalsIgnoreCase("help")){
@@ -63,7 +66,7 @@ public class Ts implements CommandExecutor{
 					if(pl.updater.getResult() == Updater.UpdateResult.UPDATE_AVAILABLE){
 						prefixsend(p);
 						p.sendMessage("");
-						p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&4&l"+pl.getConfig().getString("messages.update-info")));
+						p.sendMessage(ChatColor.translateAlternateColorCodes('&', "&4&l"+cfg.getString("messages.update-info")));
 						p.sendMessage("§2Download Link:");
 						p.sendMessage(ChatColor.BLUE+ pl.updater.getLatestFileLink());
 						p.sendMessage("");
@@ -71,7 +74,7 @@ public class Ts implements CommandExecutor{
 					}else if(pl.updater.getResult() != UpdateResult.UPDATE_AVAILABLE){
 						prefixsend(p);
 						p.sendMessage("");
-						p.sendMessage(ChatColor.translateAlternateColorCodes('&',  pl.getConfig().getString("messages.no-update")));
+						p.sendMessage(ChatColor.translateAlternateColorCodes('&',  cfg.getString("messages.no-update")));
 						p.sendMessage("");
 						prefixsend(p);
 					}
@@ -83,8 +86,8 @@ public class Ts implements CommandExecutor{
 				{
 					JsonMessage jm = new JsonMessage();
 					jm.append("§1§lClick This")
-					.setClickAsSuggestCmd(ChatColor.translateAlternateColorCodes('&',  pl.getConfig().getString("messages.ip")))
-					.setHoverAsTooltip(ChatColor.translateAlternateColorCodes('&', pl.getConfig().getString("messages.ip"))).save().send(p);	
+					.setClickAsSuggestCmd(ChatColor.translateAlternateColorCodes('&',  cfg.getString("messages.ip")))
+					.setHoverAsTooltip(ChatColor.translateAlternateColorCodes('&', cfg.getString("messages.ip"))).save().send(p);
 				}
 				p.sendMessage("");
 				prefixsend(p);		
@@ -93,7 +96,7 @@ public class Ts implements CommandExecutor{
 				if(p.isOp() || p.hasPermission("ts.filter")){
 				pl.fi.loadFilter();
 				prefixsend(p);
-				p.sendMessage(ChatColor.translateAlternateColorCodes('&', pl.getConfig().getString("messages.reloadfilter")));
+				p.sendMessage(ChatColor.translateAlternateColorCodes('&', cfg.getString("messages.reloadfilter")));
 				prefixsend(p);
 				}else{
 					tsipsend(p);
@@ -132,7 +135,6 @@ public class Ts implements CommandExecutor{
 				}
 
 			}else if(args[0].equalsIgnoreCase("list")){
-			
 				if(pl.error){
 					p.sendMessage("§cTeamspeak is unreachable!");
 				}else{
@@ -197,17 +199,17 @@ public class Ts implements CommandExecutor{
             } 
 			return true;
 			} else  {
-				sender.sendMessage(pl.getConfig().getString("messages.konsole"));	
+				sender.sendMessage(cfg.getString("messages.konsole"));
 			}
 		return false;
 	}
 	
 	public static void tsipsend(Player p){
-		prefixsend(p);	
+		prefixsend(p);
  		p.sendMessage("");
  		{
  			JsonMessage jm = new JsonMessage();
- 			jm.append(ChatColor.translateAlternateColorCodes('&',  pl.getConfig().getString("messages.ts3")))
+ 			jm.append(ChatColor.translateAlternateColorCodes('&',  cfg.getString("messages.ts3")))
  			.setHoverAsTooltip(ChatColor.translateAlternateColorCodes('&', tsip))
  			.setClickAsSuggestCmd(ChatColor.translateAlternateColorCodes('&',  tsip)).save().send(p);
  		}   

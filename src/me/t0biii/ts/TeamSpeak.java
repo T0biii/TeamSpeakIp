@@ -34,7 +34,7 @@ public class TeamSpeak extends JavaPlugin{
 	public static TeamSpeak instance;
 	public ConfigManager cm = new ConfigManager(this);
  	public Cache ca = new Cache(this);
- 	public Messages la = new Messages(this);
+ 	public Messages ms = new Messages(this);
  	public Filter fi = new Filter(this);
 	public Logger log = Bukkit.getLogger();
 
@@ -54,8 +54,10 @@ public class TeamSpeak extends JavaPlugin{
 	 
 	@Override
 	public void onDisable() {
-		api.logout();
-		query.exit();
+		if(!error){
+			api.logout();
+			query.exit();
+		}
 		log.info(prefix +"Plugin disabeld.");
 	}
 
@@ -68,7 +70,7 @@ public class TeamSpeak extends JavaPlugin{
 		 * Config laden und speichern
 		 */
 		cm.loadConfig();
-	//	la.loadLanguages();
+		ms.loadMessages();
       	saveConfig();
     	
       	/**
@@ -107,15 +109,16 @@ public class TeamSpeak extends JavaPlugin{
 				log.info(prefix+"Can´t connect to Teamspeak!");
 			}						
 		} 
+		
 		/**
 		 * Load Configurations
 		 */
      	ca.loadCache(api);
      	fi.loadFilter();
+     	
      	/**
      	 * Metrics sarten
-     	 */
-		
+     	 */	
 		if(getConfig().getBoolean("options.Metrics")){
 				try {
 					Metrics metrics = new Metrics();

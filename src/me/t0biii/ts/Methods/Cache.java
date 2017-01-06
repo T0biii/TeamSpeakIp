@@ -48,6 +48,7 @@ public class Cache {
 		cfg.set("ts.cache", list);
 		save(file, cfg);
 	}
+	
 	private void save(File file, YamlConfiguration cfg){
 		try {
 			cfg.save(file);

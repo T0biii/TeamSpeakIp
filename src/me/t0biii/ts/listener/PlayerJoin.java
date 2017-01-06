@@ -1,28 +1,22 @@
 package me.t0biii.ts.listener;
 
-import java.util.Arrays;
-
+import java.io.File;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
-import de.navo.jsonchatlib.JSONChatClickEventType;
-import de.navo.jsonchatlib.JSONChatColor;
-import de.navo.jsonchatlib.JSONChatExtra;
-import de.navo.jsonchatlib.JSONChatFormat;
-import de.navo.jsonchatlib.JSONChatHoverEventType;
-import de.navo.jsonchatlib.JSONChatMessage;
 import me.t0biii.ts.TeamSpeak;
+import me.t0biii.ts.Methods.JsonMessage;
 import me.t0biii.ts.Methods.Updater;
 
 public class PlayerJoin implements Listener{
-	
+	File file = new File("plugins/TeamspeakIP/messages.yml");
+	YamlConfiguration cfg = YamlConfiguration.loadConfiguration(file);
 	
 	@SuppressWarnings("unused")
 	private static TeamSpeak pl = TeamSpeak.instance;
-	
-	
 	private TeamSpeak plugin;
 	
 	public PlayerJoin(TeamSpeak plugin) {
@@ -37,24 +31,19 @@ public class PlayerJoin implements Listener{
 		if(p.hasPermission("ts.update") || p.isOp()){
 			if(this.plugin.updater.getResult() == Updater.UpdateResult.UPDATE_AVAILABLE){
 				if(this.plugin.getConfig().getBoolean("options.Update-info")){
-					
-					String UpdateinfoMes = this.plugin.Prefix+"§4"+this.plugin.getConfig().getString("messages.update-info");
+					String UpdateinfoMes = this.plugin.Prefix+"§4"+cfg.getString("messages.update-info");
 					sendChat(p, UpdateinfoMes, "/ts update", "§a/ts update");
-					
 				}
 			}
-			
 		}
 	}
 	
-	public void sendChat(Player p,String extraText ,String Click, String Hover ){
-		JSONChatMessage message = new JSONChatMessage("", null, null);
-		JSONChatExtra extra = new JSONChatExtra(extraText, JSONChatColor.YELLOW, Arrays.asList(JSONChatFormat.BOLD));
-		extra.setHoverEvent(JSONChatHoverEventType.SHOW_TEXT, Hover);
-		extra.setClickEvent(JSONChatClickEventType.RUN_COMMAND, Click);
-		message.addExtra(extra);
-		message.sendToPlayer(p);
+	public void sendChat(Player p,String extraText ,String Click, String Hover ){	
+		{
+       	 JsonMessage jm = new JsonMessage();
+       	 jm.append(extraText)
+       	 .setHoverAsTooltip(Hover)
+       	 .setClickAsExecuteCmd(Click).save().send(p);
+        }
 	}
-	
-	
 }
