@@ -144,19 +144,13 @@ public class Ts implements CommandExecutor{
 						YamlConfiguration fcfg = YamlConfiguration.loadConfiguration(filterfile);
 						int anzahl = cfg.getInt("ts.anzahl");
 						int max = cfg.getInt("ts.max");
-						int minusfilter = 0;
 						List<String> filter = fcfg.getStringList("ignore");
 						List<String> cachelist = cfg.getStringList("ts.cache");
 						
 				if(!pl.getConfig().getBoolean("options.realtime")){
-					for(String Users : cachelist){
-						if(filter.contains(Users)){
-							minusfilter++;
-						}
-					}
 					prefixsend(p);	
 					p.sendMessage(ChatColor.AQUA+"Teamspeak: "+ tsip + " §cCached");
-					p.sendMessage(ChatColor.AQUA+"Online: §2"+ (anzahl- minusfilter) +" of " +max);
+					p.sendMessage(ChatColor.AQUA+"Online: §2"+ (anzahl) +" of " +max);
 					p.sendMessage(ChatColor.AQUA+"List of People:");
 					for(String Users : cachelist){
 						if(!filter.contains(Users)){
@@ -165,14 +159,9 @@ public class Ts implements CommandExecutor{
 					}
 					prefixsend(p);	
 				}else{
-					for(Client c : pl.api.getClients()){
-						if(filter.contains(c.getNickname())){
-							minusfilter++;
-						}
-					}
 					prefixsend(p);	
 					p.sendMessage(ChatColor.AQUA+"Teamspeak: "+ tsip + " §2Realtime");
-					p.sendMessage(ChatColor.AQUA+"Online: §2"+ (pl.api.getClients().size()- minusfilter) +" of " + pl.api.getHostInfo().getTotalMaxClients());
+					p.sendMessage(ChatColor.AQUA+"Online: §2"+ (pl.api.getClients().size()) +" of " + pl.api.getHostInfo().getTotalMaxClients());
 					p.sendMessage(ChatColor.AQUA+"List of People:");
 					for (Client c : pl.api.getClients()) {
 						if(!filter.contains(c.getNickname())){		
