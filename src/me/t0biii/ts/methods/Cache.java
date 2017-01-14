@@ -13,7 +13,8 @@ import me.t0biii.ts.TeamSpeak;
 * Created by Tobias on 05.01.2017.
 */
 public class Cache {
-	  @SuppressWarnings("unused")
+
+	@SuppressWarnings("unused")
 	private TeamSpeak plugin;
 	  public Cache(TeamSpeak plugin)
 	  {
