@@ -7,7 +7,6 @@ import java.util.logging.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.spigotmc.Metrics;
 
 import com.github.theholywaffle.teamspeak3.TS3Api;
 import com.github.theholywaffle.teamspeak3.TS3Config;
@@ -17,6 +16,7 @@ import me.t0biii.ts.methods.Cache;
 import me.t0biii.ts.methods.ConfigManager;
 import me.t0biii.ts.methods.Filter;
 import me.t0biii.ts.methods.Messages;
+import me.t0biii.ts.methods.Metrics;
 import me.t0biii.ts.methods.Updater;
 import me.t0biii.ts.methods.Updater.UpdateType;
 import me.t0biii.ts.commands.TsTapCompleter;
@@ -131,13 +131,9 @@ public class TeamSpeak extends JavaPlugin{
      	/**
      	 * Metrics sarten
      	 */	
-		if(getConfig().getBoolean("options.Metrics")){
-				try {
-					Metrics metrics = new Metrics();
-					metrics.start();
-				} catch (IOException e) {
-					// Failed to submit the stats :-(
-				}
+		if(getConfig().getBoolean("options.Metrics")){		
+					Metrics metrics = new Metrics(this);
+					
 		}
 		
 		/**
