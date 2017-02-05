@@ -82,13 +82,7 @@
 		</dependency>
 		
 		<!--TS3 -->
-		<dependency>
-			<groupId>com.github.theholywaffle</groupId>
-			<artifactId>teamspeak3-api</artifactId>
-			<version>[1.0.0,2.0.0)</version>
-		</dependency>
 	</dependencies>
-
 
 	<build>
 
@@ -125,7 +119,7 @@
 							<createDependencyReducedPom>false</createDependencyReducedPom>
 							<artifactSet>
 								<includes>
-									<include>com.mongodb.*</include>
+									<include>org.mcstats.bukkit</include>
 								</includes>
 							</artifactSet>
 						</configuration>

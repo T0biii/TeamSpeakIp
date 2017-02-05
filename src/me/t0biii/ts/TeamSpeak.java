@@ -1,6 +1,5 @@
 package me.t0biii.ts;
 
-import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -133,7 +132,7 @@ public class TeamSpeak extends JavaPlugin{
      	 */	
 		if(getConfig().getBoolean("options.Metrics")){		
 					Metrics metrics = new Metrics(this);
-					
+				
 		}
 		
 		/**
