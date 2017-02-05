@@ -36,7 +36,7 @@ public class Messages {
 		cfg.addDefault("messages.reloadfilter", "&3Reload von Filter Erfolgreich!");
 		cfg.addDefault("messages.ts3", "&3TeamSpeak3: &2DeineIPvomTS.de");
 		cfg.addDefault("messages.konsole", "Dieser Befehl kann nur von einen Spieler ausgefuert werden!");
-		cfg.addDefault("messages.no-permission", "&4Du Hast keine Rechte dafür!");
+		cfg.addDefault("messages.no-permission", "&4Du Hast keine Rechte dafuer!");
 		cfg.addDefault("messages.update-info", "Neues Update ist verfuegbar!");
 		cfg.addDefault("messages.no-update", "&aDu hast bereits die neuste Version!");
 		/**

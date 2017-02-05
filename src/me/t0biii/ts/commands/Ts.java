@@ -85,8 +85,8 @@ public class Ts implements CommandExecutor{
 				{
 					JsonMessage jm = new JsonMessage();
 					jm.append("§1§lClick This")
-					.setClickAsSuggestCmd(ChatColor.translateAlternateColorCodes('&',  cfg.getString("messages.ip")))
-					.setHoverAsTooltip(ChatColor.translateAlternateColorCodes('&', cfg.getString("messages.ip"))).save().send(p);
+					.setClickAsSuggestCmd(ChatColor.translateAlternateColorCodes('&',  tsip))
+					.setHoverAsTooltip(ChatColor.translateAlternateColorCodes('&', tsip)).save().send(p);
 				}
 				p.sendMessage("");
 				prefixsend(p);		

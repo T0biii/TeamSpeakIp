@@ -48,7 +48,7 @@ public class TeamSpeak extends JavaPlugin{
 	public final TS3Query query = new TS3Query(config);
 	public final TS3Api api = query.getApi();
 	/**
-	 * TS≥ Login Daten laden
+	 * Load TS3 Login data
 	 */
  	String host = getConfig().getString("ts3.ip");
  	int Queryport = getConfig().getInt("ts3.queryport");
@@ -77,7 +77,7 @@ public class TeamSpeak extends JavaPlugin{
 		instance = this;
 	    
 		/**
-		 * Config laden und speichern
+		 * Config load and save
 		 */
 		cm.loadConfig();
 		ms.loadMessages();
@@ -95,7 +95,7 @@ public class TeamSpeak extends JavaPlugin{
      	pm.registerEvents(new PlayerJoin(this),this);
      	
      	/**
-     	 * TS3 Verbindung
+     	 * TS3 Connect
      	 */
 		config.setHost(host);
 		config.setQueryPort(Queryport);
@@ -128,20 +128,20 @@ public class TeamSpeak extends JavaPlugin{
      	fi.loadFilter();
      	
      	/**
-     	 * Metrics sarten
+     	 * Metrics start
      	 */	
 		if(getConfig().getBoolean("options.Metrics")){		
 					Metrics metrics = new Metrics(this);
-				
+					
 		}
 		
 		/**
-         * Updater hinweiﬂ starten
+         * Updater 
          */
         updater = new Updater(this, uid, getFile(), UpdateType.NO_DOWNLOAD, true);
         
         /**
-         * Cache Update Starten
+         * start auto chache
          */
 		int interval = 60;
 		interval = getConfig().getInt("options.realtime.update");
