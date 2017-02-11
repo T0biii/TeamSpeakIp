@@ -1,4 +1,4 @@
-TeamSpeakIP [![TeamSpeakIP](https://api.travis-ci.org/T0biii/TeamSpeakIp.svg)](https://google.de) | [![Build Status](https://ci.t0biii.ovh/job/TeamSpeakIP/badge/icon)](https://ci.t0biii.ovh/job/TeamSpeakIP/)
+TeamSpeakIP [![TeamSpeakIP](https://api.travis-ci.org/T0biii/TeamSpeakIp.svg)](https://travis-ci.org/T0biii/TeamSpeakIp) | [![Build Status](https://ci.t0biii.ovh/job/TeamSpeakIP/badge/icon)](https://ci.t0biii.ovh/job/TeamSpeakIP/)
 ===========
 
 This is a Bukkit Plugin for more information go to:
