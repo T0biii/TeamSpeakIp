@@ -18,8 +18,8 @@ public class Messages {
 	  }
 	  
 	public  void loadMessages(){
-		File file = new File("plugins/TeamspeakIP/messages.yml");
-		YamlConfiguration cfg = YamlConfiguration.loadConfiguration(file);
+		File file = getFile();
+		YamlConfiguration cfg = getcfg();
 		if(!file.exists()){
 			try {
 				file.createNewFile();
@@ -50,5 +50,14 @@ public class Messages {
 			cfg.save(file);
 		} catch (IOException e) {
 		}
+	}
+	public File getFile(){
+		File file = new File("plugins/TeamSpeakIP/messages.yml");
+		return file;
+	}
+	public YamlConfiguration getcfg(){
+		File file = getFile();
+		YamlConfiguration cfg = YamlConfiguration.loadConfiguration(file);
+		return cfg;
 	}
 }

@@ -22,8 +22,8 @@ public class Cache {
 	  }	
 	   
 	public  void loadCache(TS3Api api){
-		File file = new File("plugins/TeamspeakIP/cache.yml");
-		YamlConfiguration cfg = YamlConfiguration.loadConfiguration(file);
+		File file = getFile();
+		YamlConfiguration cfg = getcfg();
 		if(!file.exists()){
 			try {
 				file.createNewFile();
@@ -36,9 +36,9 @@ public class Cache {
 	}
 	
 	public void cachetoconfig(TS3Api api){
-		File file = new File("plugins/TeamspeakIP/cache.yml");
-		YamlConfiguration cfg = YamlConfiguration.loadConfiguration(file);
-		ArrayList<String> list = new ArrayList<>();	
+		File file = getFile();
+		YamlConfiguration cfg = getcfg();
+		ArrayList<String> list = new ArrayList<>();
 		for (Client c : api.getClients()) {
 			list.add(c.getNickname());
 		}
@@ -55,5 +55,14 @@ public class Cache {
 			cfg.save(file);
 		} catch (IOException e) {
 		}
+	}
+	public File getFile(){
+		File file = new File("plugins/TeamSpeakIP/cache.yml");
+		return file;
+	}
+	public YamlConfiguration getcfg(){
+		File file = getFile();
+		YamlConfiguration cfg = YamlConfiguration.loadConfiguration(file);
+		return cfg;
 	}
 }

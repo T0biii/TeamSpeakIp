@@ -24,7 +24,7 @@ import me.t0biii.ts.listener.PlayerJoin;
 
 public class TeamSpeak extends JavaPlugin{
 	
-	/**
+	/** 
 	 * TS3 Prefix and Updater id
 	 */
 	public String prefix = "[TeamSpeakIP] ";
@@ -55,6 +55,7 @@ public class TeamSpeak extends JavaPlugin{
  	int ts3port = getConfig().getInt("ts3.port");
 	String queryname = getConfig().getString("ts3.querylogin.name");
 	String querypw = getConfig().getString("ts3.querylogin.pw");
+	String querydisplayname = getConfig().getString("ts3.queryname");
 	
 	/**
 	 * Disable Part
@@ -86,7 +87,7 @@ public class TeamSpeak extends JavaPlugin{
       	/**
     	 * TS Command and TapCompleter
     	 */
-      	this.getCommand("ts").setExecutor(new Ts());
+      	this.getCommand("ts").setExecutor(new Ts(this));
      	this.getCommand("ts").setTabCompleter(new TsTapCompleter(this));
       	
      	/**
@@ -113,7 +114,7 @@ public class TeamSpeak extends JavaPlugin{
 		if(!error){	
 			try{
 			api.selectVirtualServerByPort(ts3port);
-			api.setNickname("TeamspeakIP");
+			api.setNickname(querydisplayname);
 			}catch(Exception e){
 				error = true;
 				log.info(prefix+"Can´t connect to Teamspeak!");
