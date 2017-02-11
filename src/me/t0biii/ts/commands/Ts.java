@@ -26,7 +26,7 @@ public class Ts implements CommandExecutor{
 	public Ts(TeamSpeak main){
 		this.pl = main;
 	}
-	  
+
 	static String tsip = "";
 	static Messages me = new Messages(pl);
 	static Filter fil = new Filter(pl);
