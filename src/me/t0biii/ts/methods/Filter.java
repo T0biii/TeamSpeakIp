@@ -12,7 +12,6 @@ import me.t0biii.ts.TeamSpeak;
 */
 public class Filter {
 	
-	@SuppressWarnings("unused")
 	private TeamSpeak plugin;
 	  public Filter(TeamSpeak plugin)
 	  {
@@ -20,8 +19,8 @@ public class Filter {
 	  }	
 	  
 	public  void loadFilter(){
-		File file = new File("plugins/TeamspeakIP/filter.yml");
-		YamlConfiguration cfg = YamlConfiguration.loadConfiguration(file);
+		File file = getFile();
+		YamlConfiguration cfg = getcfg();
 		if(!file.exists()){
 			try {
 				file.createNewFile();
@@ -29,7 +28,7 @@ public class Filter {
 			}
 		}
 		ArrayList<String> list = new ArrayList<>();	
-		list.add("TeamspeakIP");
+		list.add(plugin.getConfig().getString("ts3.queryname"));
 		cfg.addDefault("ignore", list);
 		cfg.options().copyDefaults(true);
 		save(file, cfg);
@@ -41,5 +40,14 @@ public class Filter {
 		} catch (IOException e) {
 		}	
 	}
-
+	public File getFile(){
+		File file = new File("plugins/TeamSpeakIP/filter.yml");
+		return file;
+	}
+	public YamlConfiguration getcfg(){
+		File file = getFile();
+		YamlConfiguration cfg = YamlConfiguration.loadConfiguration(file);
+		return cfg;
+	}
+	
 }

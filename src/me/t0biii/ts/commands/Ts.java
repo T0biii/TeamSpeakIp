@@ -11,17 +11,29 @@ import org.bukkit.entity.Player;
 import com.github.theholywaffle.teamspeak3.api.wrapper.Client;
 
 import me.t0biii.ts.TeamSpeak;
+import me.t0biii.ts.methods.Cache;
+import me.t0biii.ts.methods.Filter;
 import me.t0biii.ts.methods.JsonMessage;
+import me.t0biii.ts.methods.Messages;
 import me.t0biii.ts.methods.SendHelp;
 import me.t0biii.ts.methods.Updater;
 import me.t0biii.ts.methods.Updater.UpdateResult;
 
 
 public class Ts implements CommandExecutor{
+	
+	private static TeamSpeak pl;
+	public Ts(TeamSpeak main){
+		this.pl = main;
+	}
+	 
 	static String tsip = "";
-	public static TeamSpeak pl = TeamSpeak.instance;
-	static File file = new File("plugins/TeamspeakIP/messages.yml");
-	static YamlConfiguration cfg = YamlConfiguration.loadConfiguration(file);
+	static Messages me = new Messages(pl);
+	static Filter fil = new Filter(pl);
+	static Cache ca = new Cache(pl);
+	static File file = me.getFile();
+	static YamlConfiguration cfg = me.getcfg();	
+
 	
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args)
@@ -95,7 +107,9 @@ public class Ts implements CommandExecutor{
 				if(p.isOp() || p.hasPermission("ts.filter")){
 				pl.fi.loadFilter();
 				prefixsend(p);
+				p.sendMessage("");
 				p.sendMessage(ChatColor.translateAlternateColorCodes('&', cfg.getString("messages.reloadfilter")));
+				p.sendMessage("");
 				prefixsend(p);
 				}else{
 					tsipsend(p);
@@ -106,7 +120,9 @@ public class Ts implements CommandExecutor{
 				if(p.isOp() || p.hasPermission("ts.cache")){
 				pl.getConfig().set("options.realtime", true);
 				prefixsend(p);
+				p.sendMessage("");
 				p.sendMessage("§3Live data §2Activated. \n§3Cache §cDisabled.");
+				p.sendMessage("");
 				prefixsend(p);
 				}else{
 					tsipsend(p);
@@ -116,7 +132,9 @@ public class Ts implements CommandExecutor{
 				if(p.isOp() || p.hasPermission("ts.cache")){
 				pl.getConfig().set("options.realtime", false);
 				prefixsend(p);
+				p.sendMessage("");
 				p.sendMessage("§3Live data §cDisabled. \n§3Cache §2Activated.");
+				p.sendMessage("");
 				prefixsend(p);					
 				}else{
 					tsipsend(p);
@@ -138,26 +156,26 @@ public class Ts implements CommandExecutor{
 					p.sendMessage("§cTeamspeak is unreachable!");
 				}else{
 					try{
-						File cachefile = new File("plugins/TeamspeakIP/cache.yml");
-						YamlConfiguration cfg = YamlConfiguration.loadConfiguration(cachefile);
-						File filterfile = new File("plugins/TeamspeakIP/filter.yml");
-						YamlConfiguration fcfg = YamlConfiguration.loadConfiguration(filterfile);
+						YamlConfiguration cfg = ca.getcfg();
+						YamlConfiguration fcfg = fil.getcfg();
 						int anzahl = cfg.getInt("ts.anzahl");
 						int max = cfg.getInt("ts.max");
 						List<String> filter = fcfg.getStringList("ignore");
 						List<String> cachelist = cfg.getStringList("ts.cache");
 						
 				if(!pl.getConfig().getBoolean("options.realtime")){
+					   
 					prefixsend(p);	
 					p.sendMessage(ChatColor.AQUA+"Teamspeak: "+ tsip + " §cCached");
 					p.sendMessage(ChatColor.AQUA+"Online: §2"+ (anzahl) +" of " +max);
-					p.sendMessage(ChatColor.AQUA+"List of People:");
+					p.sendMessage(ChatColor.AQUA+"List of People: "+ ChatColor.RED + "(Hidden: " + cachelist.size()+ ")");
 					for(String Users : cachelist){
 						if(!filter.contains(Users)){
 							p.sendMessage("§2"+Users);
 						}
 					}
 					prefixsend(p);	
+					
 				}else{
 					prefixsend(p);	
 					p.sendMessage(ChatColor.AQUA+"Teamspeak: "+ tsip + " §2Realtime");

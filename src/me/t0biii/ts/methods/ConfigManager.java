@@ -31,6 +31,7 @@ public class ConfigManager {
    	 this.plugin.getConfig().addDefault("ts3.queryport", 10011);
    	 this.plugin.getConfig().addDefault("ts3.querylogin.name", "serveradmin");
    	 this.plugin.getConfig().addDefault("ts3.querylogin.pw", "YOUR_QUERY_PASSWORD");
+   	 this.plugin.getConfig().addDefault("ts3.queryname", "TeamspeakIP");
    	 
    	  
    	 /**
