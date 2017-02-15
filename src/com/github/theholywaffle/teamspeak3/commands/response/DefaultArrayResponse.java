@@ -39,22 +39,35 @@ import com.github.theholywaffle.teamspeak3.commands.CommandEncoding;
 public class DefaultArrayResponse {
 
 	private final List<Wrapper> array;
+	private String rawResponse;
 
 	public DefaultArrayResponse() {
+		rawResponse = "";
 		array = Collections.emptyList();
 	}
 
 	public DefaultArrayResponse(String raw) {
-		final StringTokenizer tkn = new StringTokenizer(raw, "|", false);
+		rawResponse = raw;
 		array = new LinkedList<>();
 
+		final StringTokenizer tkn = new StringTokenizer(raw, "|", false);
 		while (tkn.hasMoreTokens()) {
 			final Wrapper wrapper = new Wrapper(parse(tkn.nextToken()));
 			array.add(wrapper);
 		}
 	}
 
-	private Map<String, String> parse(String raw) {
+	public void appendResponse(String raw) {
+		rawResponse += "|" + raw;
+
+		final StringTokenizer tkn = new StringTokenizer(raw, "|", false);
+		while (tkn.hasMoreTokens()) {
+			final Wrapper wrapper = new Wrapper(parse(tkn.nextToken()));
+			array.add(wrapper);
+		}
+	}
+
+	private static Map<String, String> parse(String raw) {
 		final StringTokenizer st = new StringTokenizer(raw, " ", false);
 		final Map<String, String> options = new HashMap<>();
 
@@ -79,8 +92,12 @@ public class DefaultArrayResponse {
 	}
 
 	public Wrapper getFirstResponse() {
-		if (array.size() == 0) return null;
+		if (array.size() == 0) return Wrapper.EMPTY;
 		return array.get(0);
+	}
+
+	public String getRawResponse() {
+		return rawResponse;
 	}
 
 	public String toString() {

@@ -27,37 +27,34 @@ package com.github.theholywaffle.teamspeak3;
  */
 
 import com.github.theholywaffle.teamspeak3.api.Callback;
+import com.github.theholywaffle.teamspeak3.commands.CQuit;
 import com.github.theholywaffle.teamspeak3.commands.Command;
 
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.io.InputStreamReader;
+import java.util.Queue;
 import java.util.logging.Level;
 
 public class SocketReader extends Thread {
 
 	private final TS3Query ts3;
-	private final ExecutorService userThreadPool;
-	private final Map<Command, Callback> callbackMap;
+	private final Queue<Command> receiveQueue;
+	private final BufferedReader in;
 
-	private String lastEvent;
+	private String lastEvent = "";
 
-	public SocketReader(TS3Query ts3) {
+	public SocketReader(QueryIO io, TS3Query ts3Query) throws IOException {
 		super("[TeamSpeak-3-Java-API] SocketReader");
-		this.ts3 = ts3;
-		this.userThreadPool = Executors.newCachedThreadPool();
-		this.callbackMap = Collections.synchronizedMap(new LinkedHashMap<Command, Callback>());
-		this.lastEvent = "";
+		this.receiveQueue = io.getReceiveQueue();
+		this.ts3 = ts3Query;
 
+		// Connect
+		this.in = new BufferedReader(new InputStreamReader(io.getSocket().getInputStream(), "UTF-8"));
 		try {
 			int i = 0;
-			while (i < 4 || ts3.getIn().ready()) {
-				TS3Query.log.info("< " + ts3.getIn().readLine());
+			while (i < 4 || in.ready()) {
+				TS3Query.log.info("< " + in.readLine());
 				i++;
 			}
 		} catch (final IOException e) {
@@ -67,96 +64,91 @@ public class SocketReader extends Thread {
 
 	@Override
 	public void run() {
-		while (ts3.getSocket() != null && ts3.getSocket().isConnected()
-				&& ts3.getIn() != null && !isInterrupted()) {
+		while (!isInterrupted()) {
 			final String line;
 
 			try {
 				// Will block until a full line of text could be read.
-				line = ts3.getIn().readLine();
+				line = in.readLine();
 			} catch (IOException io) {
 				if (!isInterrupted()) {
-					io.printStackTrace();
+					TS3Query.log.log(Level.WARNING, "Connection error occurred.", io);
 				}
 				break;
 			}
 
 			if (line == null) {
-				break; // The underlying socket was closed
+				// End of stream: connection terminated by server
+				TS3Query.log.warning("Connection closed by the server.");
+				break;
 			} else if (line.isEmpty()) {
 				continue; // The server is sending garbage
 			}
 
-			final Command c = ts3.getCommandList().peek();
-
 			if (line.startsWith("notify")) {
+				// Handle event
 				TS3Query.log.info("< [event] " + line);
 
 				// Filter out duplicate events for join, quit and channel move events
 				if (isDuplicate(line)) continue;
 
-				userThreadPool.execute(new Runnable() {
+				ts3.submitUserTask(new Runnable() {
 					@Override
 					public void run() {
 						final String arr[] = line.split(" ", 2);
 						ts3.getEventManager().fireEvent(arr[0], arr[1]);
 					}
 				});
-			} else if (c != null && c.isSent()) {
+			} else {
+				// Handle response to a command
+				final Command c = receiveQueue.peek();
+				if (c == null) {
+					TS3Query.log.warning("[UNHANDLED] < " + line);
+					return;
+				}
+
 				TS3Query.log.info("[" + c.getName() + "] < " + line);
 				if (line.startsWith("error")) {
+					if (c instanceof CQuit) {
+						// Response to a quit command received, we're done
+						interrupt();
+					}
+
 					c.feedError(line.substring("error ".length()));
 					if (c.getError().getId() != 0) {
 						TS3Query.log.severe("TS3 command error: " + c.getError());
 					}
-					c.setAnswered();
-					ts3.getCommandList().remove(c);
-					answerCallback(c);
+					receiveQueue.remove();
+
+					final Callback callback = c.getCallback();
+					if (callback != null) {
+						ts3.submitUserTask(new Runnable() {
+							@Override
+							public void run() {
+								try {
+									callback.handle();
+								} catch (Throwable t) {
+									TS3Query.log.log(Level.WARNING, "User callback threw exception", t);
+								}
+							}
+						});
+					}
 				} else {
 					c.feed(line);
 				}
-			} else {
-				TS3Query.log.info("< " + line);
 			}
 		}
 
-		userThreadPool.shutdown();
+		try {
+			in.close();
+		} catch (IOException ignored) {
+			// Ignore
+		}
+
 		if (!isInterrupted()) {
 			TS3Query.log.warning("SocketReader has stopped!");
+			ts3.fireDisconnect();
 		}
-	}
-
-	private void answerCallback(Command c) {
-		final Callback callback = callbackMap.get(c);
-
-		// Command had no callback registered
-		if (callback == null) return;
-
-		// To avoid the possibility of clogging the map with callbacks for
-		// inexistent commands, remove all entries before the current one
-		// Typically, this will exit without removing a single entry
-		Set<Command> keySet = callbackMap.keySet();
-		synchronized (callbackMap) {
-			Iterator<Command> iterator = keySet.iterator();
-			while (iterator.hasNext() && !c.equals(iterator.next())) {
-				iterator.remove();
-			}
-		}
-
-		userThreadPool.execute(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					callback.handle();
-				} catch (Throwable t) {
-					TS3Query.log.log(Level.WARNING, "User callback threw exception", t);
-				}
-			}
-		});
-	}
-
-	void registerCallback(Command command, Callback callback) {
-		callbackMap.put(command, callback);
 	}
 
 	private boolean isDuplicate(String eventMessage) {

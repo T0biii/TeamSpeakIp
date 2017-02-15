@@ -28,28 +28,32 @@ package com.github.theholywaffle.teamspeak3;
 
 import com.github.theholywaffle.teamspeak3.api.Callback;
 import com.github.theholywaffle.teamspeak3.api.exception.TS3ConnectionFailedException;
+import com.github.theholywaffle.teamspeak3.api.reconnect.ConnectionHandler;
 import com.github.theholywaffle.teamspeak3.commands.CQuit;
 import com.github.theholywaffle.teamspeak3.commands.Command;
 import com.github.theholywaffle.teamspeak3.log.LogHandler;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintStream;
-import java.net.Socket;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.logging.Handler;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class TS3Query {
 
-	public enum FloodRate {
-		DEFAULT(350),
-		UNLIMITED(0);
+	public static class FloodRate {
+
+		public static final FloodRate DEFAULT = new FloodRate(350);
+		public static final FloodRate UNLIMITED = new FloodRate(0);
+
+		public static final FloodRate custom(int milliseconds) {
+			if (milliseconds < 0) throw new IllegalArgumentException("Timeout must be positive");
+			return new FloodRate(milliseconds);
+		}
 
 		private final int ms;
 
-		FloodRate(int ms) {
+		private FloodRate(int ms) {
 			this.ms = ms;
 		}
 
@@ -59,77 +63,110 @@ public class TS3Query {
 	}
 
 	public static final Logger log = Logger.getLogger(TS3Query.class.getName());
+
+	private final ExecutorService userThreadPool = Executors.newCachedThreadPool();
 	private final EventManager eventManager = new EventManager();
+	private final FileTransferHelper fileTransferHelper;
 	private final TS3Config config;
-	private Socket socket;
-	private PrintStream out;
-	private BufferedReader in;
-	private SocketReader socketReader;
-	private SocketWriter socketWriter;
-	private KeepAliveThread keepAlive;
-	private ConcurrentLinkedQueue<Command> commandList = new ConcurrentLinkedQueue<>();
+	private final ConnectionHandler connectionHandler;
+
+	private QueryIO io;
 	private TS3Api api;
 	private TS3ApiAsync asyncApi;
 
+	/**
+	 * Creates a TS3Query that connects to a TS3 server at
+	 * {@code localhost:10011} using default settings.
+	 */
+	public TS3Query() {
+		this(new TS3Config());
+	}
+
+	/**
+	 * Creates a customized TS3Query that connects to a server
+	 * specified by {@code config}.
+	 *
+	 * @param config
+	 * 		configuration for this TS3Query
+	 */
 	public TS3Query(TS3Config config) {
 		log.setUseParentHandlers(false);
 		log.addHandler(new LogHandler(config.getDebugToFile()));
 		log.setLevel(config.getDebugLevel());
 		this.config = config;
+		this.fileTransferHelper = new FileTransferHelper(config.getHost());
+		this.connectionHandler = config.getReconnectStrategy().create(config.getConnectionHandler());
 	}
 
+	// PUBLIC
+
 	public TS3Query connect() {
-		// exit();
-		try {
-			socket = new Socket(config.getHost(), config.getQueryPort());
-			if (socket.isConnected()) {
-				out = new PrintStream(socket.getOutputStream(), true, "UTF-8");
-				in = new BufferedReader(new InputStreamReader(socket.getInputStream(), "UTF-8"));
-				socketReader = new SocketReader(this);
-				socketReader.start();
-				socketWriter = new SocketWriter(this, config.getFloodRate().getMs());
-				socketWriter.start();
-				keepAlive = new KeepAliveThread(this, socketWriter);
-				keepAlive.start();
-			}
-		} catch (final IOException e) {
-			throw new TS3ConnectionFailedException(e);
+		QueryIO oldIO = io;
+		if (oldIO != null) {
+			oldIO.disconnect();
 		}
 
-		// Executing config object
-		final TS3Api api = getApi();
-		if (config.getUsername() != null && config.getPassword() != null) {
-			api.login(config.getUsername(), config.getPassword());
+		try {
+			io = new QueryIO(this, config);
+		} catch (TS3ConnectionFailedException conFailed) {
+			fireDisconnect();
+			throw conFailed;
 		}
+
+		try {
+			connectionHandler.onConnect(this);
+		} catch (Throwable t) {
+			log.log(Level.SEVERE, "ConnectionHandler threw exception in connect handler", t);
+		}
+		io.continueFrom(oldIO);
+
 		return this;
 	}
 
-	public Socket getSocket() {
-		return socket;
+	/**
+	 * Removes and closes all used resources to the teamspeak server.
+	 */
+	public void exit() {
+		// Send a quit command synchronously
+		// This will guarantee that all previously sent commands have been processed
+		doCommand(new CQuit());
+
+		io.disconnect();
+		userThreadPool.shutdown();
+		for (final Handler lh : log.getHandlers()) {
+			log.removeHandler(lh);
+		}
 	}
 
-	public PrintStream getOut() {
-		return out;
+	public TS3Api getApi() {
+		if (api == null) {
+			api = new TS3Api(this);
+		}
+		return api;
 	}
 
-	public BufferedReader getIn() {
-		return in;
+	public TS3ApiAsync getAsyncApi() {
+		if (asyncApi == null) {
+			asyncApi = new TS3ApiAsync(this);
+		}
+		return asyncApi;
 	}
 
-	public boolean doCommand(Command c) {
+	// INTERNAL
+
+	boolean doCommand(Command c) {
+		final long end = System.currentTimeMillis() + config.getCommandTimeout();
 		final Object signal = new Object();
-		final Callback callback = new Callback() {
+		c.setCallback(new Callback() {
 			@Override
 			public void handle() {
 				synchronized (signal) {
 					signal.notifyAll();
 				}
 			}
-		};
-		socketReader.registerCallback(c, callback);
+		});
 
-		final long end = System.currentTimeMillis() + config.getCommandTimeout();
-		commandList.offer(c);
+		io.enqueueCommand(c);
 
 		boolean interrupted = false;
 		while (!c.isAnswered() && System.currentTimeMillis() < end) {
@@ -154,92 +191,33 @@ public class TS3Query {
 		return c.getError().isSuccessful();
 	}
 
-	public void doCommandAsync(final Command c) {
-		doCommandAsync(c, null);
+	void doCommandAsync(Command c, Callback callback) {
+		if (callback != null) c.setCallback(callback);
+		io.enqueueCommand(c);
 	}
 
-	public void doCommandAsync(final Command c, final Callback callback) {
-		if (callback != null) {
-			socketReader.registerCallback(c, callback);
-		}
-		commandList.offer(c);
+	void submitUserTask(Runnable task) {
+		userThreadPool.submit(task);
 	}
 
-	/**
-	 * Removes and closes all used resources to the teamspeak server.
-	 */
-	public void exit() {
-		// Send a quit command synchronously
-		// This will guarantee that all previously sent commands have been processed
-		doCommand(new CQuit());
-
-		if (keepAlive != null) {
-			keepAlive.interrupt();
-		}
-		if (socketWriter != null) {
-			socketWriter.interrupt();
-		}
-		if (socketReader != null) {
-			socketReader.interrupt();
-		}
-
-		if (out != null) {
-			out.close();
-		}
-		if (in != null) {
-			try {
-				in.close();
-			} catch (IOException ignored) {
-			}
-		}
-		if (socket != null) {
-			try {
-				socket.close();
-			} catch (IOException ignored) {
-			}
-		}
-
-		try {
-			if (keepAlive != null) {
-				keepAlive.join();
-			}
-			if (socketWriter != null) {
-				socketWriter.join();
-			}
-			if (socketReader != null) {
-				socketReader.join();
-			}
-		} catch (final InterruptedException e) {
-			// Restore the interrupt for the caller
-			Thread.currentThread().interrupt();
-		}
-
-		commandList.clear();
-		commandList = null;
-		for (final Handler lh : log.getHandlers()) {
-			log.removeHandler(lh);
-		}
-	}
-
-	public ConcurrentLinkedQueue<Command> getCommandList() {
-		return commandList;
-	}
-
-	public EventManager getEventManager() {
+	EventManager getEventManager() {
 		return eventManager;
 	}
 
-	public TS3Api getApi() {
-		if (api == null) {
-			api = new TS3Api(this);
-		}
-		return api;
+	FileTransferHelper getFileTransferHelper() {
+		return fileTransferHelper;
 	}
 
-	public TS3ApiAsync getAsyncApi() {
-		if (asyncApi == null) {
-			asyncApi = new TS3ApiAsync(this);
-		}
-		return asyncApi;
+	void fireDisconnect() {
+		userThreadPool.submit(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					connectionHandler.onDisconnect(TS3Query.this);
+				} catch (Throwable t) {
+					log.log(Level.SEVERE, "ConnectionHandler threw exception in disconnect handler", t);
+				}
+			}
+		});
 	}
 }

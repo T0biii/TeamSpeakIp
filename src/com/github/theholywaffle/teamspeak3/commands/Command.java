@@ -26,25 +26,28 @@ package com.github.theholywaffle.teamspeak3.commands;
  * #L%
  */
 
+import com.github.theholywaffle.teamspeak3.api.Callback;
 import com.github.theholywaffle.teamspeak3.api.wrapper.QueryError;
 import com.github.theholywaffle.teamspeak3.api.wrapper.Wrapper;
 import com.github.theholywaffle.teamspeak3.commands.parameter.Parameter;
 import com.github.theholywaffle.teamspeak3.commands.response.DefaultArrayResponse;
 
-import java.util.Collections;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
-public abstract class Command {
+public class Command {
+
+	private static final int EMPTY_RESULT_SET_ERROR_ID = 1281;
 
 	private final String command;
-	private final List<Parameter> params = new LinkedList<>();
+	private final Collection<Parameter> params = new LinkedList<>();
 
-	private boolean sent = false;
-	private boolean answered = false;
+	private Callback callback;
 	private DefaultArrayResponse response;
 	private QueryError error;
-	private String raw;
 
 	protected Command(String command) {
 		this.command = command;
@@ -55,16 +58,32 @@ public abstract class Command {
 	}
 
 	public void feed(String str) {
-		raw = str;
 		if (response == null) {
 			response = new DefaultArrayResponse(str);
+		} else {
+			response.appendResponse(str);
 		}
 	}
 
 	public void feedError(String err) {
-		if (error == null) {
-			final DefaultArrayResponse errorResponse = new DefaultArrayResponse(err);
-			error = new QueryError(errorResponse.getFirstResponse().getMap());
+		if (error != null) throw new IllegalStateException("Multiple errors for one command");
+
+		final DefaultArrayResponse errorResponse = new DefaultArrayResponse(err);
+		QueryError parsed = new QueryError(errorResponse.getFirstResponse().getMap());
+
+		if (parsed.getId() == EMPTY_RESULT_SET_ERROR_ID) {
+			if (response != null) throw new IllegalStateException("Got empty result set despite proper response");
+
+			// Set empty response instead
+			response = new DefaultArrayResponse();
+
+			// Fake an ok-error
+			Map<String, String> errorMap = new HashMap<>(2);
+			errorMap.put("id", "0");
+			errorMap.put("msg", "ok");
+			error = new QueryError(errorMap);
+		} else {
+			error = parsed;
 		}
 	}
 
@@ -77,44 +96,36 @@ public abstract class Command {
 	}
 
 	public Wrapper getFirstResponse() {
-		if (response == null || response.getArray().isEmpty()) {
-			return new Wrapper(Collections.<String, String>emptyMap());
-		}
-
 		return response.getFirstResponse();
 	}
 
 	public List<Wrapper> getResponse() {
-		if (response == null) return Collections.emptyList();
 		return response.getArray();
 	}
 
+	public String getRawResponse() {
+		return response.getRawResponse();
+	}
+
 	public boolean isAnswered() {
-		return answered;
+		return (error != null);
 	}
 
-	public boolean isSent() {
-		return sent;
+	public Callback getCallback() {
+		return callback;
 	}
 
-	public void setAnswered() {
-		answered = true;
+	public void setCallback(Callback callback) {
+		if (this.callback != null) throw new IllegalArgumentException("Callback already set");
+		this.callback = callback;
 	}
 
-	public void setSent() {
-		sent = true;
-	}
-
+	@Override
 	public String toString() {
-		String str = command;
+		StringBuilder builder = new StringBuilder(command);
 		for (final Parameter p : params) {
-			str += " " + p;
+			builder.append(" ").append(p);
 		}
-		return str;
+		return builder.toString();
 	}
-
-	public String getRaw() {
-		return raw;
-	}
-
 }

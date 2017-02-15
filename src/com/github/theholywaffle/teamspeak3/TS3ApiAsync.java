@@ -30,13 +30,20 @@ import com.github.theholywaffle.teamspeak3.api.*;
 import com.github.theholywaffle.teamspeak3.api.event.TS3EventType;
 import com.github.theholywaffle.teamspeak3.api.event.TS3Listener;
 import com.github.theholywaffle.teamspeak3.api.exception.TS3CommandFailedException;
+import com.github.theholywaffle.teamspeak3.api.exception.TS3FileTransferFailedException;
 import com.github.theholywaffle.teamspeak3.api.wrapper.*;
 import com.github.theholywaffle.teamspeak3.commands.*;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
@@ -106,6 +113,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return the ID of the newly created ban entry
 	 *
+	 * @querycommands 1
 	 * @see Pattern RegEx Pattern
 	 * @see Client#getId()
 	 * @see Client#getUniqueIdentifier()
@@ -134,6 +142,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see Channel#getId()
 	 * @see Client#getDatabaseId()
 	 * @see Permission
@@ -155,6 +164,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return the ID of the newly created channel group
 	 *
+	 * @querycommands 1
 	 * @see ChannelGroup
 	 */
 	public CommandFuture<Integer> addChannelGroup(String name) {
@@ -171,6 +181,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return the ID of the newly created channel group
 	 *
+	 * @querycommands 1
 	 * @see ChannelGroup
 	 */
 	public CommandFuture<Integer> addChannelGroup(String name, PermissionGroupDatabaseType type) {
@@ -190,6 +201,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see ChannelGroup#getId()
 	 * @see Permission
 	 */
@@ -210,6 +222,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see Channel#getId()
 	 * @see Permission
 	 */
@@ -228,10 +241,11 @@ public class TS3ApiAsync {
 	 * @param value
 	 * 		the numeric value of the permission (or for boolean permissions: 1 = true, 0 = false)
 	 * @param skipped
-	 * 		if set to {@code true}, the permission will not be overridden by channel permissions
+	 * 		if set to {@code true}, the permission will not be overridden by channel group permissions
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see Client#getDatabaseId()
 	 * @see Permission
 	 */
@@ -253,6 +267,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see ServerGroup#getId()
 	 * @see Client#getDatabaseId()
 	 */
@@ -272,6 +287,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see Client#getDatabaseId()
 	 * @see Complaint#getMessage()
 	 */
@@ -292,10 +308,11 @@ public class TS3ApiAsync {
 	 * @param negated
 	 * 		if set to true, the lowest permission value will be selected instead of the highest
 	 * @param skipped
-	 * 		if set to true, this permission will not be overridden by client of channel permissions
+	 * 		if set to true, this permission will not be overridden by client or channel group permissions
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see ServerGroupType
 	 * @see Permission
 	 */
@@ -307,9 +324,9 @@ public class TS3ApiAsync {
 	/**
 	 * Create a new privilege key that allows one client to join a server or channel group.
 	 * <ul>
-	 * <li>If {@code type} is set to {@linkplain TokenType#SERVER_GROUP SERVER_GROUP},
+	 * <li>If {@code type} is set to {@linkplain PrivilegeKeyType#SERVER_GROUP SERVER_GROUP},
 	 * {@code groupId} is used as a server group ID and {@code channelId} is ignored.</li>
-	 * <li>If {@code type} is set to {@linkplain TokenType#CHANNEL_GROUP CHANNEL_GROUP},
+	 * <li>If {@code type} is set to {@linkplain PrivilegeKeyType#CHANNEL_GROUP CHANNEL_GROUP},
 	 * {@code groupId} is used as a channel group ID and {@code channelId} is used as the channel in which the group should be set.</li>
 	 * </ul>
 	 *
@@ -324,11 +341,12 @@ public class TS3ApiAsync {
 	 *
 	 * @return the created token for a client to use
 	 *
-	 * @see TokenType
+	 * @querycommands 1
+	 * @see PrivilegeKeyType
 	 * @see #addPrivilegeKeyServerGroup(int, String)
 	 * @see #addPrivilegeKeyChannelGroup(int, int, String)
 	 */
-	public CommandFuture<String> addPrivilegeKey(TokenType type, int groupId, int channelId, String description) {
+	public CommandFuture<String> addPrivilegeKey(PrivilegeKeyType type, int groupId, int channelId, String description) {
 		final CPrivilegeKeyAdd add = new CPrivilegeKeyAdd(type, groupId, channelId, description);
 		return executeAndReturnStringProperty(add, "token");
 	}
@@ -345,13 +363,14 @@ public class TS3ApiAsync {
 	 *
 	 * @return the created token for a client to use
 	 *
+	 * @querycommands 1
 	 * @see ChannelGroup#getId()
 	 * @see Channel#getId()
-	 * @see #addPrivilegeKey(TokenType, int, int, String)
+	 * @see #addPrivilegeKey(PrivilegeKeyType, int, int, String)
 	 * @see #addPrivilegeKeyServerGroup(int, String)
 	 */
 	public CommandFuture<String> addPrivilegeKeyChannelGroup(int channelGroupId, int channelId, String description) {
-		return addPrivilegeKey(TokenType.CHANNEL_GROUP, channelGroupId, channelId, description);
+		return addPrivilegeKey(PrivilegeKeyType.CHANNEL_GROUP, channelGroupId, channelId, description);
 	}
 
 	/**
@@ -364,12 +383,13 @@ public class TS3ApiAsync {
 	 *
 	 * @return the created token for a client to use
 	 *
+	 * @querycommands 1
 	 * @see ServerGroup#getId()
-	 * @see #addPrivilegeKey(TokenType, int, int, String)
+	 * @see #addPrivilegeKey(PrivilegeKeyType, int, int, String)
 	 * @see #addPrivilegeKeyChannelGroup(int, int, String)
 	 */
 	public CommandFuture<String> addPrivilegeKeyServerGroup(int serverGroupId, String description) {
-		return addPrivilegeKey(TokenType.SERVER_GROUP, serverGroupId, 0, description);
+		return addPrivilegeKey(PrivilegeKeyType.SERVER_GROUP, serverGroupId, 0, description);
 	}
 
 	/**
@@ -384,6 +404,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return the ID of the newly created server group
 	 *
+	 * @querycommands 1
 	 * @see ServerGroup
 	 */
 	public CommandFuture<Integer> addServerGroup(String name) {
@@ -400,6 +421,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return the ID of the newly created server group
 	 *
+	 * @querycommands 1
 	 * @see ServerGroup
 	 * @see PermissionGroupDatabaseType
 	 */
@@ -420,10 +442,11 @@ public class TS3ApiAsync {
 	 * @param negated
 	 * 		if set to true, the lowest permission value will be selected instead of the highest
 	 * @param skipped
-	 * 		if set to true, this permission will not be overridden by client of channel permissions
+	 * 		if set to true, this permission will not be overridden by client or channel group permissions
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see ServerGroup#getId()
 	 * @see Permission
 	 */
@@ -457,6 +480,10 @@ public class TS3ApiAsync {
 	 * <p>
 	 * Please note that this will create two separate ban rules,
 	 * one for the targeted client's IP address and their unique identifier.
+	 * </p><p>
+	 * <i>Exception:</i> If the banned client connects via a loopback address
+	 * (i.e. {@code 127.0.0.1} or {@code localhost}), no IP ban is created
+	 * and the returned array will only have 1 entry.
 	 * </p>
 	 *
 	 * @param clientId
@@ -466,10 +493,11 @@ public class TS3ApiAsync {
 	 *
 	 * @return an array containing the IDs of the first and the second ban entry
 	 *
+	 * @querycommands 1
 	 * @see Client#getId()
 	 * @see #addBan(String, String, String, long, String)
 	 */
-	public CommandFuture<Integer[]> banClient(int clientId, long timeInSeconds) {
+	public CommandFuture<int[]> banClient(int clientId, long timeInSeconds) {
 		return banClient(clientId, timeInSeconds, null);
 	}
 
@@ -478,6 +506,10 @@ public class TS3ApiAsync {
 	 * <p>
 	 * Please note that this will create two separate ban rules,
 	 * one for the targeted client's IP address and their unique identifier.
+	 * </p><p>
+	 * <i>Exception:</i> If the banned client connects via a loopback address
+	 * (i.e. {@code 127.0.0.1} or {@code localhost}), no IP ban is created
+	 * and the returned array will only have 1 entry.
 	 * </p>
 	 *
 	 * @param clientId
@@ -489,12 +521,13 @@ public class TS3ApiAsync {
 	 *
 	 * @return an array containing the IDs of the first and the second ban entry
 	 *
+	 * @querycommands 1
 	 * @see Client#getId()
 	 * @see #addBan(String, String, String, long, String)
 	 */
-	public CommandFuture<Integer[]> banClient(int clientId, long timeInSeconds, String reason) {
+	public CommandFuture<int[]> banClient(int clientId, long timeInSeconds, String reason) {
 		final CBanClient client = new CBanClient(clientId, timeInSeconds, reason);
-		final CommandFuture<Integer[]> future = new CommandFuture<>();
+		final CommandFuture<int[]> future = new CommandFuture<>();
 
 		query.doCommandAsync(client, new Callback() {
 			@Override
@@ -502,9 +535,11 @@ public class TS3ApiAsync {
 				if (hasFailed(client, future)) return;
 
 				final List<Wrapper> response = client.getResponse();
-				final int banId1 = response.get(0).getInt("banid");
-				final int banId2 = response.get(1).getInt("banid");
-				future.set(new Integer[] {banId1, banId2});
+				final int[] banIds = new int[response.size()];
+				for (int i = 0; i < banIds.length; ++i) {
+					banIds[i] = response.get(i).getInt("banid");
+				}
+				future.set(banIds);
 			}
 		});
 		return future;
@@ -515,6 +550,10 @@ public class TS3ApiAsync {
 	 * <p>
 	 * Please note that this will create two separate ban rules,
 	 * one for the targeted client's IP address and their unique identifier.
+	 * </p><p>
+	 * <i>Exception:</i> If the banned client connects via a loopback address
+	 * (i.e. {@code 127.0.0.1} or {@code localhost}), no IP ban is created
+	 * and the returned array will only have 1 entry.
 	 * </p>
 	 *
 	 * @param clientId
@@ -524,10 +563,11 @@ public class TS3ApiAsync {
 	 *
 	 * @return an array containing the IDs of the first and the second ban entry
 	 *
+	 * @querycommands 1
 	 * @see Client#getId()
 	 * @see #addBan(String, String, String, long, String)
 	 */
-	public CommandFuture<Integer[]> banClient(int clientId, String reason) {
+	public CommandFuture<int[]> banClient(int clientId, String reason) {
 		return banClient(clientId, 0, reason);
 	}
 
@@ -539,6 +579,8 @@ public class TS3ApiAsync {
 	 * 		the message to be sent
 	 *
 	 * @return whether the command succeeded or not
+	 *
+	 * @querycommands 1
 	 */
 	public CommandFuture<Boolean> broadcast(String message) {
 		final CGM broadcast = new CGM(message);
@@ -561,6 +603,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see ChannelGroup#getId()
 	 */
 	public CommandFuture<Boolean> copyChannelGroup(int sourceGroupId, int targetGroupId, PermissionGroupDatabaseType type) {
@@ -585,6 +628,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return the ID of the newly created channel group
 	 *
+	 * @querycommands 1
 	 * @see ChannelGroup#getId()
 	 */
 	public CommandFuture<Integer> copyChannelGroup(int sourceGroupId, String targetName, PermissionGroupDatabaseType type) {
@@ -608,6 +652,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see ServerGroup#getId()
 	 */
 	public CommandFuture<Integer> copyServerGroup(int sourceGroupId, int targetGroupId, PermissionGroupDatabaseType type) {
@@ -632,6 +677,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return the ID of the newly created server group
 	 *
+	 * @querycommands 1
 	 * @see ServerGroup#getId()
 	 */
 	public CommandFuture<Integer> copyServerGroup(int sourceGroupId, String targetName, PermissionGroupDatabaseType type) {
@@ -649,11 +695,51 @@ public class TS3ApiAsync {
 	 *
 	 * @return the ID of the newly created channel
 	 *
+	 * @querycommands 1
 	 * @see Channel
 	 */
 	public CommandFuture<Integer> createChannel(String name, Map<ChannelProperty, String> options) {
 		final CChannelCreate create = new CChannelCreate(name, options);
 		return executeAndReturnIntProperty(create, "cid");
+	}
+
+	/**
+	 * Creates a new directory on the file repository in the specified channel.
+	 *
+	 * @param directoryPath
+	 * 		the path to the directory that should be created
+	 * @param channelId
+	 * 		the ID of the channel the directory should be created in
+	 *
+	 * @return whether the command succeeded or not
+	 *
+	 * @querycommands 1
+	 * @see FileInfo#getPath()
+	 * @see Channel#getId()
+	 */
+	public CommandFuture<Boolean> createFileDirectory(String directoryPath, int channelId) {
+		return createFileDirectory(directoryPath, channelId, null);
+	}
+
+	/**
+	 * Creates a new directory on the file repository in the specified channel.
+	 *
+	 * @param directoryPath
+	 * 		the path to the directory that should be created
+	 * @param channelId
+	 * 		the ID of the channel the directory should be created in
+	 * @param channelPassword
+	 * 		the password of that channel
+	 *
+	 * @return whether the command succeeded or not
+	 *
+	 * @querycommands 1
+	 * @see FileInfo#getPath()
+	 * @see Channel#getId()
+	 */
+	public CommandFuture<Boolean> createFileDirectory(String directoryPath, int channelId, String channelPassword) {
+		final CFtCreateDir create = new CFtCreateDir(directoryPath, channelId, channelPassword);
+		return executeAndReturnError(create);
 	}
 
 	/**
@@ -676,6 +762,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return information about the newly created virtual server
 	 *
+	 * @querycommands 1
 	 * @see VirtualServer
 	 */
 	public CommandFuture<CreatedVirtualServer> createServer(String name, Map<VirtualServerProperty, String> options) {
@@ -699,6 +786,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return a snapshot of the virtual server
 	 *
+	 * @querycommands 1
 	 * @see #deployServerSnapshot(Snapshot)
 	 */
 	public CommandFuture<Snapshot> createServerSnapshot() {
@@ -709,7 +797,7 @@ public class TS3ApiAsync {
 			@Override
 			public void handle() {
 				if (hasFailed(create, future)) return;
-				future.set(new Snapshot(create.getRaw()));
+				future.set(new Snapshot(create.getRawResponse()));
 			}
 		});
 		return future;
@@ -719,6 +807,8 @@ public class TS3ApiAsync {
 	 * Deletes all active ban rules from the server. Use with caution.
 	 *
 	 * @return whether the command succeeded or not
+	 *
+	 * @querycommands 1
 	 */
 	public CommandFuture<Boolean> deleteAllBans() {
 		final CBanDelAll del = new CBanDelAll();
@@ -733,6 +823,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see Client#getDatabaseId()
 	 * @see Complaint
 	 */
@@ -749,6 +840,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see Ban#getId()
 	 */
 	public CommandFuture<Boolean> deleteBan(int banId) {
@@ -764,6 +856,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see Channel#getId()
 	 * @see #deleteChannel(int, boolean)
 	 * @see #kickClientFromChannel(String, int...)
@@ -784,6 +877,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see Channel#getId()
 	 * @see #kickClientFromChannel(String, int...)
 	 */
@@ -804,6 +898,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see Channel#getId()
 	 * @see Client#getDatabaseId()
 	 * @see Permission#getName()
@@ -821,6 +916,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see ChannelGroup#getId()
 	 */
 	public CommandFuture<Boolean> deleteChannelGroup(int groupId) {
@@ -839,6 +935,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see ChannelGroup#getId()
 	 */
 	public CommandFuture<Boolean> deleteChannelGroup(int groupId, boolean force) {
@@ -856,6 +953,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see ChannelGroup#getId()
 	 * @see Permission#getName()
 	 */
@@ -874,6 +972,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see Channel#getId()
 	 * @see Permission#getName()
 	 */
@@ -892,6 +991,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see Client#getDatabaseId()
 	 * @see Permission#getName()
 	 */
@@ -911,6 +1011,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see Complaint
 	 * @see Client#getDatabaseId()
 	 */
@@ -931,6 +1032,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see Client#getDatabaseId()
 	 * @see #getDatabaseClientInfo(int)
 	 * @see DatabaseClientInfo
@@ -941,6 +1043,119 @@ public class TS3ApiAsync {
 	}
 
 	/**
+	 * Deletes a file or directory from the file repository in the specified channel.
+	 *
+	 * @param filePath
+	 * 		the path to the file or directory
+	 * @param channelId
+	 * 		the ID of the channel the file or directory resides in
+	 *
+	 * @return whether the command succeeded or not
+	 *
+	 * @querycommands 1
+	 * @see FileInfo#getPath()
+	 * @see Channel#getId()
+	 */
+	public CommandFuture<Boolean> deleteFile(String filePath, int channelId) {
+		return deleteFile(filePath, channelId, null);
+	}
+
+	/**
+	 * Deletes a file or directory from the file repository in the specified channel.
+	 *
+	 * @param filePath
+	 * 		the path to the file or directory
+	 * @param channelId
+	 * 		the ID of the channel the file or directory resides in
+	 * @param channelPassword
+	 * 		the password of that channel
+	 *
+	 * @return whether the command succeeded or not
+	 *
+	 * @querycommands 1
+	 * @see FileInfo#getPath()
+	 * @see Channel#getId()
+	 */
+	public CommandFuture<Boolean> deleteFile(String filePath, int channelId, String channelPassword) {
+		final CFtDeleteFile delete = new CFtDeleteFile(channelId, channelPassword, filePath);
+		return executeAndReturnError(delete);
+	}
+
+	/**
+	 * Deletes multiple files or directories from the file repository in the specified channel.
+	 *
+	 * @param filePaths
+	 * 		the paths to the files or directories
+	 * @param channelId
+	 * 		the ID of the channel the file or directory resides in
+	 *
+	 * @return whether the command succeeded or not
+	 *
+	 * @querycommands 1
+	 * @see FileInfo#getPath()
+	 * @see Channel#getId()
+	 */
+	public CommandFuture<Boolean> deleteFiles(String[] filePaths, int channelId) {
+		return deleteFiles(filePaths, channelId, null);
+	}
+
+	/**
+	 * Deletes multiple files or directories from the file repository in the specified channel.
+	 *
+	 * @param filePaths
+	 * 		the paths to the files or directories
+	 * @param channelId
+	 * 		the ID of the channel the file or directory resides in
+	 * @param channelPassword
+	 * 		the password of that channel
+	 *
+	 * @return whether the command succeeded or not
+	 *
+	 * @querycommands 1
+	 * @see FileInfo#getPath()
+	 * @see Channel#getId()
+	 */
+	public CommandFuture<Boolean> deleteFiles(String[] filePaths, int channelId, String channelPassword) {
+		final CFtDeleteFile delete = new CFtDeleteFile(channelId, channelPassword, filePaths);
+		return executeAndReturnError(delete);
+	}
+
+	/**
+	 * Deletes an icon from the icon directory in the file repository.
+	 *
+	 * @param iconId
+	 * 		the ID of the icon to delete
+	 *
+	 * @return whether the command succeeded or not
+	 *
+	 * @querycommands 1
+	 * @see IconFile#getIconId()
+	 */
+	public CommandFuture<Boolean> deleteIcon(long iconId) {
+		final String iconPath = "/icon_" + iconId;
+		return deleteFile(iconPath, 0);
+	}
+
+	/**
+	 * Deletes multiple icons from the icon directory in the file repository.
+	 *
+	 * @param iconIds
+	 * 		the IDs of the icons to delete
+	 *
+	 * @return whether the command succeeded or not
+	 *
+	 * @querycommands 1
+	 * @see IconFile#getIconId()
+	 */
+	public CommandFuture<Boolean> deleteIcons(long[] iconIds) {
+		final String[] iconPaths = new String[iconIds.length];
+		for (int i = 0; i < iconIds.length; ++i) {
+			iconPaths[i] = "/icon_" + iconIds[i];
+		}
+		return deleteFiles(iconPaths, 0);
+	}
+
+	/**
 	 * Deletes the offline message with the specified ID.
 	 *
 	 * @param messageId
@@ -948,6 +1163,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see Message#getId()
 	 */
 	public CommandFuture<Boolean> deleteOfflineMessage(int messageId) {
@@ -965,6 +1181,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see ServerGroupType
 	 * @see Permission#getName()
 	 */
@@ -981,6 +1198,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see PrivilegeKey
 	 */
 	public CommandFuture<Boolean> deletePrivilegeKey(String token) {
@@ -999,6 +1217,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see VirtualServer#getId()
 	 * @see #stopServer(int)
 	 */
@@ -1015,6 +1234,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see ServerGroup#getId()
 	 */
 	public CommandFuture<Boolean> deleteServerGroup(int groupId) {
@@ -1035,6 +1255,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see ServerGroup#getId()
 	 */
 	public CommandFuture<Boolean> deleteServerGroup(int groupId, boolean force) {
@@ -1052,6 +1273,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see ServerGroup#getId()
 	 * @see Permission#getName()
 	 */
@@ -1069,6 +1291,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see #createServerSnapshot()
 	 */
 	public CommandFuture<Boolean> deployServerSnapshot(Snapshot snapshot) {
@@ -1084,11 +1307,242 @@ public class TS3ApiAsync {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see #createServerSnapshot()
 	 */
 	public CommandFuture<Boolean> deployServerSnapshot(String snapshot) {
 		final CServerSnapshotDeploy deploy = new CServerSnapshotDeploy(snapshot);
 		return executeAndReturnError(deploy);
+	}
+
+	/**
+	 * Downloads a file from the file repository at a given path and channel
+	 * and writes the file's bytes to an open {@link OutputStream}.
+	 * <p>
+	 * It is the user's responsibility to ensure that the given {@code OutputStream} is
+	 * open and to close the stream again once the download has finished.
+	 * </p><p>
+	 * Note that this method will not read the entire file to memory and can thus
+	 * download arbitrarily sized files from the file repository.
+	 * </p>
+	 *
+	 * @param dataOut
+	 * 		a stream that the downloaded data should be written to
+	 * @param filePath
+	 * 		the path of the file on the file repository
+	 * @param channelId
+	 * 		the ID of the channel to download the file from
+	 *
+	 * @return how many bytes were downloaded
+	 *
+	 * @throws TS3FileTransferFailedException
+	 * 		if the file transfer fails for any reason
+	 * @querycommands 1
+	 * @see FileInfo#getPath()
+	 * @see Channel#getId()
+	 * @see #downloadFileDirect(String, int)
+	 */
+	public CommandFuture<Long> downloadFile(OutputStream dataOut, String filePath, int channelId) {
+		return downloadFile(dataOut, filePath, channelId, null);
+	}
+
+	/**
+	 * Downloads a file from the file repository at a given path and channel
+	 * and writes the file's bytes to an open {@link OutputStream}.
+	 * <p>
+	 * It is the user's responsibility to ensure that the given {@code OutputStream} is
+	 * open and to close the stream again once the download has finished.
+	 * </p><p>
+	 * Note that this method will not read the entire file to memory and can thus
+	 * download arbitrarily sized files from the file repository.
+	 * </p>
+	 *
+	 * @param dataOut
+	 * 		a stream that the downloaded data should be written to
+	 * @param filePath
+	 * 		the path of the file on the file repository
+	 * @param channelId
+	 * 		the ID of the channel to download the file from
+	 * @param channelPassword
+	 * 		that channel's password
+	 *
+	 * @return how many bytes were downloaded
+	 *
+	 * @throws TS3FileTransferFailedException
+	 * 		if the file transfer fails for any reason
+	 * @querycommands 1
+	 * @see FileInfo#getPath()
+	 * @see Channel#getId()
+	 * @see #downloadFileDirect(String, int, String)
+	 */
+	public CommandFuture<Long> downloadFile(final OutputStream dataOut, String filePath, int channelId, String channelPassword) {
+		final FileTransferHelper helper = query.getFileTransferHelper();
+		final int transferId = helper.getClientTransferId();
+		final CFtInitDownload download = new CFtInitDownload(transferId, filePath, channelId, channelPassword);
+		final CommandFuture<Long> future = new CommandFuture<>();
+
+		query.doCommandAsync(download, new Callback() {
+			@Override
+			public void handle() {
+				if (hasFailed(download, future)) return;
+
+				FileTransferParameters params = new FileTransferParameters(download.getFirstResponse().getMap());
+				QueryError error = params.getQueryError();
+				if (!error.isSuccessful()) {
+					future.fail(new TS3CommandFailedException(error));
+					return;
+				}
+
+				try {
+					query.getFileTransferHelper().downloadFile(dataOut, params);
+				} catch (IOException e) {
+					future.fail(new TS3FileTransferFailedException("Download failed", e));
+					return;
+				}
+				future.set(params.getFileSize());
+			}
+		});
+		return future;
+	}
+
+	/**
+	 * Downloads a file from the file repository at a given path and channel
+	 * and returns the file's bytes as a byte array.
+	 * <p>
+	 * Note that this method <strong>will read the entire file to memory</strong>.
+	 * That means that if a file is larger than 2<sup>31</sup>-1 bytes in size,
+	 * the download will fail.
+	 * </p>
+	 *
+	 * @param filePath
+	 * 		the path of the file on the file repository
+	 * @param channelId
+	 * 		the ID of the channel to download the file from
+	 *
+	 * @return a byte array containing the file's data
+	 *
+	 * @throws TS3FileTransferFailedException
+	 * 		if the file transfer fails for any reason
+	 * @querycommands 1
+	 * @see FileInfo#getPath()
+	 * @see Channel#getId()
+	 * @see #downloadFile(OutputStream, String, int)
+	 */
+	public CommandFuture<byte[]> downloadFileDirect(String filePath, int channelId) {
+		return downloadFileDirect(filePath, channelId, null);
+	}
+
+	/**
+	 * Downloads a file from the file repository at a given path and channel
+	 * and returns the file's bytes as a byte array.
+	 * <p>
+	 * Note that this method <strong>will read the entire file to memory</strong>.
+	 * That means that if a file is larger than 2<sup>31</sup>-1 bytes in size,
+	 * the download will fail.
+	 * </p>
+	 *
+	 * @param filePath
+	 * 		the path of the file on the file repository
+	 * @param channelId
+	 * 		the ID of the channel to download the file from
+	 * @param channelPassword
+	 * 		that channel's password
+	 *
+	 * @return a byte array containing the file's data
+	 *
+	 * @throws TS3FileTransferFailedException
+	 * 		if the file transfer fails for any reason
+	 * @querycommands 1
+	 * @see FileInfo#getPath()
+	 * @see Channel#getId()
+	 * @see #downloadFile(OutputStream, String, int, String)
+	 */
+	public CommandFuture<byte[]> downloadFileDirect(String filePath, int channelId, String channelPassword) {
+		final FileTransferHelper helper = query.getFileTransferHelper();
+		final int transferId = helper.getClientTransferId();
+		final CFtInitDownload download = new CFtInitDownload(transferId, filePath, channelId, channelPassword);
+		final CommandFuture<byte[]> future = new CommandFuture<>();
+
+		query.doCommandAsync(download, new Callback() {
+			@Override
+			public void handle() {
+				if (hasFailed(download, future)) return;
+
+				FileTransferParameters params = new FileTransferParameters(download.getFirstResponse().getMap());
+				QueryError error = params.getQueryError();
+				if (!error.isSuccessful()) {
+					future.fail(new TS3CommandFailedException(error));
+					return;
+				}
+
+				long fileSize = params.getFileSize();
+				if (fileSize > Integer.MAX_VALUE) {
+					future.fail(new TS3FileTransferFailedException("File too big for byte array"));
+					return;
+				}
+				ByteArrayOutputStream dataOut = new ByteArrayOutputStream((int) fileSize);
+
+				try {
+					query.getFileTransferHelper().downloadFile(dataOut, params);
+				} catch (IOException e) {
+					future.fail(new TS3FileTransferFailedException("Download failed", e));
+					return;
+				}
+				future.set(dataOut.toByteArray());
+			}
+		});
+		return future;
+	}
+
+	/**
+	 * Downloads an icon from the icon directory in the file repository
+	 * and writes the file's bytes to an open {@link OutputStream}.
+	 * <p>
+	 * It is the user's responsibility to ensure that the given {@code OutputStream} is
+	 * open and to close the stream again once the download has finished.
+	 * </p>
+	 *
+	 * @param dataOut
+	 * 		a stream that the downloaded data should be written to
+	 * @param iconId
+	 * 		the ID of the icon that should be downloaded
+	 *
+	 * @return a byte array containing the icon file's data
+	 *
+	 * @throws TS3FileTransferFailedException
+	 * 		if the file transfer fails for any reason
+	 * @querycommands 1
+	 * @see IconFile#getIconId()
+	 * @see #downloadIconDirect(long)
+	 * @see #uploadIcon(InputStream, long)
+	 */
+	public CommandFuture<Long> downloadIcon(OutputStream dataOut, long iconId) {
+		final String iconPath = "/icon_" + iconId;
+		return downloadFile(dataOut, iconPath, 0);
+	}
+
+	/**
+	 * Downloads an icon from the icon directory in the file repository
+	 * and returns the file's bytes as a byte array.
+	 * <p>
+	 * Note that this method <strong>will read the entire file to memory</strong>.
+	 * </p>
+	 *
+	 * @param iconId
+	 * 		the ID of the icon that should be downloaded
+	 *
+	 * @return a byte array containing the icon file's data
+	 *
+	 * @throws TS3FileTransferFailedException
+	 * 		if the file transfer fails for any reason
+	 * @querycommands 1
+	 * @see IconFile#getIconId()
+	 * @see #downloadIcon(OutputStream, long)
+	 * @see #uploadIconDirect(byte[])
+	 */
+	public CommandFuture<byte[]> downloadIconDirect(long iconId) {
+		final String iconPath = "/icon_" + iconId;
+		return downloadFileDirect(iconPath, 0);
 	}
 
 	/**
@@ -1101,6 +1555,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see Channel#getId()
 	 */
 	public CommandFuture<Boolean> editChannel(int channelId, Map<ChannelProperty, String> options) {
@@ -1122,6 +1577,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see Client#getId()
 	 * @see #updateClient(Map)
 	 */
@@ -1140,6 +1596,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see DatabaseClientInfo
 	 * @see Client#getDatabaseId()
 	 */
@@ -1161,6 +1618,7 @@ public class TS3ApiAsync {
 	 *
 	 * @throws IllegalArgumentException
 	 * 		if {@code property} is not changeable
+	 * @querycommands 1
 	 * @see ServerInstanceProperty#isChangeable()
 	 */
 	public CommandFuture<Boolean> editInstance(ServerInstanceProperty property, String value) {
@@ -1180,6 +1638,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see VirtualServerProperty
 	 */
 	public CommandFuture<Boolean> editServer(Map<VirtualServerProperty, String> options) {
@@ -1192,6 +1651,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return a list of all bans on the virtual server
 	 *
+	 * @querycommands 1
 	 * @see Ban
 	 */
 	public CommandFuture<List<Ban>> getBans() {
@@ -1220,6 +1680,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return the list of bound IP addresses
 	 *
+	 * @querycommands 1
 	 * @see Binding
 	 */
 	public CommandFuture<List<Binding>> getBindings() {
@@ -1253,18 +1714,19 @@ public class TS3ApiAsync {
 	 *
 	 * @return the found channel or {@code null} if no channel was found
 	 *
+	 * @querycommands 1
 	 * @see Channel
 	 * @see #getChannelsByName(String)
 	 */
 	public CommandFuture<Channel> getChannelByNameExact(String name, final boolean ignoreCase) {
 		final CommandFuture<Channel> future = new CommandFuture<>();
-		final String caseName = ignoreCase ? name.toLowerCase() : name;
+		final String caseName = ignoreCase ? name.toLowerCase(Locale.ROOT) : name;
 
 		getChannels().onSuccess(new CommandFuture.SuccessListener<List<Channel>>() {
 			@Override
 			public void handleSuccess(final List<Channel> allChannels) {
 				for (final Channel c : allChannels) {
-					final String channelName = ignoreCase ? c.getName().toLowerCase() : c.getName();
+					final String channelName = ignoreCase ? c.getName().toLowerCase(Locale.ROOT) : c.getName();
 					if (caseName.equals(channelName)) {
 						future.set(c);
 						return;
@@ -1284,6 +1746,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return a list of all channels with names matching the search pattern
 	 *
+	 * @querycommands 2
 	 * @see Channel
 	 * @see #getChannelByNameExact(String, boolean)
 	 */
@@ -1329,6 +1792,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return a list of permissions for the user in the specified channel
 	 *
+	 * @querycommands 1
 	 * @see Channel#getId()
 	 * @see Client#getDatabaseId()
 	 * @see Permission
@@ -1367,6 +1831,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return a list of combinations of channel ID, client database ID and channel group ID
 	 *
+	 * @querycommands 1
 	 * @see Channel#getId()
 	 * @see Client#getDatabaseId()
 	 * @see ChannelGroup#getId()
@@ -1401,6 +1866,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return a list of combinations of channel ID, client database ID and channel group ID
 	 *
+	 * @querycommands 1
 	 * @see ChannelGroup#getId()
 	 * @see ChannelGroupClient
 	 * @see #getChannelGroupClients(int, int, int)
@@ -1417,6 +1883,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return a list of combinations of channel ID, client database ID and channel group ID
 	 *
+	 * @querycommands 1
 	 * @see Channel#getId()
 	 * @see ChannelGroupClient
 	 * @see #getChannelGroupClients(int, int, int)
@@ -1433,6 +1900,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return a list of combinations of channel ID, client database ID and channel group ID
 	 *
+	 * @querycommands 1
 	 * @see Client#getDatabaseId()
 	 * @see ChannelGroupClient
 	 * @see #getChannelGroupClients(int, int, int)
@@ -1449,6 +1917,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return a list of permissions assigned to the channel group
 	 *
+	 * @querycommands 1
 	 * @see ChannelGroup#getId()
 	 * @see Permission
 	 */
@@ -1478,6 +1947,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return a list of all channel groups on the virtual server
 	 *
+	 * @querycommands 1
 	 * @see ChannelGroup
 	 */
 	public CommandFuture<List<ChannelGroup>> getChannelGroups() {
@@ -1509,6 +1979,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return information about the channel
 	 *
+	 * @querycommands 1
 	 * @see Channel#getId()
 	 * @see ChannelInfo
 	 */
@@ -1534,6 +2005,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return a list of all permissions assigned to the channel
 	 *
+	 * @querycommands 1
 	 * @see Channel#getId()
 	 * @see Permission
 	 */
@@ -1563,6 +2035,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return a list of all channels on the virtual server
 	 *
+	 * @querycommands 1
 	 * @see Channel
 	 */
 	public CommandFuture<List<Channel>> getChannels() {
@@ -1596,18 +2069,19 @@ public class TS3ApiAsync {
 	 *
 	 * @return the found client or {@code null} if no client was found
 	 *
+	 * @querycommands 1
 	 * @see Client
 	 * @see #getClientsByName(String)
 	 */
 	public CommandFuture<Client> getClientByNameExact(String name, final boolean ignoreCase) {
 		final CommandFuture<Client> future = new CommandFuture<>();
-		final String caseName = ignoreCase ? name.toLowerCase() : name;
+		final String caseName = ignoreCase ? name.toLowerCase(Locale.ROOT) : name;
 
 		getClients().onSuccess(new CommandFuture.SuccessListener<List<Client>>() {
 			@Override
 			public void handleSuccess(final List<Client> allClients) {
 				for (final Client c : allClients) {
-					final String clientName = ignoreCase ? c.getNickname().toLowerCase() : c.getNickname();
+					final String clientName = ignoreCase ? c.getNickname().toLowerCase(Locale.ROOT) : c.getNickname();
 					if (caseName.equals(clientName)) {
 						future.set(c);
 						return;
@@ -1627,6 +2101,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return a list of all clients with nicknames matching the search pattern
 	 *
+	 * @querycommands 2
 	 * @see Client
 	 * @see #getClientByNameExact(String, boolean)
 	 */
@@ -1669,6 +2144,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return the client or {@code null} if no client was found
 	 *
+	 * @querycommands 2
 	 * @see Client#getUniqueIdentifier()
 	 * @see ClientInfo
 	 */
@@ -1695,6 +2171,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return the client or {@code null} if no client was found
 	 *
+	 * @querycommands 1
 	 * @see Client#getId()
 	 * @see ClientInfo
 	 */
@@ -1720,6 +2197,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return a list of all permissions assigned to the client
 	 *
+	 * @querycommands 1
 	 * @see Client#getDatabaseId()
 	 * @see Permission
 	 */
@@ -1749,6 +2227,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return a list of all clients on the virtual server
 	 *
+	 * @querycommands 1
 	 * @see Client
 	 */
 	public CommandFuture<List<Client>> getClients() {
@@ -1777,6 +2256,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return a list of all complaints on the virtual server
 	 *
+	 * @querycommands 1
 	 * @see Complaint
 	 * @see #getComplaints(int)
 	 */
@@ -1792,6 +2272,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return a list of all complaints about the specified client
 	 *
+	 * @querycommands 1
 	 * @see Client#getDatabaseId()
 	 * @see Complaint
 	 */
@@ -1821,6 +2302,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return connection information about the selected virtual server
 	 *
+	 * @querycommands 1
 	 * @see ConnectionInfo
 	 * @see #getServerInfo()
 	 */
@@ -1846,6 +2328,8 @@ public class TS3ApiAsync {
 	 *
 	 * @return a list of all clients with a matching nickname
 	 *
+	 * @querycommands 1 + n,
+	 * where n is the amount of database clients with a matching nickname
 	 * @see Client#getNickname()
 	 */
 	public CommandFuture<List<DatabaseClientInfo>> getDatabaseClientsByName(String name) {
@@ -1878,6 +2362,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return the database client or {@code null} if no client was found
 	 *
+	 * @querycommands 2
 	 * @see Client#getUniqueIdentifier()
 	 * @see DatabaseClientInfo
 	 */
@@ -1904,6 +2389,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return the database client or {@code null} if no client was found
 	 *
+	 * @querycommands 1
 	 * @see Client#getDatabaseId()
 	 * @see DatabaseClientInfo
 	 */
@@ -1932,6 +2418,8 @@ public class TS3ApiAsync {
 	 *
 	 * @return a {@link List} of all database clients
 	 *
+	 * @querycommands 1 + n,
+	 * where n = Math.ceil([amount of database clients] / 200)
 	 * @see DatabaseClient
 	 */
 	public CommandFuture<List<DatabaseClient>> getDatabaseClients() {
@@ -1982,6 +2470,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return a {@link List} of database clients
 	 *
+	 * @querycommands 1
 	 * @see DatabaseClient
 	 */
 	public CommandFuture<List<DatabaseClient>> getDatabaseClients(final int offset, final int count) {
@@ -2004,10 +2493,255 @@ public class TS3ApiAsync {
 	}
 
 	/**
+	 * Gets information about a file on the file repository in the specified channel.
+	 * <p>
+	 * Note that this method does not work on directories and the information returned by this
+	 * method is identical to the one returned by {@link #getFileList(String, int, String)}
+	 * </p>
+	 *
+	 * @param filePath
+	 * 		the path to the file
+	 * @param channelId
+	 * 		the ID of the channel the file resides in
+	 *
+	 * @return some information about the file
+	 *
+	 * @querycommands 1
+	 * @see FileInfo#getPath()
+	 * @see Channel#getId()
+	 */
+	public CommandFuture<FileInfo> getFileInfo(String filePath, int channelId) {
+		return getFileInfo(filePath, channelId, null);
+	}
+
+	/**
+	 * Gets information about a file on the file repository in the specified channel.
+	 * <p>
+	 * Note that this method does not work on directories and the information returned by this
+	 * method is identical to the one returned by {@link #getFileList(String, int, String)}
+	 * </p>
+	 *
+	 * @param filePath
+	 * 		the path to the file
+	 * @param channelId
+	 * 		the ID of the channel the file resides in
+	 * @param channelPassword
+	 * 		the password of that channel
+	 *
+	 * @return some information about the file
+	 *
+	 * @querycommands 1
+	 * @see FileInfo#getPath()
+	 * @see Channel#getId()
+	 */
+	public CommandFuture<FileInfo> getFileInfo(String filePath, int channelId, String channelPassword) {
+		final CFtGetFileInfo info = new CFtGetFileInfo(channelId, channelPassword, filePath);
+		final CommandFuture<FileInfo> future = new CommandFuture<>();
+
+		query.doCommandAsync(info, new Callback() {
+			@Override
+			public void handle() {
+				if (hasFailed(info, future)) return;
+				future.set(new FileInfo(info.getFirstResponse().getMap()));
+			}
+		});
+		return future;
+	}
+
+	/**
+	 * Gets information about multiple files on the file repository in the specified channel.
+	 * <p>
+	 * Note that this method does not work on directories and the information returned by this
+	 * method is identical to the one returned by {@link #getFileList(String, int, String)}
+	 * </p>
+	 *
+	 * @param filePaths
+	 * 		the paths to the files
+	 * @param channelId
+	 * 		the ID of the channel the file resides in
+	 *
+	 * @return some information about the file
+	 *
+	 * @querycommands 1
+	 * @see FileInfo#getPath()
+	 * @see Channel#getId()
+	 */
+	public CommandFuture<List<FileInfo>> getFileInfos(String filePaths[], int channelId) {
+		return getFileInfos(filePaths, channelId, null);
+	}
+
+	/**
+	 * Gets information about multiple files on the file repository in the specified channel.
+	 * <p>
+	 * Note that this method does not work on directories and the information returned by this
+	 * method is identical to the one returned by {@link #getFileList(String, int, String)}
+	 * </p>
+	 *
+	 * @param filePaths
+	 * 		the paths to the files
+	 * @param channelId
+	 * 		the ID of the channel the file resides in
+	 * @param channelPassword
+	 * 		the password of that channel
+	 *
+	 * @return some information about the file
+	 *
+	 * @querycommands 1
+	 * @see FileInfo#getPath()
+	 * @see Channel#getId()
+	 */
+	public CommandFuture<List<FileInfo>> getFileInfos(String filePaths[], int channelId, String channelPassword) {
+		final CFtGetFileInfo info = new CFtGetFileInfo(channelId, channelPassword, filePaths);
+		final CommandFuture<List<FileInfo>> future = new CommandFuture<>();
+
+		query.doCommandAsync(info, new Callback() {
+			@Override
+			public void handle() {
+				if (hasFailed(info, future)) return;
+
+				final List<Wrapper> responses = info.getResponse();
+				final List<FileInfo> files = new ArrayList<>(responses.size());
+
+				for (final Wrapper response : responses) {
+					files.add(new FileInfo(response.getMap()));
+				}
+				future.set(files);
+			}
+		});
+		return future;
+	}
+
+	/**
+	 * Gets information about multiple files on the file repository in multiple channels.
+	 * <p>
+	 * Note that this method does not work on directories and the information returned by this
+	 * method is identical to the one returned by {@link #getFileList(String, int, String)}
+	 * </p>
+	 *
+	 * @param filePaths
+	 * 		the paths to the files, may not be {@code null} and may not contain {@code null} elements
+	 * @param channelIds
+	 * 		the IDs of the channels the file resides in, may not be {@code null}
+	 * @param channelPasswords
+	 * 		the passwords of those channels, may be {@code null} and may contain {@code null} elements
+	 *
+	 * @return some information about the files
+	 *
+	 * @throws IllegalArgumentException
+	 * 		if the dimensions of {@code filePaths}, {@code channelIds} and {@code channelPasswords} don't match
+	 * @querycommands 1
+	 * @see FileInfo#getPath()
+	 * @see Channel#getId()
+	 */
+	public CommandFuture<List<FileInfo>> getFileInfos(String filePaths[], int[] channelIds, String[] channelPasswords) {
+		final CFtGetFileInfo info = new CFtGetFileInfo(channelIds, channelPasswords, filePaths);
+		final CommandFuture<List<FileInfo>> future = new CommandFuture<>();
+
+		query.doCommandAsync(info, new Callback() {
+			@Override
+			public void handle() {
+				if (hasFailed(info, future)) return;
+
+				final List<Wrapper> responses = info.getResponse();
+				final List<FileInfo> files = new ArrayList<>(responses.size());
+
+				for (final Wrapper response : responses) {
+					files.add(new FileInfo(response.getMap()));
+				}
+				future.set(files);
+			}
+		});
+		return future;
+	}
+
+	/**
+	 * Gets a list of files and directories in the specified parent directory and channel.
+	 *
+	 * @param directoryPath
+	 * 		the path to the parent directory
+	 * @param channelId
+	 * 		the ID of the channel the directory resides in
+	 *
+	 * @return the files and directories in the parent directory
+	 *
+	 * @querycommands 1
+	 * @see FileInfo#getPath()
+	 * @see Channel#getId()
+	 */
+	public CommandFuture<List<FileListEntry>> getFileList(String directoryPath, int channelId) {
+		return getFileList(directoryPath, channelId, null);
+	}
+
+	/**
+	 * Gets a list of files and directories in the specified parent directory and channel.
+	 *
+	 * @param directoryPath
+	 * 		the path to the parent directory
+	 * @param channelId
+	 * 		the ID of the channel the directory resides in
+	 * @param channelPassword
+	 * 		the password of that channel
+	 *
+	 * @return the files and directories in the parent directory
+	 *
+	 * @querycommands 1
+	 * @see FileInfo#getPath()
+	 * @see Channel#getId()
+	 */
+	public CommandFuture<List<FileListEntry>> getFileList(final String directoryPath, final int channelId, String channelPassword) {
+		final CFtGetFileList list = new CFtGetFileList(directoryPath, channelId, channelPassword);
+		final CommandFuture<List<FileListEntry>> future = new CommandFuture<>();
+
+		query.doCommandAsync(list, new Callback() {
+			@Override
+			public void handle() {
+				if (hasFailed(list, future)) return;
+
+				final List<Wrapper> responses = list.getResponse();
+				final List<FileListEntry> files = new ArrayList<>(responses.size());
+
+				for (final Wrapper response : responses) {
+					files.add(new FileListEntry(response.getMap(), channelId, directoryPath));
+				}
+				future.set(files);
+			}
+		});
+		return future;
+	}
+
+	/**
+	 * Gets a list of active or recently active file transfers.
+	 *
+	 * @return a list of file transfers
+	 */
+	public CommandFuture<List<FileTransfer>> getFileTransfers() {
+		final CFtList list = new CFtList();
+		final CommandFuture<List<FileTransfer>> future = new CommandFuture<>();
+
+		query.doCommandAsync(list, new Callback() {
+			@Override
+			public void handle() {
+				if (hasFailed(list, future)) return;
+
+				final List<Wrapper> responses = list.getResponse();
+				final List<FileTransfer> transfers = new ArrayList<>(responses.size());
+
+				for (final Wrapper response : responses) {
+					transfers.add(new FileTransfer(response.getMap()));
+				}
+				future.set(transfers);
+			}
+		});
+		return future;
+	}
+
+	/**
 	 * Displays detailed configuration information about the server instance including
 	 * uptime, number of virtual servers online, traffic information, etc.
 	 *
-	 * @return information about the
+	 * @return information about the host
+	 *
+	 * @querycommands 1
 	 */
 	public CommandFuture<HostInfo> getHostInfo() {
 		final CHostInfo info = new CHostInfo();
@@ -2024,10 +2758,35 @@ public class TS3ApiAsync {
 	}
 
 	/**
+	 * Gets a list of all icon files on this virtual server.
+	 *
+	 * @return a list of all icons
+	 */
+	public CommandFuture<List<IconFile>> getIconList() {
+		final CommandFuture<List<IconFile>> future = new CommandFuture<>();
+
+		getFileList("/icons/", 0).onSuccess(new CommandFuture.SuccessListener<List<FileListEntry>>() {
+			@Override
+			public void handleSuccess(List<FileListEntry> result) {
+				List<IconFile> icons = new ArrayList<>(result.size());
+				for (FileListEntry file : result) {
+					if (file.isDirectory() || file.isStillUploading()) continue;
+					icons.add(new IconFile(file.getMap(), 0, "/icons/"));
+				}
+				future.set(icons);
+			}
+		}).forwardFailure(future);
+
+		return future;
+	}
+
+	/**
 	 * Displays the server instance configuration including database revision number,
 	 * the file transfer port, default group IDs, etc.
 	 *
 	 * @return information about the TeamSpeak server instance.
+	 *
+	 * @querycommands 1
 	 */
 	public CommandFuture<InstanceInfo> getInstanceInfo() {
 		final CInstanceInfo info = new CInstanceInfo();
@@ -2051,6 +2810,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return the body of the message with the specified ID or {@code null} if there was no message with that ID
 	 *
+	 * @querycommands 1
 	 * @see Message#getId()
 	 * @see #setMessageRead(int)
 	 */
@@ -2067,6 +2827,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return the body of the message with the specified ID or {@code null} if there was no message with that ID
 	 *
+	 * @querycommands 1
 	 * @see Message#getId()
 	 * @see #setMessageRead(Message)
 	 */
@@ -2080,6 +2841,8 @@ public class TS3ApiAsync {
 	 * To read the actual message, use {@link #getOfflineMessage(int)} or {@link #getOfflineMessage(Message)}.
 	 *
 	 * @return a list of all offline messages this server query has received
+	 *
+	 * @querycommands 1
 	 */
 	public CommandFuture<List<Message>> getOfflineMessages() {
 		final CMessageList list = new CMessageList();
@@ -2112,11 +2875,12 @@ public class TS3ApiAsync {
 	 *
 	 * @return a list of permission assignments
 	 *
+	 * @querycommands 1
 	 * @see #getPermissionOverview(int, int)
 	 */
-	public CommandFuture<List<AdvancedPermission>> getPermissionAssignments(String permName) {
+	public CommandFuture<List<PermissionAssignment>> getPermissionAssignments(String permName) {
 		final CPermFind find = new CPermFind(permName);
-		final CommandFuture<List<AdvancedPermission>> future = new CommandFuture<>();
+		final CommandFuture<List<PermissionAssignment>> future = new CommandFuture<>();
 
 		query.doCommandAsync(find, new Callback() {
 			@Override
@@ -2124,10 +2888,10 @@ public class TS3ApiAsync {
 				if (hasFailed(find, future)) return;
 
 				final List<Wrapper> responses = find.getResponse();
-				final List<AdvancedPermission> assignments = new ArrayList<>(responses.size());
+				final List<PermissionAssignment> assignments = new ArrayList<>(responses.size());
 
 				for (final Wrapper response : responses) {
-					assignments.add(new AdvancedPermission(response.getMap()));
+					assignments.add(new PermissionAssignment(response.getMap()));
 				}
 				future.set(assignments);
 			}
@@ -2146,10 +2910,51 @@ public class TS3ApiAsync {
 	 * 		the name of the permission
 	 *
 	 * @return the numeric ID of the specified permission
+	 *
+	 * @querycommands 1
 	 */
 	public CommandFuture<Integer> getPermissionIdByName(String permName) {
 		final CPermIdGetByName get = new CPermIdGetByName(permName);
 		return executeAndReturnIntProperty(get, "permid");
+	}
+
+	/**
+	 * Gets the IDs of the permissions specified by {@code permNames}.
+	 * <p>
+	 * Note that the use of numeric permission IDs is deprecated
+	 * and that this API only uses the string variant of the IDs.
+	 * </p>
+	 *
+	 * @param permNames
+	 * 		the names of the permissions
+	 *
+	 * @return the numeric IDs of the specified permission
+	 *
+	 * @throws IllegalArgumentException
+	 * 		if {@code permNames} is {@code null}
+	 * @querycommands 1
+	 */
+	public CommandFuture<int[]> getPermissionIdsByName(String[] permNames) {
+		if (permNames == null) throw new IllegalArgumentException("permNames was null");
+
+		final CPermIdGetByName get = new CPermIdGetByName(permNames);
+		final CommandFuture<int[]> future = new CommandFuture<>();
+
+		query.doCommandAsync(get, new Callback() {
+			@Override
+			public void handle() {
+				if (hasFailed(get, future)) return;
+
+				final List<Wrapper> responses = get.getResponse();
+				int[] ids = new int[responses.size()];
+				int i = 0;
+				for (final Wrapper response : get.getResponse()) {
+					ids[i++] = response.getInt("permid");
+				}
+				future.set(ids);
+			}
+		});
+		return future;
 	}
 
 	/**
@@ -2163,12 +2968,13 @@ public class TS3ApiAsync {
 	 *
 	 * @return a list of all permission assignments for the client in the specified channel
 	 *
+	 * @querycommands 1
 	 * @see Channel#getId()
 	 * @see Client#getDatabaseId()
 	 */
-	public CommandFuture<List<AdvancedPermission>> getPermissionOverview(int channelId, int clientDBId) {
+	public CommandFuture<List<PermissionAssignment>> getPermissionOverview(int channelId, int clientDBId) {
 		final CPermOverview overview = new CPermOverview(channelId, clientDBId);
-		final CommandFuture<List<AdvancedPermission>> future = new CommandFuture<>();
+		final CommandFuture<List<PermissionAssignment>> future = new CommandFuture<>();
 
 		query.doCommandAsync(overview, new Callback() {
 			@Override
@@ -2176,10 +2982,10 @@ public class TS3ApiAsync {
 				if (hasFailed(overview, future)) return;
 
 				final List<Wrapper> responses = overview.getResponse();
-				final List<AdvancedPermission> permissions = new ArrayList<>(responses.size());
+				final List<PermissionAssignment> permissions = new ArrayList<>(responses.size());
 
 				for (final Wrapper response : responses) {
-					permissions.add(new AdvancedPermission(response.getMap()));
+					permissions.add(new PermissionAssignment(response.getMap()));
 				}
 				future.set(permissions);
 			}
@@ -2191,6 +2997,8 @@ public class TS3ApiAsync {
 	 * Displays a list of all permissions, including ID, name and description.
 	 *
 	 * @return a list of all permissions
+	 *
+	 * @querycommands 1
 	 */
 	public CommandFuture<List<PermissionInfo>> getPermissions() {
 		final CPermissionList list = new CPermissionList();
@@ -2220,10 +3028,47 @@ public class TS3ApiAsync {
 	 * 		the name of the permission
 	 *
 	 * @return the permission value, usually ranging from 0 to 100
+	 *
+	 * @querycommands 1
 	 */
 	public CommandFuture<Integer> getPermissionValue(String permName) {
 		final CPermGet get = new CPermGet(permName);
 		return executeAndReturnIntProperty(get, "permvalue");
+	}
+
+	/**
+	 * Displays the current values of the specified permissions for this server query instance.
+	 *
+	 * @param permNames
+	 * 		the names of the permissions
+	 *
+	 * @return the permission values, usually ranging from 0 to 100
+	 *
+	 * @throws IllegalArgumentException
+	 * 		if {@code permNames} is {@code null}
+	 * @querycommands 1
+	 */
+	public CommandFuture<int[]> getPermissionValues(String[] permNames) {
+		if (permNames == null) throw new IllegalArgumentException("permNames was null");
+
+		final CPermGet get = new CPermGet(permNames);
+		final CommandFuture<int[]> future = new CommandFuture<>();
+
+		query.doCommandAsync(get, new Callback() {
+			@Override
+			public void handle() {
+				if (hasFailed(get, future)) return;
+
+				final List<Wrapper> responses = get.getResponse();
+				int[] values = new int[responses.size()];
+				int i = 0;
+				for (final Wrapper response : get.getResponse()) {
+					values[i++] = response.getInt("permvalue");
+				}
+				future.set(values);
+			}
+		});
+		return future;
 	}
 
 	/**
@@ -2232,7 +3077,8 @@ public class TS3ApiAsync {
 	 *
 	 * @return a list of all generated, but still unclaimed privilege keys
 	 *
-	 * @see #addPrivilegeKey(TokenType, int, int, String)
+	 * @querycommands 1
+	 * @see #addPrivilegeKey(PrivilegeKeyType, int, int, String)
 	 * @see #usePrivilegeKey(String)
 	 */
 	public CommandFuture<List<PrivilegeKey>> getPrivilegeKeys() {
@@ -2263,6 +3109,8 @@ public class TS3ApiAsync {
 	 * 		the ID of the server group for which the clients should be looked up
 	 *
 	 * @return a list of all clients in the server group
+	 *
+	 * @querycommands 1
 	 */
 	public CommandFuture<List<ServerGroupClient>> getServerGroupClients(int serverGroupId) {
 		final CServerGroupClientList list = new CServerGroupClientList(serverGroupId);
@@ -2292,6 +3140,8 @@ public class TS3ApiAsync {
 	 * 		the server group for which the clients should be looked up
 	 *
 	 * @return a list of all clients in the server group
+	 *
+	 * @querycommands 1
 	 */
 	public CommandFuture<List<ServerGroupClient>> getServerGroupClients(ServerGroup serverGroup) {
 		return getServerGroupClients(serverGroup.getId());
@@ -2305,6 +3155,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return a list of all permissions assigned to the server group
 	 *
+	 * @querycommands 1
 	 * @see ServerGroup#getId()
 	 * @see #getServerGroupPermissions(ServerGroup)
 	 */
@@ -2336,6 +3187,8 @@ public class TS3ApiAsync {
 	 * 		the server group for which the permissions should be looked up
 	 *
 	 * @return a list of all permissions assigned to the server group
+	 *
+	 * @querycommands 1
 	 */
 	public CommandFuture<List<Permission>> getServerGroupPermissions(ServerGroup serverGroup) {
 		return getServerGroupPermissions(serverGroup.getId());
@@ -2349,6 +3202,8 @@ public class TS3ApiAsync {
 	 * </p>
 	 *
 	 * @return a list of all server groups
+	 *
+	 * @querycommands 1
 	 */
 	public CommandFuture<List<ServerGroup>> getServerGroups() {
 		final CServerGroupList list = new CServerGroupList();
@@ -2379,6 +3234,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return a list of all server groups set for the client
 	 *
+	 * @querycommands 2
 	 * @see Client#getDatabaseId()
 	 * @see #getServerGroupsByClient(Client)
 	 */
@@ -2420,6 +3276,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return a list of all server group set for the client
 	 *
+	 * @querycommands 2
 	 * @see #getServerGroupsByClientId(int)
 	 */
 	public CommandFuture<List<ServerGroup>> getServerGroupsByClient(Client client) {
@@ -2434,6 +3291,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return the ID of the virtual server
 	 *
+	 * @querycommands 1
 	 * @see VirtualServer#getPort()
 	 * @see VirtualServer#getId()
 	 */
@@ -2446,6 +3304,8 @@ public class TS3ApiAsync {
 	 * Gets detailed information about the virtual server the server query is currently in.
 	 *
 	 * @return information about the current virtual server
+	 *
+	 * @querycommands 1
 	 */
 	public CommandFuture<VirtualServerInfo> getServerInfo() {
 		final CServerInfo info = new CServerInfo();
@@ -2465,6 +3325,8 @@ public class TS3ApiAsync {
 	 * Gets the version, build number and platform of the TeamSpeak3 server.
 	 *
 	 * @return the version information of the server
+	 *
+	 * @querycommands 1
 	 */
 	public CommandFuture<Version> getVersion() {
 		final CVersion version = new CVersion();
@@ -2484,6 +3346,8 @@ public class TS3ApiAsync {
 	 * Gets a list of all virtual servers including their ID, status, number of clients online, etc.
 	 *
 	 * @return a list of all virtual servers
+	 *
+	 * @querycommands 1
 	 */
 	public CommandFuture<List<VirtualServer>> getVirtualServers() {
 		final CServerList serverList = new CServerList();
@@ -2516,6 +3380,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see #kickClientFromChannel(Client...)
 	 * @see #kickClientFromChannel(String, int...)
 	 */
@@ -2533,6 +3398,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see #kickClientFromChannel(int...)
 	 * @see #kickClientFromChannel(String, Client...)
 	 */
@@ -2552,6 +3418,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see Client#getId()
 	 * @see #kickClientFromChannel(int...)
 	 * @see #kickClientFromChannel(String, Client...)
@@ -2572,6 +3439,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see #kickClientFromChannel(Client...)
 	 * @see #kickClientFromChannel(String, int...)
 	 */
@@ -2587,6 +3455,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see Client#getId()
 	 * @see #kickClientFromServer(Client...)
 	 * @see #kickClientFromServer(String, int...)
@@ -2603,6 +3472,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see #kickClientFromServer(int...)
 	 * @see #kickClientFromServer(String, Client...)
 	 */
@@ -2620,6 +3490,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see Client#getId()
 	 * @see #kickClientFromServer(int...)
 	 * @see #kickClientFromServer(String, Client...)
@@ -2638,6 +3509,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see #kickClientFromServer(Client...)
 	 * @see #kickClientFromServer(String, int...)
 	 */
@@ -2656,6 +3528,8 @@ public class TS3ApiAsync {
 	 * 		the clients to kick
 	 *
 	 * @return whether the command succeeded or not
+	 *
+	 * @querycommands 1
 	 */
 	private CommandFuture<Boolean> kickClients(ReasonIdentifier reason, String message, Client... clients) {
 		int[] clientIds = new int[clients.length];
@@ -2677,6 +3551,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see Client#getId()
 	 */
 	private CommandFuture<Boolean> kickClients(ReasonIdentifier reason, String message, int... clientIds) {
@@ -2698,7 +3573,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return whether the command succeeded or not
 	 *
-	 * @see TS3Config#setLoginCredentials(String, String)
+	 * @querycommands 1
 	 * @see #logout()
 	 */
 	public CommandFuture<Boolean> login(String username, String password) {
@@ -2711,6 +3586,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see #login(String, String)
 	 */
 	public CommandFuture<Boolean> logout() {
@@ -2733,6 +3609,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see Channel#getId()
 	 * @see #moveChannel(int, int, int)
 	 */
@@ -2758,6 +3635,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see Channel#getId()
 	 * @see #moveChannel(int, int)
 	 */
@@ -2767,63 +3645,11 @@ public class TS3ApiAsync {
 	}
 
 	/**
-	 * Moves the server query into the specified channel.
-	 *
-	 * @param channelId
-	 * 		the ID of the channel to move the client into
-	 *
-	 * @return whether the command succeeded or not
-	 *
-	 * @see Channel#getId()
-	 */
-	public CommandFuture<Boolean> moveClient(int channelId) {
-		return moveClient(channelId, null);
-	}
-
-	/**
-	 * Moves the server query into the specified channel.
-	 *
-	 * @param channel
-	 * 		the channel to move the client into
-	 *
-	 * @return whether the command succeeded or not
-	 */
-	public CommandFuture<Boolean> moveClient(ChannelBase channel) {
-		return moveClient(channel.getId(), null);
-	}
-
-	/**
-	 * Moves the server query into the specified channel using the specified password.
-	 *
-	 * @param channelId
-	 * 		the ID of the channel to move the client into
-	 * @param channelPassword
-	 * 		the password of the channel
-	 *
-	 * @return whether the command succeeded or not
-	 *
-	 * @see Channel#getId()
-	 */
-	public CommandFuture<Boolean> moveClient(int channelId, String channelPassword) {
-		return moveClient(0, channelId, channelPassword);
-	}
-
-	/**
-	 * Moves the server query into the specified channel using the specified password.
-	 *
-	 * @param channel
-	 * 		the channel to move the client into
-	 * @param channelPassword
-	 * 		the password of the channel
-	 *
-	 * @return whether the command succeeded or not
-	 */
-	public CommandFuture<Boolean> moveClient(ChannelBase channel, String channelPassword) {
-		return moveClient(0, channel.getId(), channelPassword);
-	}
-
-	/**
-	 * Moves a client into the specified channel.
+	 * Moves a client into a channel.
+	 * <p>
+	 * Consider using {@link #moveClients(int[], int)}
+	 * for moving multiple clients.
+	 * </p>
 	 *
 	 * @param clientId
 	 * 		the ID of the client to move
@@ -2832,6 +3658,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see Client#getId()
 	 * @see Channel#getId()
 	 */
@@ -2840,31 +3667,88 @@ public class TS3ApiAsync {
 	}
 
 	/**
-	 * Moves a client into the specified channel.
+	 * Moves multiple clients into a channel.
+	 * Immediately returns {@code true} for an empty client ID array.
+	 * <p>
+	 * Use this method instead of {@link #moveClient(int, int)} for moving
+	 * several clients as this will only send 1 command to the server and thus complete faster.
+	 * </p>
 	 *
-	 * @param client
-	 * 		the client to move
-	 * @param channel
-	 * 		the channel to move the client into
+	 * @param clientIds
+	 * 		the IDs of the clients to move, cannot be {@code null}
+	 * @param channelId
+	 * 		the ID of the channel to move the clients into
 	 *
 	 * @return whether the command succeeded or not
+	 *
+	 * @throws IllegalArgumentException
+	 * 		if {@code clientIds} is {@code null}
+	 * @querycommands 1
+	 * @see Client#getId()
+	 * @see Channel#getId()
 	 */
-	public CommandFuture<Boolean> moveClient(Client client, ChannelBase channel) {
-		return moveClient(client.getId(), channel.getId(), null);
+	public CommandFuture<Boolean> moveClients(int[] clientIds, int channelId) {
+		return moveClients(clientIds, channelId, null);
 	}
 
 	/**
-	 * Moves a client into the specified channel using the specified password.
+	 * Moves a client into a channel.
+	 * <p>
+	 * Consider using {@link #moveClients(Client[], ChannelBase)}
+	 * for moving multiple clients.
+	 * </p>
+	 *
+	 * @param client
+	 * 		the client to move, cannot be {@code null}
+	 * @param channel
+	 * 		the channel to move the client into, cannot be {@code null}
+	 *
+	 * @return whether the command succeeded or not
+	 *
+	 * @throws IllegalArgumentException
+	 * 		if {@code client} or {@code channel} is {@code null}
+	 * @querycommands 1
+	 */
+	public CommandFuture<Boolean> moveClient(Client client, ChannelBase channel) {
+		return moveClient(client, channel, null);
+	}
+
+	/**
+	 * Moves multiple clients into a channel.
+	 * Immediately returns {@code true} for an empty client array.
+	 * <p>
+	 * Use this method instead of {@link #moveClient(Client, ChannelBase)} for moving
+	 * several clients as this will only send 1 command to the server and thus complete faster.
+	 * </p>
+	 *
+	 * @param clients
+	 * 		the clients to move, cannot be {@code null}
+	 * @param channel
+	 * 		the channel to move the clients into, cannot be {@code null}
+	 *
+	 * @return whether the command succeeded or not
+	 *
+	 * @throws IllegalArgumentException
+	 * 		if {@code clients} or {@code channel} is {@code null}
+	 * @querycommands 1
+	 */
+	public CommandFuture<Boolean> moveClients(Client[] clients, ChannelBase channel) {
+		return moveClients(clients, channel, null);
+	}
+
+	/**
+	 * Moves a client into a channel using the specified password.
 	 *
 	 * @param clientId
 	 * 		the ID of the client to move
 	 * @param channelId
 	 * 		the ID of the channel to move the client into
 	 * @param channelPassword
-	 * 		the password of the channel
+	 * 		the password of the channel, can be {@code null}
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see Client#getId()
 	 * @see Channel#getId()
 	 */
@@ -2874,19 +3758,260 @@ public class TS3ApiAsync {
 	}
 
 	/**
-	 * Moves a client into the specified channel using the specified password.
+	 * Moves multiple clients into a channel using the specified password.
+	 * Immediately returns {@code true} for an empty client ID array.
+	 * <p>
+	 * Use this method instead of {@link #moveClient(int, int, String)} for moving
+	 * several clients as this will only send 1 command to the server and thus complete faster.
+	 * </p>
+	 *
+	 * @param clientIds
+	 * 		the IDs of the clients to move, cannot be {@code null}
+	 * @param channelId
+	 * 		the ID of the channel to move the clients into
+	 * @param channelPassword
+	 * 		the password of the channel, can be {@code null}
+	 *
+	 * @return whether the command succeeded or not
+	 *
+	 * @throws IllegalArgumentException
+	 * 		if {@code clientIds} is {@code null}
+	 * @querycommands 1
+	 * @see Client#getId()
+	 * @see Channel#getId()
+	 */
+	public CommandFuture<Boolean> moveClients(int[] clientIds, int channelId, String channelPassword) {
+		if (clientIds == null) throw new IllegalArgumentException("clientIds was null");
+		if (clientIds.length == 0) return CommandFuture.immediate(true);
+
+		final CClientMove move = new CClientMove(clientIds, channelId, channelPassword);
+		return executeAndReturnError(move);
+	}
+
+	/**
+	 * Moves a client into a channel using the specified password.
+	 * <p>
+	 * Consider using {@link #moveClients(Client[], ChannelBase, String)}
+	 * for moving multiple clients.
+	 * </p>
 	 *
 	 * @param client
-	 * 		the client to move
+	 * 		the client to move, cannot be {@code null}
 	 * @param channel
-	 * 		the channel to move the client into
+	 * 		the channel to move the client into, cannot be {@code null}
+	 * @param channelPassword
+	 * 		the password of the channel, can be {@code null}
+	 *
+	 * @return whether the command succeeded or not
+	 *
+	 * @throws IllegalArgumentException
+	 * 		if {@code client} or {@code channel} is {@code null}
+	 * @querycommands 1
+	 */
+	public CommandFuture<Boolean> moveClient(Client client, ChannelBase channel, String channelPassword) {
+		if (client == null) throw new IllegalArgumentException("client was null");
+		if (channel == null) throw new IllegalArgumentException("channel was null");
+
+		return moveClient(client.getId(), channel.getId(), channelPassword);
+	}
+
+	/**
+	 * Moves multiple clients into a channel using the specified password.
+	 * Immediately returns {@code true} for an empty client array.
+	 * <p>
+	 * Use this method instead of {@link #moveClient(Client, ChannelBase, String)} for moving
+	 * several clients as this will only send 1 command to the server and thus complete faster.
+	 * </p>
+	 *
+	 * @param clients
+	 * 		the clients to move, cannot be {@code null}
+	 * @param channel
+	 * 		the channel to move the clients into, cannot be {@code null}
+	 * @param channelPassword
+	 * 		the password of the channel, can be {@code null}
+	 *
+	 * @return whether the command succeeded or not
+	 *
+	 * @throws IllegalArgumentException
+	 * 		if {@code clients} or {@code channel} is {@code null}
+	 * @querycommands 1
+	 */
+	public CommandFuture<Boolean> moveClients(Client[] clients, ChannelBase channel, String channelPassword) {
+		if (clients == null) throw new IllegalArgumentException("clients was null");
+		if (channel == null) throw new IllegalArgumentException("channel was null");
+
+		int[] clientIds = new int[clients.length];
+		for (int i = 0; i < clients.length; i++) {
+			Client client = clients[i];
+			clientIds[i] = client.getId();
+		}
+		return moveClients(clientIds, channel.getId(), channelPassword);
+	}
+
+	/**
+	 * Moves and renames a file on the file repository within the same channel.
+	 *
+	 * @param oldPath
+	 * 		the current path to the file
+	 * @param newPath
+	 * 		the desired new path
+	 * @param channelId
+	 * 		the ID of the channel the file resides in
+	 *
+	 * @return whether the command succeeded or not
+	 *
+	 * @querycommands 1
+	 * @see FileInfo#getPath()
+	 * @see Channel#getId()
+	 * @see #moveFile(String, String, int, int) moveFile to a different channel
+	 */
+	public CommandFuture<Boolean> moveFile(String oldPath, String newPath, int channelId) {
+		return moveFile(oldPath, newPath, channelId, null);
+	}
+
+	/**
+	 * Renames a file on the file repository and moves it to a new path in a different channel.
+	 *
+	 * @param oldPath
+	 * 		the current path to the file
+	 * @param newPath
+	 * 		the desired new path
+	 * @param oldChannelId
+	 * 		the ID of the channel the file currently resides in
+	 * @param newChannelId
+	 * 		the ID of the channel the file should be moved to
+	 *
+	 * @return whether the command succeeded or not
+	 *
+	 * @querycommands 1
+	 * @see FileInfo#getPath()
+	 * @see Channel#getId()
+	 * @see #moveFile(String, String, int) moveFile within the same channel
+	 */
+	public CommandFuture<Boolean> moveFile(String oldPath, String newPath, int oldChannelId, int newChannelId) {
+		return moveFile(oldPath, newPath, oldChannelId, null, newChannelId, null);
+	}
+
+	/**
+	 * Moves and renames a file on the file repository within the same channel.
+	 *
+	 * @param oldPath
+	 * 		the current path to the file
+	 * @param newPath
+	 * 		the desired new path
+	 * @param channelId
+	 * 		the ID of the channel the file resides in
 	 * @param channelPassword
 	 * 		the password of the channel
 	 *
 	 * @return whether the command succeeded or not
+	 *
+	 * @querycommands 1
+	 * @see FileInfo#getPath()
+	 * @see Channel#getId()
+	 * @see #moveFile(String, String, int, String, int, String) moveFile to a different channel
 	 */
-	public CommandFuture<Boolean> moveClient(Client client, ChannelBase channel, String channelPassword) {
-		return moveClient(client.getId(), channel.getId(), channelPassword);
+	public CommandFuture<Boolean> moveFile(String oldPath, String newPath, int channelId, String channelPassword) {
+		final CFtRenameFile rename = new CFtRenameFile(oldPath, newPath, channelId, channelPassword);
+		return executeAndReturnError(rename);
+	}
+
+	/**
+	 * Renames a file on the file repository and moves it to a new path in a different channel.
+	 *
+	 * @param oldPath
+	 * 		the current path to the file
+	 * @param newPath
+	 * 		the desired new path
+	 * @param oldChannelId
+	 * 		the ID of the channel the file currently resides in
+	 * @param oldPassword
+	 * 		the password of the current channel
+	 * @param newChannelId
+	 * 		the ID of the channel the file should be moved to
+	 * @param newPassword
+	 * 		the password of the new channel
+	 *
+	 * @return whether the command succeeded or not
+	 *
+	 * @querycommands 1
+	 * @see FileInfo#getPath()
+	 * @see Channel#getId()
+	 * @see #moveFile(String, String, int, String) moveFile within the same channel
+	 */
+	public CommandFuture<Boolean> moveFile(String oldPath, String newPath, int oldChannelId, String oldPassword, int newChannelId, String newPassword) {
+		final CFtRenameFile rename = new CFtRenameFile(oldPath, newPath, oldChannelId, oldPassword, newChannelId, newPassword);
+		return executeAndReturnError(rename);
+	}
+
+	/**
+	 * Moves the server query into a channel.
+	 *
+	 * @param channelId
+	 * 		the ID of the channel to move the server query into
+	 *
+	 * @return whether the command succeeded or not
+	 *
+	 * @querycommands 1
+	 * @see Channel#getId()
+	 */
+	public CommandFuture<Boolean> moveQuery(int channelId) {
+		return moveClient(0, channelId, null);
+	}
+
+	/**
+	 * Moves the server query into a channel.
+	 *
+	 * @param channel
+	 * 		the channel to move the server query into, cannot be {@code null}
+	 *
+	 * @return whether the command succeeded or not
+	 *
+	 * @throws IllegalArgumentException
+	 * 		if {@code channel} is {@code null}
+	 * @querycommands 1
+	 */
+	public CommandFuture<Boolean> moveQuery(ChannelBase channel) {
+		if (channel == null) throw new IllegalArgumentException("channel was null");
+
+		return moveClient(0, channel.getId(), null);
+	}
+
+	/**
+	 * Moves the server query into a channel using the specified password.
+	 *
+	 * @param channelId
+	 * 		the ID of the channel to move the client into
+	 * @param channelPassword
+	 * 		the password of the channel, can be {@code null}
+	 *
+	 * @return whether the command succeeded or not
+	 *
+	 * @querycommands 1
+	 * @see Channel#getId()
+	 */
+	public CommandFuture<Boolean> moveQuery(int channelId, String channelPassword) {
+		return moveClient(0, channelId, channelPassword);
+	}
+
+	/**
+	 * Moves the server query into a channel using the specified password.
+	 *
+	 * @param channel
+	 * 		the channel to move the client into, cannot be {@code null}
+	 * @param channelPassword
+	 * 		the password of the channel, can be {@code null}
+	 *
+	 * @return whether the command succeeded or not
+	 *
+	 * @throws IllegalArgumentException
+	 * 		if {@code channel} is {@code null}
+	 * @querycommands 1
+	 */
+	public CommandFuture<Boolean> moveQuery(ChannelBase channel, String channelPassword) {
+		if (channel == null) throw new IllegalArgumentException("channel was null");
+
+		return moveClient(0, channel.getId(), channelPassword);
 	}
 
 	/**
@@ -2907,6 +4032,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see Client#getId()
 	 */
 	public CommandFuture<Boolean> pokeClient(int clientId, String message) {
@@ -2920,6 +4046,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @deprecated This command leaves the query in an undefined state,
 	 * where the connection is closed without the socket being closed and no more command can be executed.
 	 * To terminate a connection, use {@link TS3Query#exit()}.
@@ -2949,6 +4076,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return whether all commands succeeded or not
 	 *
+	 * @querycommands 6
 	 * @see #addTS3Listeners(TS3Listener...)
 	 */
 	public CommandFuture<Boolean> registerAllEvents() {
@@ -2960,6 +4088,7 @@ public class TS3ApiAsync {
 		eventFutures.add(registerEvent(TS3EventType.CHANNEL, 0));
 		eventFutures.add(registerEvent(TS3EventType.TEXT_CHANNEL, 0));
 		eventFutures.add(registerEvent(TS3EventType.TEXT_PRIVATE));
+		eventFutures.add(registerEvent(TS3EventType.PRIVILEGE_KEY_USED));
 
 		CommandFuture.ofAll(eventFutures).onSuccess(new CommandFuture.SuccessListener<List<Boolean>>() {
 			@Override
@@ -2983,6 +4112,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see #addTS3Listeners(TS3Listener...)
 	 * @see #registerEvent(TS3EventType, int)
 	 * @see #registerAllEvents()
@@ -3005,6 +4135,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see Channel#getId()
 	 * @see #addTS3Listeners(TS3Listener...)
 	 * @see #registerAllEvents()
@@ -3027,22 +4158,20 @@ public class TS3ApiAsync {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands n, one command per TS3EventType
 	 * @see #addTS3Listeners(TS3Listener...)
 	 * @see #registerEvent(TS3EventType, int)
 	 * @see #registerAllEvents()
 	 */
 	public CommandFuture<Boolean> registerEvents(TS3EventType... eventTypes) {
-		final CommandFuture<Boolean> future = new CommandFuture<>();
-		if (eventTypes.length == 0) {
-			future.set(true);
-			return future;
-		}
+		if (eventTypes.length == 0) return CommandFuture.immediate(true);
 
 		final Collection<CommandFuture<Boolean>> registerFutures = new ArrayList<>(eventTypes.length);
 		for (final TS3EventType type : eventTypes) {
 			registerFutures.add(registerEvent(type));
 		}
 
+		final CommandFuture<Boolean> future = new CommandFuture<>();
 		CommandFuture.ofAll(registerFutures).onSuccess(new CommandFuture.SuccessListener<List<Boolean>>() {
 			@Override
 			public void handleSuccess(List<Boolean> result) {
@@ -3062,6 +4191,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see ServerGroup#getId()
 	 * @see Client#getDatabaseId()
 	 * @see #removeClientFromServerGroup(ServerGroup, Client)
@@ -3081,6 +4211,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see #removeClientFromServerGroup(int, int)
 	 */
 	public CommandFuture<Boolean> removeClientFromServerGroup(ServerGroup serverGroup, Client client) {
@@ -3114,6 +4245,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see ChannelGroup#getId()
 	 * @see #renameChannelGroup(ChannelGroup, String)
 	 */
@@ -3132,6 +4264,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see #renameChannelGroup(int, String)
 	 */
 	public CommandFuture<Boolean> renameChannelGroup(ChannelGroup channelGroup, String name) {
@@ -3148,6 +4281,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see ServerGroup#getId()
 	 * @see #renameServerGroup(ServerGroup, String)
 	 */
@@ -3166,6 +4300,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see #renameServerGroup(int, String)
 	 */
 	public CommandFuture<Boolean> renameServerGroup(ServerGroup serverGroup, String name) {
@@ -3176,6 +4311,8 @@ public class TS3ApiAsync {
 	 * Resets all permissions and deletes all server / channel groups. Use carefully.
 	 *
 	 * @return a token for a new administrator account
+	 *
+	 * @querycommands 1
 	 */
 	public CommandFuture<String> resetPermissions() {
 		final CPermReset reset = new CPermReset();
@@ -3190,6 +4327,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see VirtualServer#getId()
 	 * @see #selectVirtualServerByPort(int)
 	 * @see #selectVirtualServer(VirtualServer)
@@ -3207,6 +4345,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see VirtualServer#getPort()
 	 * @see #selectVirtualServerById(int)
 	 * @see #selectVirtualServer(VirtualServer)
@@ -3224,6 +4363,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see #selectVirtualServerById(int)
 	 * @see #selectVirtualServerByPort(int)
 	 */
@@ -3247,6 +4387,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see Client#getUniqueIdentifier()
 	 * @see Message
 	 */
@@ -3272,6 +4413,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see Client#getId()
 	 */
 	public CommandFuture<Boolean> sendTextMessage(TextMessageTargetMode targetMode, int targetId, String message) {
@@ -3294,13 +4436,14 @@ public class TS3ApiAsync {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see #sendChannelMessage(String)
 	 * @see Channel#getId()
 	 */
 	public CommandFuture<Boolean> sendChannelMessage(int channelId, final String message) {
 		final CommandFuture<Boolean> future = new CommandFuture<>();
 
-		moveClient(channelId).onSuccess(new CommandFuture.SuccessListener<Boolean>() {
+		moveQuery(channelId).onSuccess(new CommandFuture.SuccessListener<Boolean>() {
 			@Override
 			public void handleSuccess(Boolean result) {
 				sendTextMessage(TextMessageTargetMode.CHANNEL, 0, message).forwardResult(future);
@@ -3318,6 +4461,8 @@ public class TS3ApiAsync {
 	 * 		the text message to send
 	 *
 	 * @return whether the command succeeded or not
+	 *
+	 * @querycommands 1
 	 */
 	public CommandFuture<Boolean> sendChannelMessage(String message) {
 		return sendTextMessage(TextMessageTargetMode.CHANNEL, 0, message);
@@ -3338,6 +4483,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see #sendServerMessage(String)
 	 * @see VirtualServer#getId()
 	 */
@@ -3362,6 +4508,8 @@ public class TS3ApiAsync {
 	 * 		the text message to send
 	 *
 	 * @return whether the command succeeded or not
+	 *
+	 * @querycommands 1
 	 */
 	public CommandFuture<Boolean> sendServerMessage(String message) {
 		return sendTextMessage(TextMessageTargetMode.SERVER, 0, message);
@@ -3378,6 +4526,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see Client#getId()
 	 */
 	public CommandFuture<Boolean> sendPrivateMessage(int clientId, String message) {
@@ -3396,6 +4545,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see ChannelGroup#getId()
 	 * @see Channel#getId()
 	 * @see Client#getDatabaseId()
@@ -3413,6 +4563,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see #setMessageReadFlag(int, boolean)
 	 */
 	public CommandFuture<Boolean> setMessageRead(int messageId) {
@@ -3427,6 +4578,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see #setMessageRead(int)
 	 * @see #setMessageReadFlag(Message, boolean)
 	 * @see #deleteOfflineMessage(int)
@@ -3445,6 +4597,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see #setMessageRead(int)
 	 * @see #setMessageReadFlag(Message, boolean)
 	 * @see #deleteOfflineMessage(int)
@@ -3464,6 +4617,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see #setMessageRead(Message)
 	 * @see #setMessageReadFlag(int, boolean)
 	 * @see #deleteOfflineMessage(int)
@@ -3481,6 +4635,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see #updateClient(Map)
 	 */
 	public CommandFuture<Boolean> setNickname(String nickname) {
@@ -3495,6 +4650,8 @@ public class TS3ApiAsync {
 	 * 		the ID of the virtual server
 	 *
 	 * @return whether the command succeeded or not
+	 *
+	 * @querycommands 1
 	 */
 	public CommandFuture<Boolean> startServer(int serverId) {
 		final CServerStart start = new CServerStart(serverId);
@@ -3508,6 +4665,8 @@ public class TS3ApiAsync {
 	 * 		the virtual server to start
 	 *
 	 * @return whether the command succeeded or not
+	 *
+	 * @querycommands 1
 	 */
 	public CommandFuture<Boolean> startServer(VirtualServer virtualServer) {
 		return startServer(virtualServer.getId());
@@ -3520,6 +4679,8 @@ public class TS3ApiAsync {
 	 * 		the ID of the virtual server
 	 *
 	 * @return whether the command succeeded or not
+	 *
+	 * @querycommands 1
 	 */
 	public CommandFuture<Boolean> stopServer(int serverId) {
 		final CServerStop stop = new CServerStop(serverId);
@@ -3533,6 +4694,8 @@ public class TS3ApiAsync {
 	 * 		the virtual server to stop
 	 *
 	 * @return whether the command succeeded or not
+	 *
+	 * @querycommands 1
 	 */
 	public CommandFuture<Boolean> stopServer(VirtualServer virtualServer) {
 		return stopServer(virtualServer.getId());
@@ -3545,6 +4708,8 @@ public class TS3ApiAsync {
 	 * </p>
 	 *
 	 * @return whether the command succeeded or not
+	 *
+	 * @querycommands 1
 	 */
 	public CommandFuture<Boolean> stopServerProcess() {
 		final CServerProcessStop stop = new CServerProcessStop();
@@ -3555,6 +4720,8 @@ public class TS3ApiAsync {
 	 * Unregisters the server query from receiving any event notifications.
 	 *
 	 * @return whether the command succeeded or not
+	 *
+	 * @querycommands 1
 	 */
 	public CommandFuture<Boolean> unregisterAllEvents() {
 		final CServerNotifyUnregister unr = new CServerNotifyUnregister();
@@ -3569,6 +4736,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see #editClient(int, Map)
 	 */
 	public CommandFuture<Boolean> updateClient(Map<ClientProperty, String> options) {
@@ -3587,10 +4755,247 @@ public class TS3ApiAsync {
 	 * 		the name for the server query login
 	 *
 	 * @return the generated password for the server query login
+	 *
+	 * @querycommands 1
 	 */
 	public CommandFuture<String> updateServerQueryLogin(String loginName) {
 		final CClientSetServerQueryLogin login = new CClientSetServerQueryLogin(loginName);
 		return executeAndReturnStringProperty(login, "client_login_password");
+	}
+
+	/**
+	 * Uploads a file to the file repository at a given path and channel
+	 * by reading {@code dataLength} bytes from an open {@link InputStream}.
+	 * <p>
+	 * It is the user's responsibility to ensure that the given {@code InputStream} is
+	 * open and that {@code dataLength} bytes can eventually be read from it. The user is
+	 * also responsible for closing the stream once the upload has finished.
+	 * </p><p>
+	 * Note that this method will not read the entire file to memory and can thus
+	 * upload arbitrarily sized files to the file repository.
+	 * </p>
+	 *
+	 * @param dataIn
+	 * 		a stream that contains the data that should be uploaded
+	 * @param dataLength
+	 * 		how many bytes should be read from the stream
+	 * @param filePath
+	 * 		the path the file should have after being uploaded
+	 * @param overwrite
+	 * 		if {@code false}, fails if there's already a file at {@code filePath}
+	 * @param channelId
+	 * 		the ID of the channel to upload the file to
+	 *
+	 * @return whether the command succeeded or not
+	 *
+	 * @throws TS3FileTransferFailedException
+	 * 		if the file transfer fails for any reason
+	 * @querycommands 1
+	 * @see FileInfo#getPath()
+	 * @see Channel#getId()
+	 * @see #uploadFileDirect(byte[], String, boolean, int, String)
+	 */
+	public CommandFuture<Boolean> uploadFile(InputStream dataIn, long dataLength, String filePath, boolean overwrite, int channelId) {
+		return uploadFile(dataIn, dataLength, filePath, overwrite, channelId, null);
+	}
+
+	/**
+	 * Uploads a file to the file repository at a given path and channel
+	 * by reading {@code dataLength} bytes from an open {@link InputStream}.
+	 * <p>
+	 * It is the user's responsibility to ensure that the given {@code InputStream} is
+	 * open and that {@code dataLength} bytes can eventually be read from it. The user is
+	 * also responsible for closing the stream once the upload has finished.
+	 * </p><p>
+	 * Note that this method will not read the entire file to memory and can thus
+	 * upload arbitrarily sized files to the file repository.
+	 * </p>
+	 *
+	 * @param dataIn
+	 * 		a stream that contains the data that should be uploaded
+	 * @param dataLength
+	 * 		how many bytes should be read from the stream
+	 * @param filePath
+	 * 		the path the file should have after being uploaded
+	 * @param overwrite
+	 * 		if {@code false}, fails if there's already a file at {@code filePath}
+	 * @param channelId
+	 * 		the ID of the channel to upload the file to
+	 * @param channelPassword
+	 * 		that channel's password
+	 *
+	 * @return whether the command succeeded or not
+	 *
+	 * @throws TS3FileTransferFailedException
+	 * 		if the file transfer fails for any reason
+	 * @querycommands 1
+	 * @see FileInfo#getPath()
+	 * @see Channel#getId()
+	 * @see #uploadFileDirect(byte[], String, boolean, int, String)
+	 */
+	public CommandFuture<Boolean> uploadFile(final InputStream dataIn, final long dataLength, String filePath, boolean overwrite, int channelId, String channelPassword) {
+		final FileTransferHelper helper = query.getFileTransferHelper();
+		final int transferId = helper.getClientTransferId();
+		final CFtInitUpload upload = new CFtInitUpload(transferId, filePath, channelId, channelPassword, dataLength, overwrite);
+		final CommandFuture<Boolean> future = new CommandFuture<>();
+
+		query.doCommandAsync(upload, new Callback() {
+			@Override
+			public void handle() {
+				if (hasFailed(upload, future)) return;
+
+				FileTransferParameters params = new FileTransferParameters(upload.getFirstResponse().getMap());
+				QueryError error = params.getQueryError();
+				if (!error.isSuccessful()) {
+					future.fail(new TS3CommandFailedException(error));
+					return;
+				}
+
+				try {
+					query.getFileTransferHelper().uploadFile(dataIn, dataLength, params);
+				} catch (IOException e) {
+					future.fail(new TS3FileTransferFailedException("Upload failed", e));
+					return;
+				}
+				future.set(true);
+			}
+		});
+
+		return future;
+	}
+
+	/**
+	 * Uploads a file that is already stored in memory to the file repository
+	 * at a given path and channel.
+	 *
+	 * @param data
+	 * 		the file's data as a byte array
+	 * @param filePath
+	 * 		the path the file should have after being uploaded
+	 * @param overwrite
+	 * 		if {@code false}, fails if there's already a file at {@code filePath}
+	 * @param channelId
+	 * 		the ID of the channel to upload the file to
+	 *
+	 * @return whether the command succeeded or not
+	 *
+	 * @throws TS3FileTransferFailedException
+	 * 		if the file transfer fails for any reason
+	 * @querycommands 1
+	 * @see FileInfo#getPath()
+	 * @see Channel#getId()
+	 * @see #uploadFile(InputStream, long, String, boolean, int)
+	 */
+	public CommandFuture<Boolean> uploadFileDirect(byte[] data, String filePath, boolean overwrite, int channelId) {
+		return uploadFileDirect(data, filePath, overwrite, channelId, null);
+	}
+
+	/**
+	 * Uploads a file that is already stored in memory to the file repository
+	 * at a given path and channel.
+	 *
+	 * @param data
+	 * 		the file's data as a byte array
+	 * @param filePath
+	 * 		the path the file should have after being uploaded
+	 * @param overwrite
+	 * 		if {@code false}, fails if there's already a file at {@code filePath}
+	 * @param channelId
+	 * 		the ID of the channel to upload the file to
+	 * @param channelPassword
+	 * 		that channel's password
+	 *
+	 * @return whether the command succeeded or not
+	 *
+	 * @throws TS3FileTransferFailedException
+	 * 		if the file transfer fails for any reason
+	 * @querycommands 1
+	 * @see FileInfo#getPath()
+	 * @see Channel#getId()
+	 * @see #uploadFile(InputStream, long, String, boolean, int, String)
+	 */
+	public CommandFuture<Boolean> uploadFileDirect(byte[] data, String filePath, boolean overwrite, int channelId, String channelPassword) {
+		return uploadFile(new ByteArrayInputStream(data), data.length, filePath, overwrite, channelId, channelPassword);
+	}
+
+	/**
+	 * Uploads an icon to the icon directory in the file repository
+	 * by reading {@code dataLength} bytes from an open {@link InputStream}.
+	 * <p>
+	 * It is the user's responsibility to ensure that the given {@code InputStream} is
+	 * open and that {@code dataLength} bytes can eventually be read from it. The user is
+	 * also responsible for closing the stream once the upload has finished.
+	 * </p><p>
+	 * Note that unlike the file upload methods, this <strong>will read the entire file to memory</strong>.
+	 * This is because the CRC32 hash must be calculated before the icon can be uploaded.
+	 * That means that all icon files must be less than 2<sup>31</sup>-1 bytes in size.
+	 * </p>
+	 * Uploads  that is already stored in memory to the icon directory
+	 * in the file repository. If this icon has already been uploaded or
+	 * if a hash collision occurs (CRC32), this command will fail.
+	 *
+	 * @param dataIn
+	 * 		a stream that contains the data that should be uploaded
+	 * @param dataLength
+	 * 		how many bytes should be read from the stream
+	 *
+	 * @return the ID of the uploaded icon
+	 *
+	 * @throws TS3FileTransferFailedException
+	 * 		if the file transfer fails for any reason
+	 * @querycommands 1
+	 * @see IconFile#getIconId()
+	 * @see #uploadIconDirect(byte[])
+	 * @see #downloadIcon(OutputStream, long)
+	 */
+	public CommandFuture<Long> uploadIcon(InputStream dataIn, long dataLength) {
+		final FileTransferHelper helper = query.getFileTransferHelper();
+		final byte[] data;
+		try {
+			data = helper.readFully(dataIn, dataLength);
+		} catch (IOException e) {
+			throw new TS3FileTransferFailedException("Reading stream failed", e);
+		}
+		return uploadIconDirect(data);
+	}
+
+	/**
+	 * Uploads an icon that is already stored in memory to the icon directory
+	 * in the file repository. If this icon has already been uploaded or
+	 * if a CRC32 hash collision occurs, this command will fail.
+	 *
+	 * @param data
+	 * 		the icon's data as a byte array
+	 *
+	 * @return the ID of the uploaded icon
+	 *
+	 * @throws TS3FileTransferFailedException
+	 * 		if the file transfer fails for any reason
+	 * @querycommands 1
+	 * @see IconFile#getIconId()
+	 * @see #uploadIcon(InputStream, long)
+	 * @see #downloadIconDirect(long)
+	 */
+	public CommandFuture<Long> uploadIconDirect(byte[] data) {
+		final FileTransferHelper helper = query.getFileTransferHelper();
+		final CommandFuture<Long> future = new CommandFuture<>();
+
+		final long iconId;
+		try {
+			iconId = helper.getIconId(data);
+		} catch (IOException e) {
+			throw new TS3FileTransferFailedException("Reading stream failed", e);
+		}
+
+		final String path = "/icon_" + iconId;
+		uploadFileDirect(data, path, false, 0).onSuccess(new CommandFuture.SuccessListener<Boolean>() {
+			@Override
+			public void handleSuccess(Boolean result) {
+				future.set(iconId);
+			}
+		}).forwardFailure(future);
+
+		return future;
 	}
 
 	/**
@@ -3601,8 +5006,9 @@ public class TS3ApiAsync {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see PrivilegeKey
-	 * @see #addPrivilegeKey(TokenType, int, int, String)
+	 * @see #addPrivilegeKey(PrivilegeKeyType, int, int, String)
 	 * @see #usePrivilegeKey(PrivilegeKey)
 	 */
 	public CommandFuture<Boolean> usePrivilegeKey(String token) {
@@ -3618,8 +5024,9 @@ public class TS3ApiAsync {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see PrivilegeKey
-	 * @see #addPrivilegeKey(TokenType, int, int, String)
+	 * @see #addPrivilegeKey(PrivilegeKeyType, int, int, String)
 	 * @see #usePrivilegeKey(String)
 	 */
 	public CommandFuture<Boolean> usePrivilegeKey(PrivilegeKey privilegeKey) {
@@ -3631,6 +5038,7 @@ public class TS3ApiAsync {
 	 *
 	 * @return information about the server query instance
 	 *
+	 * @querycommands 1
 	 * @see #getClientInfo(int)
 	 */
 	public CommandFuture<ServerQueryInfo> whoAmI() {
@@ -3729,11 +5137,11 @@ public class TS3ApiAsync {
 	 *
 	 * @see Command
 	 */
-	private boolean hasFailed(Command command, CommandFuture<?> future) {
+	private static boolean hasFailed(Command command, CommandFuture<?> future) {
 		final QueryError error = command.getError();
 		if (error.isSuccessful()) return false;
 
-		future.fail(error);
+		future.fail(new TS3CommandFailedException(error));
 		return true;
 	}
 }

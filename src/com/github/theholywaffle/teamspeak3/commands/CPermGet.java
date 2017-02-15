@@ -26,13 +26,46 @@ package com.github.theholywaffle.teamspeak3.commands;
  * #L%
  */
 
+import com.github.theholywaffle.teamspeak3.commands.parameter.ArrayParameter;
 import com.github.theholywaffle.teamspeak3.commands.parameter.KeyValueParam;
 
+/**
+ * Command to look up the value of a permission for the server query.
+ * <p>
+ * As this command returns both the numerical ID and the name of a permission,
+ * it is also useful for looking up a permission's ID based on its name
+ * and vice versa.
+ * </p>
+ */
 public class CPermGet extends Command {
 
-	public CPermGet(String permName) {
+	/**
+	 * Looks up one or more permission values based on the permissions' names.
+	 *
+	 * @param permNames
+	 * 		the names of the permissions
+	 */
+	public CPermGet(String... permNames) {
 		super("permget");
-		add(new KeyValueParam("permsid", permName));
+		final ArrayParameter p = new ArrayParameter(permNames.length);
+		for (String permName : permNames) {
+			p.add(new KeyValueParam("permsid", permName));
+		}
+		add(p);
 	}
 
+	/**
+	 * Looks up one or more permission values based on the permissions' numerical IDs.
+	 *
+	 * @param permIds
+	 * 		the IDs of the permissions
+	 */
+	public CPermGet(int... permIds) {
+		super("permget");
+		final ArrayParameter p = new ArrayParameter(permIds.length);
+		for (int permId : permIds) {
+			p.add(new KeyValueParam("permid", permId));
+		}
+		add(p);
+	}
 }

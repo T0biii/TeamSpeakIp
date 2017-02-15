@@ -27,6 +27,8 @@ package com.github.theholywaffle.teamspeak3;
  */
 
 import com.github.theholywaffle.teamspeak3.TS3Query.FloodRate;
+import com.github.theholywaffle.teamspeak3.api.reconnect.ConnectionHandler;
+import com.github.theholywaffle.teamspeak3.api.reconnect.ReconnectStrategy;
 
 import java.util.logging.Level;
 
@@ -36,10 +38,10 @@ public class TS3Config {
 	private int queryPort = 10011;
 	private FloodRate floodRate = FloodRate.DEFAULT;
 	private Level level = Level.WARNING;
-	private String username = null;
-	private String password = null;
 	private boolean debugToFile = false;
-	private long commandTimeout = 4000;
+	private int commandTimeout = 4000;
+	private ReconnectStrategy reconnectStrategy = ReconnectStrategy.disconnect();
+	private ConnectionHandler connectionHandler = null;
 
 	public TS3Config setHost(String host) {
 		this.host = host;
@@ -60,6 +62,7 @@ public class TS3Config {
 	}
 
 	public TS3Config setFloodRate(FloodRate rate) {
+		if (rate == null) throw new NullPointerException("rate cannot be null!");
 		this.floodRate = rate;
 		return this;
 	}
@@ -69,26 +72,13 @@ public class TS3Config {
 	}
 
 	public TS3Config setDebugLevel(Level level) {
+		if (level == null) throw new NullPointerException("level cannot be null!");
 		this.level = level;
 		return this;
 	}
 
 	Level getDebugLevel() {
 		return level;
-	}
-
-	public TS3Config setLoginCredentials(String username, String password) {
-		this.username = username;
-		this.password = password;
-		return this;
-	}
-
-	String getUsername() {
-		return username;
-	}
-
-	String getPassword() {
-		return password;
 	}
 
 	public TS3Config setDebugToFile(boolean debugToFile) {
@@ -112,7 +102,7 @@ public class TS3Config {
 	 * @throws IllegalArgumentException
 	 * 		if the timeout value is smaller than or equal to {@code 0}
 	 */
-	public TS3Config setCommandTimeout(long commandTimeout) {
+	public TS3Config setCommandTimeout(int commandTimeout) {
 		if (commandTimeout <= 0) {
 			throw new IllegalArgumentException("Timeout value must be greater than 0");
 		}
@@ -121,7 +111,26 @@ public class TS3Config {
 		return this;
 	}
 
-	long getCommandTimeout() {
+	int getCommandTimeout() {
 		return commandTimeout;
+	}
+
+	public TS3Config setReconnectStrategy(ReconnectStrategy reconnectStrategy) {
+		if (reconnectStrategy == null) throw new NullPointerException("reconnectStrategy cannot be null!");
+		this.reconnectStrategy = reconnectStrategy;
+		return this;
+	}
+
+	ReconnectStrategy getReconnectStrategy() {
+		return reconnectStrategy;
+	}
+
+	public TS3Config setConnectionHandler(ConnectionHandler connectionHandler) {
+		this.connectionHandler = connectionHandler;
+		return this;
+	}
+
+	ConnectionHandler getConnectionHandler() {
+		return connectionHandler;
 	}
 }

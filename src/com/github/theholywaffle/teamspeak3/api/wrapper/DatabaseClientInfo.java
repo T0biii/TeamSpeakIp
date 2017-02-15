@@ -64,7 +64,7 @@ public class DatabaseClientInfo extends DatabaseClient {
 	public long getIconId() {
 		return getLong(ClientProperty.CLIENT_ICON_ID);
 	}
-
+	
 	public String getBase64HashClientUID() {
 		return get("client_base64HashClientUID");
 	}

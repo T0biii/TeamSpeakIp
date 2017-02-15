@@ -67,4 +67,7 @@ public abstract class TS3EventAdapter implements TS3Listener {
 
 	@Override
 	public void onChannelPasswordChanged(ChannelPasswordChangedEvent e) {}
+
+	@Override
+	public void onPrivilegeKeyUsed(PrivilegeKeyUsedEvent e) {}
 }

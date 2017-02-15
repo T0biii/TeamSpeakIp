@@ -83,4 +83,9 @@ public class ChannelInfo extends ChannelBase {
 	public String getPhoneticName() {
 		return get(ChannelProperty.CHANNEL_NAME_PHONETIC);
 	}
+
+	@Override
+	public boolean isFamilyEmpty() {
+		return (getSecondsEmpty() >= 0);
+	}
 }

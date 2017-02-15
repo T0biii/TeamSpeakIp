@@ -28,50 +28,53 @@ package com.github.theholywaffle.teamspeak3;
 
 import com.github.theholywaffle.teamspeak3.commands.Command;
 
+import java.io.IOException;
+import java.io.PrintStream;
+import java.util.concurrent.BlockingQueue;
+
 public class SocketWriter extends Thread {
 
-	private final TS3Query ts3;
+	private final BlockingQueue<Command> sendQueue;
+	private final BlockingQueue<Command> receiveQueue;
 	private final int floodRate;
+	private final PrintStream out;
 	private volatile long lastCommand = System.currentTimeMillis();
 
-	public SocketWriter(TS3Query ts3, int floodRate) {
+	public SocketWriter(QueryIO io, TS3Config config) throws IOException {
 		super("[TeamSpeak-3-Java-API] SocketWriter");
-		this.ts3 = ts3;
-		if (floodRate > 50) {
-			this.floodRate = floodRate;
-		} else {
-			this.floodRate = 50;
-		}
+		this.sendQueue = io.getSendQueue();
+		this.receiveQueue = io.getReceiveQueue();
+		this.floodRate = config.getFloodRate().getMs();
+		this.out = new PrintStream(io.getSocket().getOutputStream(), true, "UTF-8");
 	}
 
 	@Override
 	public void run() {
-		while (ts3.getSocket() != null && ts3.getSocket().isConnected()
-				&& ts3.getOut() != null && !isInterrupted()) {
-			final Command c = ts3.getCommandList().peek();
-			if (c != null && !c.isSent()) {
+		try {
+			while (!isInterrupted()) {
+				final Command c = sendQueue.take();
 				final String msg = c.toString();
-				TS3Query.log.info("> " + msg);
 
-				c.setSent();
-				ts3.getOut().println(msg);
+				receiveQueue.put(c);
+				TS3Query.log.info("> " + msg);
+				out.println(msg);
+
 				lastCommand = System.currentTimeMillis();
+				if (floodRate > 0) Thread.sleep(floodRate);
 			}
-			try {
-				Thread.sleep(floodRate);
-			} catch (final InterruptedException e) {
-				interrupt();
-				break;
-			}
+		} catch (final InterruptedException e) {
+			// Regular shutdown
+			interrupt();
 		}
+
+		out.close();
 
 		if (!isInterrupted()) {
 			TS3Query.log.warning("SocketWriter has stopped!");
 		}
 	}
 
-	public long getIdleTime() {
+	long getIdleTime() {
 		return System.currentTimeMillis() - lastCommand;
 	}
-
 }

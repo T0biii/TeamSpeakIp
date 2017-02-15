@@ -28,26 +28,83 @@ package com.github.theholywaffle.teamspeak3.api.wrapper;
 
 import java.util.Map;
 
+/**
+ * Describes a permission that has been assigned to a client,
+ * a channel group or a server group.
+ * <p>
+ * For a complete description of the TS3 permission system, refer to
+ * <a href="http://forum.teamspeak.com/threads/49581-The-New-Permission-Documentataions">
+ * this post</a> on the TeamSpeak forums.
+ * </p>
+ */
 public class Permission extends Wrapper {
 
 	public Permission(Map<String, String> map) {
 		super(map);
 	}
 
+	/**
+	 * Gets the name of this permission.
+	 * <p>
+	 * Boolean permissions are prefixed with {@code b_}<br>
+	 * Integer permissions are prefixed with {@code i_}
+	 * </p>
+	 *
+	 * @return this permission's name
+	 */
 	public String getName() {
 		return get("permsid");
 	}
 
+	/**
+	 * Gets the value of this permission assignment.
+	 * <p>
+	 * Please note that this value doesn't necessarily have to be
+	 * the effective permission value for a client, as this assignment
+	 * can be overridden by another assignment.
+	 * </p><p>
+	 * Integer permissions usually have values between 0 and 100,
+	 * but any integer value is theoretically valid.
+	 * </p><p>
+	 * Boolean permissions have a value of {@code 0} to represent
+	 * {@code false} and {@code 1} to represent {@code true}.
+	 * </p>
+	 *
+	 * @return the value of this permission assignment
+	 */
 	public int getValue() {
 		return getInt("permvalue");
 	}
 
+	/**
+	 * Returns {@code true} if this permission is negated.
+	 * <p>
+	 * Negated means that instead of the highest value, the lowest
+	 * value will be selected for this permission instead.
+	 * </p>
+	 *
+	 * @return whether this permission is negated or not
+	 */
 	public boolean isNegated() {
-		return getInt("permnegated") == 1;
+		return getBoolean("permnegated");
 	}
 
+	/**
+	 * Returns {@code true} if this permission is skipped.
+	 * <p>
+	 * Skipped only exists for server group and client permissions,
+	 * therefore this value will always be false for channel group permissions.
+	 * </p><p>
+	 * If a client permission is skipped, it won't be overridden by channel
+	 * group permissions.<br>
+	 * If a server group permission is skipped, it won't be overridden by
+	 * channel group or client permissions.
+	 * </p>
+	 *
+	 * @return whether this permission is negated or not
+	 */
 	public boolean isSkipped() {
-		return getInt("permskip") == 1;
+		return getBoolean("permskip");
 	}
 
 }

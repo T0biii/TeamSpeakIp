@@ -33,7 +33,7 @@ import java.util.Map;
 
 public abstract class ChannelBase extends Wrapper {
 
-	public ChannelBase(Map<String, String> map) {
+	protected ChannelBase(Map<String, String> map) {
 		super(map);
 	}
 
@@ -100,4 +100,13 @@ public abstract class ChannelBase extends Wrapper {
 	public int getMaxFamilyClients() {
 		return getInt(ChannelProperty.CHANNEL_MAXFAMILYCLIENTS);
 	}
+
+	public int getSecondsEmpty() {
+		return getInt(ChannelProperty.SECONDS_EMPTY);
+	}
+
+	/**
+	 * @return {@code true}, if the channel and all child channels are empty, {@code false} otherwise.
+	 */
+	abstract public boolean isFamilyEmpty();
 }

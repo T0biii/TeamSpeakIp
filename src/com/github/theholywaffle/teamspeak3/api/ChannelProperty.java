@@ -26,12 +26,15 @@ package com.github.theholywaffle.teamspeak3.api;
  * #L%
  */
 
+import java.util.Locale;
+
 public enum ChannelProperty implements Property {
 
 	CHANNEL_CODEC(true),
 	CHANNEL_CODEC_IS_UNENCRYPTED(true),
 	CHANNEL_CODEC_LATENCY_FACTOR(false),
 	CHANNEL_CODEC_QUALITY(true),
+	CHANNEL_DELETE_DELAY(true),
 	CHANNEL_DESCRIPTION(true),
 	CHANNEL_FILEPATH(false),
 	CHANNEL_FLAG_DEFAULT(true),
@@ -48,11 +51,12 @@ public enum ChannelProperty implements Property {
 	CHANNEL_MAXFAMILYCLIENTS(true),
 	CHANNEL_NAME(true),
 	CHANNEL_NAME_PHONETIC(true),
-	CHANNEL_NEEDED_TALK_POWER(true),
 	CHANNEL_NEEDED_SUBSCRIBE_POWER(false),
+	CHANNEL_NEEDED_TALK_POWER(true),
 	CHANNEL_ORDER(true),
 	CHANNEL_PASSWORD(true),
 	CHANNEL_TOPIC(true),
+	SECONDS_EMPTY(false),
 	CID(false),
 	PID(false),
 	CPID(true);
@@ -63,8 +67,9 @@ public enum ChannelProperty implements Property {
 		this.changeable = changeable;
 	}
 
+	@Override
 	public String getName() {
-		return name().toLowerCase();
+		return name().toLowerCase(Locale.ROOT);
 	}
 
 	public boolean isChangeable() {

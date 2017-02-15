@@ -28,6 +28,8 @@ package com.github.theholywaffle.teamspeak3.api.wrapper;
 
 import com.github.theholywaffle.teamspeak3.api.ClientProperty;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Date;
 import java.util.Map;
 
@@ -51,6 +53,26 @@ public class Client extends Wrapper {
 
 	public int getChannelId() {
 		return getInt(ClientProperty.CID);
+	}
+
+	/**
+	 * Utility method. This method will return a client URI.
+	 * A client URI can be used to reference a client in descriptions or just via chat.
+	 * Example: {@code client://<clientId>/<clientUId>~<clientNickname>}
+	 *
+	 * @return Client's URI
+	 */
+	public String getClientURI() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("client://").append(getId()).append("/");
+		sb.append(getUniqueIdentifier()).append("~");
+		try {
+			// We will encode the nickname, so characters like spaces work with this.
+			sb.append(URLEncoder.encode(getNickname(), "UTF-8"));
+		} catch (UnsupportedEncodingException e) {
+			throw new RuntimeException(e);
+		}
+		return sb.toString();
 	}
 
 	public String getCountry() {
@@ -81,6 +103,10 @@ public class Client extends Wrapper {
 		return getInt(ClientProperty.CLIENT_CHANNEL_GROUP_INHERITED_CHANNEL_ID);
 	}
 
+	public String getIp() {
+		return get(ClientProperty.CONNECTION_CLIENT_IP);
+	}
+
 	public Date getLastConnectedDate() {
 		return new Date(getLong(ClientProperty.CLIENT_LASTCONNECTED) * 1000);
 	}
@@ -98,7 +124,7 @@ public class Client extends Wrapper {
 		final String[] arr = str.split(",");
 		final int[] groups = new int[arr.length];
 		for (int i = 0; i < groups.length; i++) {
-			groups[i] = Integer.valueOf(arr[i]);
+			groups[i] = Integer.parseInt(arr[i]);
 		}
 		return groups;
 	}
@@ -127,6 +153,38 @@ public class Client extends Wrapper {
 		return getBoolean(ClientProperty.CLIENT_IS_CHANNEL_COMMANDER);
 	}
 
+	/**
+	 * Utility method that does a linear search on the array of server group IDs returned
+	 * by {@link #getServerGroups()} and returns {@code true} if that array contains
+	 * the given server group ID.
+	 *
+	 * @param serverGroupId
+	 * 		the ID of the server group to search for
+	 *
+	 * @return whether this client is a member of the given server group
+	 */
+	public boolean isInServerGroup(int serverGroupId) {
+		int[] serverGroupIds = getServerGroups();
+		for (int s : serverGroupIds) {
+			if (s == serverGroupId) return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Utility method that does a linear search on the array of server group IDs returned
+	 * by {@link #getServerGroups()} and returns {@code true} if that array contains
+	 * the ID of the given server group.
+	 *
+	 * @param serverGroup
+	 * 		the server group to search for
+	 *
+	 * @return whether this client is a member of the given server group
+	 */
+	public boolean isInServerGroup(ServerGroup serverGroup) {
+		return isInServerGroup(serverGroup.getId());
+	}
+
 	public boolean isInputHardware() {
 		return getBoolean(ClientProperty.CLIENT_INPUT_HARDWARE);
 	}
@@ -149,6 +207,14 @@ public class Client extends Wrapper {
 
 	public boolean isRecording() {
 		return getBoolean(ClientProperty.CLIENT_IS_RECORDING);
+	}
+
+	public boolean isRegularClient() {
+		return getType() == 0;
+	}
+
+	public boolean isServerQueryClient() {
+		return getType() == 1;
 	}
 
 	public boolean isTalking() {

@@ -30,12 +30,19 @@ import com.github.theholywaffle.teamspeak3.api.*;
 import com.github.theholywaffle.teamspeak3.api.event.TS3EventType;
 import com.github.theholywaffle.teamspeak3.api.event.TS3Listener;
 import com.github.theholywaffle.teamspeak3.api.exception.TS3ConnectionFailedException;
+import com.github.theholywaffle.teamspeak3.api.exception.TS3FileTransferFailedException;
 import com.github.theholywaffle.teamspeak3.api.wrapper.*;
 import com.github.theholywaffle.teamspeak3.commands.*;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -100,6 +107,7 @@ public class TS3Api {
 	 *
 	 * @return the ID of the newly created ban entry
 	 *
+	 * @querycommands 1
 	 * @see Pattern RegEx Pattern
 	 * @see Client#getId()
 	 * @see Client#getUniqueIdentifier()
@@ -131,6 +139,7 @@ public class TS3Api {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see Channel#getId()
 	 * @see Client#getDatabaseId()
 	 * @see Permission
@@ -152,6 +161,7 @@ public class TS3Api {
 	 *
 	 * @return the ID of the newly created channel group
 	 *
+	 * @querycommands 1
 	 * @see ChannelGroup
 	 */
 	public int addChannelGroup(String name) {
@@ -168,6 +178,7 @@ public class TS3Api {
 	 *
 	 * @return the ID of the newly created channel group
 	 *
+	 * @querycommands 1
 	 * @see ChannelGroup
 	 */
 	public int addChannelGroup(String name, PermissionGroupDatabaseType type) {
@@ -190,6 +201,7 @@ public class TS3Api {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see ChannelGroup#getId()
 	 * @see Permission
 	 */
@@ -210,6 +222,7 @@ public class TS3Api {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see Channel#getId()
 	 * @see Permission
 	 */
@@ -228,10 +241,11 @@ public class TS3Api {
 	 * @param value
 	 * 		the numeric value of the permission (or for boolean permissions: 1 = true, 0 = false)
 	 * @param skipped
-	 * 		if set to {@code true}, the permission will not be overridden by channel permissions
+	 * 		if set to {@code true}, the permission will not be overridden by channel group permissions
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see Client#getDatabaseId()
 	 * @see Permission
 	 */
@@ -253,6 +267,7 @@ public class TS3Api {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see ServerGroup#getId()
 	 * @see Client#getDatabaseId()
 	 */
@@ -272,6 +287,7 @@ public class TS3Api {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see Client#getDatabaseId()
 	 * @see Complaint#getMessage()
 	 */
@@ -292,10 +308,11 @@ public class TS3Api {
 	 * @param negated
 	 * 		if set to true, the lowest permission value will be selected instead of the highest
 	 * @param skipped
-	 * 		if set to true, this permission will not be overridden by client of channel permissions
+	 * 		if set to true, this permission will not be overridden by client or channel group permissions
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see ServerGroupType
 	 * @see Permission
 	 */
@@ -307,9 +324,9 @@ public class TS3Api {
 	/**
 	 * Create a new privilege key that allows one client to join a server or channel group.
 	 * <ul>
-	 * <li>If {@code type} is set to {@linkplain TokenType#SERVER_GROUP SERVER_GROUP},
+	 * <li>If {@code type} is set to {@linkplain PrivilegeKeyType#SERVER_GROUP SERVER_GROUP},
 	 * {@code groupId} is used as a server group ID and {@code channelId} is ignored.</li>
-	 * <li>If {@code type} is set to {@linkplain TokenType#CHANNEL_GROUP CHANNEL_GROUP},
+	 * <li>If {@code type} is set to {@linkplain PrivilegeKeyType#CHANNEL_GROUP CHANNEL_GROUP},
 	 * {@code groupId} is used as a channel group ID and {@code channelId} is used as the channel in which the group should be set.</li>
 	 * </ul>
 	 *
@@ -324,11 +341,12 @@ public class TS3Api {
 	 *
 	 * @return the created token for a client to use
 	 *
-	 * @see TokenType
+	 * @querycommands 1
+	 * @see PrivilegeKeyType
 	 * @see #addPrivilegeKeyServerGroup(int, String)
 	 * @see #addPrivilegeKeyChannelGroup(int, int, String)
 	 */
-	public String addPrivilegeKey(TokenType type, int groupId, int channelId, String description) {
+	public String addPrivilegeKey(PrivilegeKeyType type, int groupId, int channelId, String description) {
 		final CPrivilegeKeyAdd add = new CPrivilegeKeyAdd(type, groupId, channelId, description);
 		if (query.doCommand(add)) {
 			return add.getFirstResponse().get("token");
@@ -348,13 +366,14 @@ public class TS3Api {
 	 *
 	 * @return the created token for a client to use
 	 *
+	 * @querycommands 1
 	 * @see ChannelGroup#getId()
 	 * @see Channel#getId()
-	 * @see #addPrivilegeKey(TokenType, int, int, String)
+	 * @see #addPrivilegeKey(PrivilegeKeyType, int, int, String)
 	 * @see #addPrivilegeKeyServerGroup(int, String)
 	 */
 	public String addPrivilegeKeyChannelGroup(int channelGroupId, int channelId, String description) {
-		return addPrivilegeKey(TokenType.CHANNEL_GROUP, channelGroupId, channelId, description);
+		return addPrivilegeKey(PrivilegeKeyType.CHANNEL_GROUP, channelGroupId, channelId, description);
 	}
 
 	/**
@@ -367,12 +386,13 @@ public class TS3Api {
 	 *
 	 * @return the created token for a client to use
 	 *
+	 * @querycommands 1
 	 * @see ServerGroup#getId()
-	 * @see #addPrivilegeKey(TokenType, int, int, String)
+	 * @see #addPrivilegeKey(PrivilegeKeyType, int, int, String)
 	 * @see #addPrivilegeKeyChannelGroup(int, int, String)
 	 */
 	public String addPrivilegeKeyServerGroup(int serverGroupId, String description) {
-		return addPrivilegeKey(TokenType.SERVER_GROUP, serverGroupId, 0, description);
+		return addPrivilegeKey(PrivilegeKeyType.SERVER_GROUP, serverGroupId, 0, description);
 	}
 
 	/**
@@ -387,6 +407,7 @@ public class TS3Api {
 	 *
 	 * @return the ID of the newly created server group
 	 *
+	 * @querycommands 1
 	 * @see ServerGroup
 	 */
 	public int addServerGroup(String name) {
@@ -403,6 +424,7 @@ public class TS3Api {
 	 *
 	 * @return the ID of the newly created server group
 	 *
+	 * @querycommands 1
 	 * @see ServerGroup
 	 * @see PermissionGroupDatabaseType
 	 */
@@ -426,10 +448,11 @@ public class TS3Api {
 	 * @param negated
 	 * 		if set to true, the lowest permission value will be selected instead of the highest
 	 * @param skipped
-	 * 		if set to true, this permission will not be overridden by client of channel permissions
+	 * 		if set to true, this permission will not be overridden by client or channel group permissions
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see ServerGroup#getId()
 	 * @see Permission
 	 */
@@ -463,6 +486,10 @@ public class TS3Api {
 	 * <p>
 	 * Please note that this will create two separate ban rules,
 	 * one for the targeted client's IP address and their unique identifier.
+	 * </p><p>
+	 * <i>Exception:</i> If the banned client connects via a loopback address
+	 * (i.e. {@code 127.0.0.1} or {@code localhost}), no IP ban is created
+	 * and the returned array will only have 1 entry.
 	 * </p>
 	 *
 	 * @param clientId
@@ -472,6 +499,7 @@ public class TS3Api {
 	 *
 	 * @return an array containing the IDs of the first and the second ban entry
 	 *
+	 * @querycommands 1
 	 * @see Client#getId()
 	 * @see #addBan(String, String, String, long, String)
 	 */
@@ -484,6 +512,10 @@ public class TS3Api {
 	 * <p>
 	 * Please note that this will create two separate ban rules,
 	 * one for the targeted client's IP address and their unique identifier.
+	 * </p><p>
+	 * <i>Exception:</i> If the banned client connects via a loopback address
+	 * (i.e. {@code 127.0.0.1} or {@code localhost}), no IP ban is created
+	 * and the returned array will only have 1 entry.
 	 * </p>
 	 *
 	 * @param clientId
@@ -495,6 +527,7 @@ public class TS3Api {
 	 *
 	 * @return an array containing the IDs of the first and the second ban entry
 	 *
+	 * @querycommands 1
 	 * @see Client#getId()
 	 * @see #addBan(String, String, String, long, String)
 	 */
@@ -502,9 +535,11 @@ public class TS3Api {
 		final CBanClient client = new CBanClient(clientId, timeInSeconds, reason);
 		if (query.doCommand(client)) {
 			final List<Wrapper> response = client.getResponse();
-			final int banId1 = response.get(0).getInt("banid");
-			final int banId2 = response.get(1).getInt("banid");
-			return new int[] {banId1, banId2};
+			final int[] banIds = new int[response.size()];
+			for (int i = 0; i < banIds.length; ++i) {
+				banIds[i] = response.get(i).getInt("banid");
+			}
+			return banIds;
 		}
 		return null;
 	}
@@ -514,6 +549,10 @@ public class TS3Api {
 	 * <p>
 	 * Please note that this will create two separate ban rules,
 	 * one for the targeted client's IP address and their unique identifier.
+	 * </p><p>
+	 * <i>Exception:</i> If the banned client connects via a loopback address
+	 * (i.e. {@code 127.0.0.1} or {@code localhost}), no IP ban is created
+	 * and the returned array will only have 1 entry.
 	 * </p>
 	 *
 	 * @param clientId
@@ -523,6 +562,7 @@ public class TS3Api {
 	 *
 	 * @return an array containing the IDs of the first and the second ban entry
 	 *
+	 * @querycommands 1
 	 * @see Client#getId()
 	 * @see #addBan(String, String, String, long, String)
 	 */
@@ -538,6 +578,8 @@ public class TS3Api {
 	 * 		the message to be sent
 	 *
 	 * @return whether the command succeeded or not
+	 *
+	 * @querycommands 1
 	 */
 	public boolean broadcast(String message) {
 		final CGM broadcast = new CGM(message);
@@ -560,6 +602,7 @@ public class TS3Api {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see ChannelGroup#getId()
 	 */
 	public boolean copyChannelGroup(int sourceGroupId, int targetGroupId, PermissionGroupDatabaseType type) {
@@ -584,6 +627,7 @@ public class TS3Api {
 	 *
 	 * @return the ID of the newly created channel group
 	 *
+	 * @querycommands 1
 	 * @see ChannelGroup#getId()
 	 */
 	public int copyChannelGroup(int sourceGroupId, String targetName, PermissionGroupDatabaseType type) {
@@ -610,6 +654,7 @@ public class TS3Api {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see ServerGroup#getId()
 	 */
 	public boolean copyServerGroup(int sourceGroupId, int targetGroupId, PermissionGroupDatabaseType type) {
@@ -634,6 +679,7 @@ public class TS3Api {
 	 *
 	 * @return the ID of the newly created server group
 	 *
+	 * @querycommands 1
 	 * @see ServerGroup#getId()
 	 */
 	public int copyServerGroup(int sourceGroupId, String targetName, PermissionGroupDatabaseType type) {
@@ -654,6 +700,7 @@ public class TS3Api {
 	 *
 	 * @return the ID of the newly created channel
 	 *
+	 * @querycommands 1
 	 * @see Channel
 	 */
 	public int createChannel(String name, Map<ChannelProperty, String> options) {
@@ -662,6 +709,45 @@ public class TS3Api {
 			return create.getFirstResponse().getInt("cid");
 		}
 		return -1;
+	}
+
+	/**
+	 * Creates a new directory on the file repository in the specified channel.
+	 *
+	 * @param directoryPath
+	 * 		the path to the directory that should be created
+	 * @param channelId
+	 * 		the ID of the channel the directory should be created in
+	 *
+	 * @return whether the command succeeded or not
+	 *
+	 * @querycommands 1
+	 * @see FileInfo#getPath()
+	 * @see Channel#getId()
+	 */
+	public boolean createFileDirectory(String directoryPath, int channelId) {
+		return createFileDirectory(directoryPath, channelId, null);
+	}
+
+	/**
+	 * Creates a new directory on the file repository in the specified channel.
+	 *
+	 * @param directoryPath
+	 * 		the path to the directory that should be created
+	 * @param channelId
+	 * 		the ID of the channel the directory should be created in
+	 * @param channelPassword
+	 * 		the password of that channel
+	 *
+	 * @return whether the command succeeded or not
+	 *
+	 * @querycommands 1
+	 * @see FileInfo#getPath()
+	 * @see Channel#getId()
+	 */
+	public boolean createFileDirectory(String directoryPath, int channelId, String channelPassword) {
+		final CFtCreateDir create = new CFtCreateDir(directoryPath, channelId, channelPassword);
+		return query.doCommand(create);
 	}
 
 	/**
@@ -684,6 +770,7 @@ public class TS3Api {
 	 *
 	 * @return information about the newly created virtual server
 	 *
+	 * @querycommands 1
 	 * @see VirtualServer
 	 */
 	public CreatedVirtualServer createServer(String name, Map<VirtualServerProperty, String> options) {
@@ -701,12 +788,13 @@ public class TS3Api {
 	 *
 	 * @return a snapshot of the virtual server
 	 *
+	 * @querycommands 1
 	 * @see #deployServerSnapshot(Snapshot)
 	 */
 	public Snapshot createServerSnapshot() {
 		final CServerSnapshotCreate create = new CServerSnapshotCreate();
 		if (query.doCommand(create)) {
-			return new Snapshot(create.getRaw());
+			return new Snapshot(create.getRawResponse());
 		}
 		return null;
 	}
@@ -715,6 +803,8 @@ public class TS3Api {
 	 * Deletes all active ban rules from the server. Use with caution.
 	 *
 	 * @return whether the command succeeded or not
+	 *
+	 * @querycommands 1
 	 */
 	public boolean deleteAllBans() {
 		final CBanDelAll del = new CBanDelAll();
@@ -729,6 +819,7 @@ public class TS3Api {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see Client#getDatabaseId()
 	 * @see Complaint
 	 */
@@ -745,6 +836,7 @@ public class TS3Api {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see Ban#getId()
 	 */
 	public boolean deleteBan(int banId) {
@@ -760,6 +852,7 @@ public class TS3Api {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see Channel#getId()
 	 * @see #deleteChannel(int, boolean)
 	 * @see #kickClientFromChannel(String, int...)
@@ -780,6 +873,7 @@ public class TS3Api {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see Channel#getId()
 	 * @see #kickClientFromChannel(String, int...)
 	 */
@@ -800,6 +894,7 @@ public class TS3Api {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see Channel#getId()
 	 * @see Client#getDatabaseId()
 	 * @see Permission#getName()
@@ -817,6 +912,7 @@ public class TS3Api {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see ChannelGroup#getId()
 	 */
 	public boolean deleteChannelGroup(int groupId) {
@@ -835,6 +931,7 @@ public class TS3Api {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see ChannelGroup#getId()
 	 */
 	public boolean deleteChannelGroup(int groupId, boolean force) {
@@ -852,6 +949,7 @@ public class TS3Api {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see ChannelGroup#getId()
 	 * @see Permission#getName()
 	 */
@@ -870,6 +968,7 @@ public class TS3Api {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see Channel#getId()
 	 * @see Permission#getName()
 	 */
@@ -888,6 +987,7 @@ public class TS3Api {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see Client#getDatabaseId()
 	 * @see Permission#getName()
 	 */
@@ -907,6 +1007,7 @@ public class TS3Api {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see Complaint
 	 * @see Client#getDatabaseId()
 	 */
@@ -927,6 +1028,7 @@ public class TS3Api {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see Client#getDatabaseId()
 	 * @see #getDatabaseClientInfo(int)
 	 * @see DatabaseClientInfo
@@ -937,6 +1039,119 @@ public class TS3Api {
 	}
 
 	/**
+	 * Deletes a file or directory from the file repository in the specified channel.
+	 *
+	 * @param filePath
+	 * 		the path to the file or directory
+	 * @param channelId
+	 * 		the ID of the channel the file or directory resides in
+	 *
+	 * @return whether the command succeeded or not
+	 *
+	 * @querycommands 1
+	 * @see FileInfo#getPath()
+	 * @see Channel#getId()
+	 */
+	public boolean deleteFile(String filePath, int channelId) {
+		return deleteFile(filePath, channelId, null);
+	}
+
+	/**
+	 * Deletes a file or directory from the file repository in the specified channel.
+	 *
+	 * @param filePath
+	 * 		the path to the file or directory
+	 * @param channelId
+	 * 		the ID of the channel the file or directory resides in
+	 * @param channelPassword
+	 * 		the password of that channel
+	 *
+	 * @return whether the command succeeded or not
+	 *
+	 * @querycommands 1
+	 * @see FileInfo#getPath()
+	 * @see Channel#getId()
+	 */
+	public boolean deleteFile(String filePath, int channelId, String channelPassword) {
+		final CFtDeleteFile delete = new CFtDeleteFile(channelId, channelPassword, filePath);
+		return query.doCommand(delete);
+	}
+
+	/**
+	 * Deletes multiple files or directories from the file repository in the specified channel.
+	 *
+	 * @param filePaths
+	 * 		the paths to the files or directories
+	 * @param channelId
+	 * 		the ID of the channel the file or directory resides in
+	 *
+	 * @return whether the command succeeded or not
+	 *
+	 * @querycommands 1
+	 * @see FileInfo#getPath()
+	 * @see Channel#getId()
+	 */
+	public boolean deleteFiles(String[] filePaths, int channelId) {
+		return deleteFiles(filePaths, channelId, null);
+	}
+
+	/**
+	 * Deletes multiple files or directories from the file repository in the specified channel.
+	 *
+	 * @param filePaths
+	 * 		the paths to the files or directories
+	 * @param channelId
+	 * 		the ID of the channel the file or directory resides in
+	 * @param channelPassword
+	 * 		the password of that channel
+	 *
+	 * @return whether the command succeeded or not
+	 *
+	 * @querycommands 1
+	 * @see FileInfo#getPath()
+	 * @see Channel#getId()
+	 */
+	public boolean deleteFiles(String[] filePaths, int channelId, String channelPassword) {
+		final CFtDeleteFile delete = new CFtDeleteFile(channelId, channelPassword, filePaths);
+		return query.doCommand(delete);
+	}
+
+	/**
+	 * Deletes an icon from the icon directory in the file repository.
+	 *
+	 * @param iconId
+	 * 		the ID of the icon to delete
+	 *
+	 * @return whether the command succeeded or not
+	 *
+	 * @querycommands 1
+	 * @see IconFile#getIconId()
+	 */
+	public boolean deleteIcon(long iconId) {
+		final String iconPath = "/icon_" + iconId;
+		return deleteFile(iconPath, 0);
+	}
+
+	/**
+	 * Deletes multiple icons from the icon directory in the file repository.
+	 *
+	 * @param iconIds
+	 * 		the IDs of the icons to delete
+	 *
+	 * @return whether the command succeeded or not
+	 *
+	 * @querycommands 1
+	 * @see IconFile#getIconId()
+	 */
+	public boolean deleteIcons(long[] iconIds) {
+		final String[] iconPaths = new String[iconIds.length];
+		for (int i = 0; i < iconIds.length; ++i) {
+			iconPaths[i] = "/icon_" + iconIds[i];
+		}
+		return deleteFiles(iconPaths, 0);
+	}
+
+	/**
 	 * Deletes the offline message with the specified ID.
 	 *
 	 * @param messageId
@@ -944,6 +1159,7 @@ public class TS3Api {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see Message#getId()
 	 */
 	public boolean deleteOfflineMessage(int messageId) {
@@ -961,6 +1177,7 @@ public class TS3Api {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see ServerGroupType
 	 * @see Permission#getName()
 	 */
@@ -977,6 +1194,7 @@ public class TS3Api {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see PrivilegeKey
 	 */
 	public boolean deletePrivilegeKey(String token) {
@@ -995,6 +1213,7 @@ public class TS3Api {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see VirtualServer#getId()
 	 * @see #stopServer(int)
 	 */
@@ -1011,6 +1230,7 @@ public class TS3Api {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see ServerGroup#getId()
 	 */
 	public boolean deleteServerGroup(int groupId) {
@@ -1031,6 +1251,7 @@ public class TS3Api {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see ServerGroup#getId()
 	 */
 	public boolean deleteServerGroup(int groupId, boolean force) {
@@ -1048,6 +1269,7 @@ public class TS3Api {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see ServerGroup#getId()
 	 * @see Permission#getName()
 	 */
@@ -1065,6 +1287,7 @@ public class TS3Api {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see #createServerSnapshot()
 	 */
 	public boolean deployServerSnapshot(Snapshot snapshot) {
@@ -1080,11 +1303,216 @@ public class TS3Api {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see #createServerSnapshot()
 	 */
 	public boolean deployServerSnapshot(String snapshot) {
 		final CServerSnapshotDeploy deploy = new CServerSnapshotDeploy(snapshot);
 		return query.doCommand(deploy);
+	}
+
+	/**
+	 * Downloads a file from the file repository at a given path and channel
+	 * and writes the file's bytes to an open {@link OutputStream}.
+	 * <p>
+	 * It is the user's responsibility to ensure that the given {@code OutputStream} is
+	 * open and to close the stream again once the download has finished.
+	 * </p><p>
+	 * Note that this method will not read the entire file to memory and can thus
+	 * download arbitrarily sized files from the file repository.
+	 * </p>
+	 *
+	 * @param dataOut
+	 * 		a stream that the downloaded data should be written to
+	 * @param filePath
+	 * 		the path of the file on the file repository
+	 * @param channelId
+	 * 		the ID of the channel to download the file from
+	 *
+	 * @return how many bytes were downloaded
+	 *
+	 * @throws TS3FileTransferFailedException
+	 * 		if the file transfer fails for any reason
+	 * @querycommands 1
+	 * @see FileInfo#getPath()
+	 * @see Channel#getId()
+	 * @see #downloadFileDirect(String, int)
+	 */
+	public long downloadFile(OutputStream dataOut, String filePath, int channelId) {
+		return downloadFile(dataOut, filePath, channelId, null);
+	}
+
+	/**
+	 * Downloads a file from the file repository at a given path and channel
+	 * and writes the file's bytes to an open {@link OutputStream}.
+	 * <p>
+	 * It is the user's responsibility to ensure that the given {@code OutputStream} is
+	 * open and to close the stream again once the download has finished.
+	 * </p><p>
+	 * Note that this method will not read the entire file to memory and can thus
+	 * download arbitrarily sized files from the file repository.
+	 * </p>
+	 *
+	 * @param dataOut
+	 * 		a stream that the downloaded data should be written to
+	 * @param filePath
+	 * 		the path of the file on the file repository
+	 * @param channelId
+	 * 		the ID of the channel to download the file from
+	 * @param channelPassword
+	 * 		that channel's password
+	 *
+	 * @return how many bytes were downloaded
+	 *
+	 * @throws TS3FileTransferFailedException
+	 * 		if the file transfer fails for any reason
+	 * @querycommands 1
+	 * @see FileInfo#getPath()
+	 * @see Channel#getId()
+	 * @see #downloadFileDirect(String, int, String)
+	 */
+	public long downloadFile(OutputStream dataOut, String filePath, int channelId, String channelPassword) {
+		final FileTransferHelper helper = query.getFileTransferHelper();
+		final int transferId = helper.getClientTransferId();
+		final CFtInitDownload download = new CFtInitDownload(transferId, filePath, channelId, channelPassword);
+
+		if (!query.doCommand(download)) return -1L;
+		FileTransferParameters params = new FileTransferParameters(download.getFirstResponse().getMap());
+		QueryError error = params.getQueryError();
+		if (!error.isSuccessful()) return -1L;
+
+		try {
+			query.getFileTransferHelper().downloadFile(dataOut, params);
+		} catch (IOException e) {
+			throw new TS3FileTransferFailedException("Download failed", e);
+		}
+		return params.getFileSize();
+	}
+
+	/**
+	 * Downloads a file from the file repository at a given path and channel
+	 * and returns the file's bytes as a byte array.
+	 * <p>
+	 * Note that this method <strong>will read the entire file to memory</strong>.
+	 * That means that if a file is larger than 2<sup>31</sup>-1 bytes in size,
+	 * the download will fail.
+	 * </p>
+	 *
+	 * @param filePath
+	 * 		the path of the file on the file repository
+	 * @param channelId
+	 * 		the ID of the channel to download the file from
+	 *
+	 * @return a byte array containing the file's data
+	 *
+	 * @throws TS3FileTransferFailedException
+	 * 		if the file transfer fails for any reason
+	 * @querycommands 1
+	 * @see FileInfo#getPath()
+	 * @see Channel#getId()
+	 * @see #downloadFile(OutputStream, String, int)
+	 */
+	public byte[] downloadFileDirect(String filePath, int channelId) {
+		return downloadFileDirect(filePath, channelId, null);
+	}
+
+	/**
+	 * Downloads a file from the file repository at a given path and channel
+	 * and returns the file's bytes as a byte array.
+	 * <p>
+	 * Note that this method <strong>will read the entire file to memory</strong>.
+	 * That means that if a file is larger than 2<sup>31</sup>-1 bytes in size,
+	 * the download will fail.
+	 * </p>
+	 *
+	 * @param filePath
+	 * 		the path of the file on the file repository
+	 * @param channelId
+	 * 		the ID of the channel to download the file from
+	 * @param channelPassword
+	 * 		that channel's password
+	 *
+	 * @return a byte array containing the file's data
+	 *
+	 * @throws TS3FileTransferFailedException
+	 * 		if the file transfer fails for any reason
+	 * @querycommands 1
+	 * @see FileInfo#getPath()
+	 * @see Channel#getId()
+	 * @see #downloadFile(OutputStream, String, int, String)
+	 */
+	public byte[] downloadFileDirect(String filePath, int channelId, String channelPassword) {
+		final FileTransferHelper helper = query.getFileTransferHelper();
+		final int transferId = helper.getClientTransferId();
+		final CFtInitDownload download = new CFtInitDownload(transferId, filePath, channelId, channelPassword);
+
+		if (!query.doCommand(download)) return null;
+		FileTransferParameters params = new FileTransferParameters(download.getFirstResponse().getMap());
+		QueryError error = params.getQueryError();
+		if (!error.isSuccessful()) return null;
+
+		long fileSize = params.getFileSize();
+		if (fileSize > Integer.MAX_VALUE) throw new TS3FileTransferFailedException("File too big for byte array");
+		ByteArrayOutputStream dataOut = new ByteArrayOutputStream((int) fileSize);
+
+		try {
+			query.getFileTransferHelper().downloadFile(dataOut, params);
+		} catch (IOException e) {
+			throw new TS3FileTransferFailedException("Download failed", e);
+		}
+
+		return dataOut.toByteArray();
+	}
+
+	/**
+	 * Downloads an icon from the icon directory in the file repository
+	 * and writes the file's bytes to an open {@link OutputStream}.
+	 * <p>
+	 * It is the user's responsibility to ensure that the given {@code OutputStream} is
+	 * open and to close the stream again once the download has finished.
+	 * </p>
+	 *
+	 * @param dataOut
+	 * 		a stream that the downloaded data should be written to
+	 * @param iconId
+	 * 		the ID of the icon that should be downloaded
+	 *
+	 * @return a byte array containing the icon file's data
+	 *
+	 * @throws TS3FileTransferFailedException
+	 * 		if the file transfer fails for any reason
+	 * @querycommands 1
+	 * @see IconFile#getIconId()
+	 * @see #downloadIconDirect(long)
+	 * @see #uploadIcon(InputStream, long)
+	 */
+	public long downloadIcon(OutputStream dataOut, long iconId) {
+		final String iconPath = "/icon_" + iconId;
+		return downloadFile(dataOut, iconPath, 0);
+	}
+
+	/**
+	 * Downloads an icon from the icon directory in the file repository
+	 * and returns the file's bytes as a byte array.
+	 * <p>
+	 * Note that this method <strong>will read the entire file to memory</strong>.
+	 * </p>
+	 *
+	 * @param iconId
+	 * 		the ID of the icon that should be downloaded
+	 *
+	 * @return a byte array containing the icon file's data
+	 *
+	 * @throws TS3FileTransferFailedException
+	 * 		if the file transfer fails for any reason
+	 * @querycommands 1
+	 * @see IconFile#getIconId()
+	 * @see #downloadIcon(OutputStream, long)
+	 * @see #uploadIconDirect(byte[])
+	 */
+	public byte[] downloadIconDirect(long iconId) {
+		final String iconPath = "/icon_" + iconId;
+		return downloadFileDirect(iconPath, 0);
 	}
 
 	/**
@@ -1097,6 +1525,7 @@ public class TS3Api {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see Channel#getId()
 	 */
 	public boolean editChannel(int channelId, Map<ChannelProperty, String> options) {
@@ -1118,6 +1547,7 @@ public class TS3Api {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see Client#getId()
 	 * @see #updateClient(Map)
 	 */
@@ -1136,6 +1566,7 @@ public class TS3Api {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see DatabaseClientInfo
 	 * @see Client#getDatabaseId()
 	 */
@@ -1157,6 +1588,7 @@ public class TS3Api {
 	 *
 	 * @throws IllegalArgumentException
 	 * 		if {@code property} is not changeable
+	 * @querycommands 1
 	 * @see ServerInstanceProperty#isChangeable()
 	 */
 	public boolean editInstance(ServerInstanceProperty property, String value) {
@@ -1176,6 +1608,7 @@ public class TS3Api {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see VirtualServerProperty
 	 */
 	public boolean editServer(Map<VirtualServerProperty, String> options) {
@@ -1188,6 +1621,7 @@ public class TS3Api {
 	 *
 	 * @return a list of all bans on the virtual server
 	 *
+	 * @querycommands 1
 	 * @see Ban
 	 */
 	public List<Ban> getBans() {
@@ -1209,6 +1643,7 @@ public class TS3Api {
 	 *
 	 * @return the list of bound IP addresses
 	 *
+	 * @querycommands 1
 	 * @see Binding
 	 */
 	public List<Binding> getBindings() {
@@ -1235,16 +1670,17 @@ public class TS3Api {
 	 *
 	 * @return the found channel or {@code null} if no channel was found
 	 *
+	 * @querycommands 1
 	 * @see Channel
 	 * @see #getChannelsByName(String)
 	 */
 	public Channel getChannelByNameExact(String name, final boolean ignoreCase) {
-		final String caseName = ignoreCase ? name.toLowerCase() : name;
+		final String caseName = ignoreCase ? name.toLowerCase(Locale.ROOT) : name;
 		final List<Channel> allChannels = getChannels();
 		if (allChannels == null) return null;
 
 		for (final Channel channel : allChannels) {
-			final String channelName = ignoreCase ? channel.getName().toLowerCase() : channel.getName();
+			final String channelName = ignoreCase ? channel.getName().toLowerCase(Locale.ROOT) : channel.getName();
 			if (caseName.equals(channelName)) {
 				return channel;
 			}
@@ -1260,6 +1696,7 @@ public class TS3Api {
 	 *
 	 * @return a list of all channels with names matching the search pattern
 	 *
+	 * @querycommands 2
 	 * @see Channel
 	 * @see #getChannelByNameExact(String, boolean)
 	 */
@@ -1296,6 +1733,7 @@ public class TS3Api {
 	 *
 	 * @return a list of permissions for the user in the specified channel
 	 *
+	 * @querycommands 1
 	 * @see Channel#getId()
 	 * @see Client#getDatabaseId()
 	 * @see Permission
@@ -1327,6 +1765,7 @@ public class TS3Api {
 	 *
 	 * @return a list of combinations of channel ID, client database ID and channel group ID
 	 *
+	 * @querycommands 1
 	 * @see Channel#getId()
 	 * @see Client#getDatabaseId()
 	 * @see ChannelGroup#getId()
@@ -1354,6 +1793,7 @@ public class TS3Api {
 	 *
 	 * @return a list of combinations of channel ID, client database ID and channel group ID
 	 *
+	 * @querycommands 1
 	 * @see ChannelGroup#getId()
 	 * @see ChannelGroupClient
 	 * @see #getChannelGroupClients(int, int, int)
@@ -1370,6 +1810,7 @@ public class TS3Api {
 	 *
 	 * @return a list of combinations of channel ID, client database ID and channel group ID
 	 *
+	 * @querycommands 1
 	 * @see Channel#getId()
 	 * @see ChannelGroupClient
 	 * @see #getChannelGroupClients(int, int, int)
@@ -1386,6 +1827,7 @@ public class TS3Api {
 	 *
 	 * @return a list of combinations of channel ID, client database ID and channel group ID
 	 *
+	 * @querycommands 1
 	 * @see Client#getDatabaseId()
 	 * @see ChannelGroupClient
 	 * @see #getChannelGroupClients(int, int, int)
@@ -1402,6 +1844,7 @@ public class TS3Api {
 	 *
 	 * @return a list of permissions assigned to the channel group
 	 *
+	 * @querycommands 1
 	 * @see ChannelGroup#getId()
 	 * @see Permission
 	 */
@@ -1424,6 +1867,7 @@ public class TS3Api {
 	 *
 	 * @return a list of all channel groups on the virtual server
 	 *
+	 * @querycommands 1
 	 * @see ChannelGroup
 	 */
 	public List<ChannelGroup> getChannelGroups() {
@@ -1448,6 +1892,7 @@ public class TS3Api {
 	 *
 	 * @return information about the channel
 	 *
+	 * @querycommands 1
 	 * @see Channel#getId()
 	 * @see ChannelInfo
 	 */
@@ -1467,6 +1912,7 @@ public class TS3Api {
 	 *
 	 * @return a list of all permissions assigned to the channel
 	 *
+	 * @querycommands 1
 	 * @see Channel#getId()
 	 * @see Permission
 	 */
@@ -1489,6 +1935,7 @@ public class TS3Api {
 	 *
 	 * @return a list of all channels on the virtual server
 	 *
+	 * @querycommands 1
 	 * @see Channel
 	 */
 	public List<Channel> getChannels() {
@@ -1514,16 +1961,17 @@ public class TS3Api {
 	 *
 	 * @return the found client or {@code null} if no client was found
 	 *
+	 * @querycommands 1
 	 * @see Client
 	 * @see #getClientsByName(String)
 	 */
 	public Client getClientByNameExact(String name, final boolean ignoreCase) {
-		final String caseName = ignoreCase ? name.toLowerCase() : name;
+		final String caseName = ignoreCase ? name.toLowerCase(Locale.ROOT) : name;
 		final List<Client> allClients = getClients();
 		if (allClients == null) return null;
 
 		for (final Client client : allClients) {
-			final String clientName = ignoreCase ? client.getNickname().toLowerCase() : client.getNickname();
+			final String clientName = ignoreCase ? client.getNickname().toLowerCase(Locale.ROOT) : client.getNickname();
 			if (caseName.equals(clientName)) {
 				return client;
 			}
@@ -1539,6 +1987,7 @@ public class TS3Api {
 	 *
 	 * @return a list of all clients with nicknames matching the search pattern
 	 *
+	 * @querycommands 2
 	 * @see Client
 	 * @see #getClientByNameExact(String, boolean)
 	 */
@@ -1572,6 +2021,7 @@ public class TS3Api {
 	 *
 	 * @return the client or {@code null} if no client was found
 	 *
+	 * @querycommands 2
 	 * @see Client#getUniqueIdentifier()
 	 * @see ClientInfo
 	 */
@@ -1591,6 +2041,7 @@ public class TS3Api {
 	 *
 	 * @return the client or {@code null} if no client was found
 	 *
+	 * @querycommands 1
 	 * @see Client#getId()
 	 * @see ClientInfo
 	 */
@@ -1610,6 +2061,7 @@ public class TS3Api {
 	 *
 	 * @return a list of all permissions assigned to the client
 	 *
+	 * @querycommands 1
 	 * @see Client#getDatabaseId()
 	 * @see Permission
 	 */
@@ -1632,6 +2084,7 @@ public class TS3Api {
 	 *
 	 * @return a list of all clients on the virtual server
 	 *
+	 * @querycommands 1
 	 * @see Client
 	 */
 	public List<Client> getClients() {
@@ -1653,6 +2106,7 @@ public class TS3Api {
 	 *
 	 * @return a list of all complaints on the virtual server
 	 *
+	 * @querycommands 1
 	 * @see Complaint
 	 * @see #getComplaints(int)
 	 */
@@ -1668,6 +2122,7 @@ public class TS3Api {
 	 *
 	 * @return a list of all complaints about the specified client
 	 *
+	 * @querycommands 1
 	 * @see Client#getDatabaseId()
 	 * @see Complaint
 	 */
@@ -1690,6 +2145,7 @@ public class TS3Api {
 	 *
 	 * @return connection information about the selected virtual server
 	 *
+	 * @querycommands 1
 	 * @see ConnectionInfo
 	 * @see #getServerInfo()
 	 */
@@ -1709,6 +2165,8 @@ public class TS3Api {
 	 *
 	 * @return a list of all clients with a matching nickname
 	 *
+	 * @querycommands 1 + n,
+	 * where n is the amount of database clients with a matching nickname
 	 * @see Client#getNickname()
 	 */
 	public List<DatabaseClientInfo> getDatabaseClientsByName(String name) {
@@ -1738,6 +2196,7 @@ public class TS3Api {
 	 *
 	 * @return the database client or {@code null} if no client was found
 	 *
+	 * @querycommands 2
 	 * @see Client#getUniqueIdentifier()
 	 * @see DatabaseClientInfo
 	 */
@@ -1757,6 +2216,7 @@ public class TS3Api {
 	 *
 	 * @return the database client or {@code null} if no client was found
 	 *
+	 * @querycommands 1
 	 * @see Client#getDatabaseId()
 	 * @see DatabaseClientInfo
 	 */
@@ -1779,6 +2239,8 @@ public class TS3Api {
 	 *
 	 * @return a {@link List} of all database clients
 	 *
+	 * @querycommands 1 + n,
+	 * where n = Math.ceil([amount of database clients] / 200)
 	 * @see DatabaseClient
 	 */
 	public List<DatabaseClient> getDatabaseClients() {
@@ -1803,10 +2265,248 @@ public class TS3Api {
 	}
 
 	/**
+	 * Gets information about a set number of clients in the server database, starting at {@code offset}.
+	 *
+	 * @param offset
+	 * 		the index of the first database client to be returned.
+	 * 		Note that this is <b>not</b> a database ID, but an arbitrary, 0-based index.
+	 * @param count
+	 * 		the number of database clients that should be returned.
+	 * 		Any integer greater than 200 might cause problems with the connection
+	 *
+	 * @return a {@link List} of database clients
+	 *
+	 * @querycommands 1
+	 * @see DatabaseClient
+	 */
+	public List<DatabaseClient> getDatabaseClients(final int offset, final int count) {
+		final CClientDBList list = new CClientDBList(offset, count, false);
+		if (query.doCommand(list)) {
+			final List<DatabaseClient> clients = new ArrayList<>(count);
+			for (final Wrapper response : list.getResponse()) {
+				clients.add(new DatabaseClient(response.getMap()));
+			}
+			return clients;
+		}
+		return null;
+	}
+
+	/**
+	 * Gets information about a file on the file repository in the specified channel.
+	 * <p>
+	 * Note that this method does not work on directories and the information returned by this
+	 * method is identical to the one returned by {@link #getFileList(String, int, String)}
+	 * </p>
+	 *
+	 * @param filePath
+	 * 		the path to the file
+	 * @param channelId
+	 * 		the ID of the channel the file resides in
+	 *
+	 * @return some information about the file
+	 *
+	 * @querycommands 1
+	 * @see FileInfo#getPath()
+	 * @see Channel#getId()
+	 */
+	public FileInfo getFileInfo(String filePath, int channelId) {
+		return getFileInfo(filePath, channelId, null);
+	}
+
+	/**
+	 * Gets information about a file on the file repository in the specified channel.
+	 * <p>
+	 * Note that this method does not work on directories and the information returned by this
+	 * method is identical to the one returned by {@link #getFileList(String, int, String)}
+	 * </p>
+	 *
+	 * @param filePath
+	 * 		the path to the file
+	 * @param channelId
+	 * 		the ID of the channel the file resides in
+	 * @param channelPassword
+	 * 		the password of that channel
+	 *
+	 * @return some information about the file
+	 *
+	 * @querycommands 1
+	 * @see FileInfo#getPath()
+	 * @see Channel#getId()
+	 */
+	public FileInfo getFileInfo(String filePath, int channelId, String channelPassword) {
+		final CFtGetFileInfo info = new CFtGetFileInfo(channelId, channelPassword, filePath);
+		if (query.doCommand(info)) {
+			return new FileInfo(info.getFirstResponse().getMap());
+		}
+		return null;
+	}
+
+	/**
+	 * Gets information about multiple files on the file repository in the specified channel.
+	 * <p>
+	 * Note that this method does not work on directories and the information returned by this
+	 * method is identical to the one returned by {@link #getFileList(String, int, String)}
+	 * </p>
+	 *
+	 * @param filePaths
+	 * 		the paths to the files
+	 * @param channelId
+	 * 		the ID of the channel the file resides in
+	 *
+	 * @return some information about the file
+	 *
+	 * @querycommands 1
+	 * @see FileInfo#getPath()
+	 * @see Channel#getId()
+	 */
+	public List<FileInfo> getFileInfos(String filePaths[], int channelId) {
+		return getFileInfos(filePaths, channelId, null);
+	}
+
+	/**
+	 * Gets information about multiple files on the file repository in the specified channel.
+	 * <p>
+	 * Note that this method does not work on directories and the information returned by this
+	 * method is identical to the one returned by {@link #getFileList(String, int, String)}
+	 * </p>
+	 *
+	 * @param filePaths
+	 * 		the paths to the files
+	 * @param channelId
+	 * 		the ID of the channel the file resides in
+	 * @param channelPassword
+	 * 		the password of that channel
+	 *
+	 * @return some information about the file
+	 *
+	 * @querycommands 1
+	 * @see FileInfo#getPath()
+	 * @see Channel#getId()
+	 */
+	public List<FileInfo> getFileInfos(String filePaths[], int channelId, String channelPassword) {
+		final CFtGetFileInfo info = new CFtGetFileInfo(channelId, channelPassword, filePaths);
+		if (query.doCommand(info)) {
+			final List<Wrapper> responses = info.getResponse();
+			final List<FileInfo> files = new ArrayList<>(responses.size());
+
+			for (final Wrapper response : responses) {
+				files.add(new FileInfo(response.getMap()));
+			}
+			return files;
+		}
+		return null;
+	}
+
+	/**
+	 * Gets information about multiple files on the file repository in multiple channels.
+	 * <p>
+	 * Note that this method does not work on directories and the information returned by this
+	 * method is identical to the one returned by {@link #getFileList(String, int, String)}
+	 * </p>
+	 *
+	 * @param filePaths
+	 * 		the paths to the files, may not be {@code null} and may not contain {@code null} elements
+	 * @param channelIds
+	 * 		the IDs of the channels the file resides in, may not be {@code null}
+	 * @param channelPasswords
+	 * 		the passwords of those channels, may be {@code null} and may contain {@code null} elements
+	 *
+	 * @return some information about the files
+	 *
+	 * @throws IllegalArgumentException
+	 * 		if the dimensions of {@code filePaths}, {@code channelIds} and {@code channelPasswords} don't match
+	 * @querycommands 1
+	 * @see FileInfo#getPath()
+	 * @see Channel#getId()
+	 */
+	public List<FileInfo> getFileInfos(String filePaths[], int[] channelIds, String[] channelPasswords) {
+		final CFtGetFileInfo info = new CFtGetFileInfo(channelIds, channelPasswords, filePaths);
+		if (query.doCommand(info)) {
+			final List<Wrapper> responses = info.getResponse();
+			final List<FileInfo> files = new ArrayList<>(responses.size());
+
+			for (final Wrapper response : responses) {
+				files.add(new FileInfo(response.getMap()));
+			}
+			return files;
+		}
+		return null;
+	}
+
+	/**
+	 * Gets a list of files and directories in the specified parent directory and channel.
+	 *
+	 * @param directoryPath
+	 * 		the path to the parent directory
+	 * @param channelId
+	 * 		the ID of the channel the directory resides in
+	 *
+	 * @return the files and directories in the parent directory
+	 *
+	 * @querycommands 1
+	 * @see FileInfo#getPath()
+	 * @see Channel#getId()
+	 */
+	public List<FileListEntry> getFileList(String directoryPath, int channelId) {
+		return getFileList(directoryPath, channelId, null);
+	}
+
+	/**
+	 * Gets a list of files and directories in the specified parent directory and channel.
+	 *
+	 * @param directoryPath
+	 * 		the path to the parent directory
+	 * @param channelId
+	 * 		the ID of the channel the directory resides in
+	 * @param channelPassword
+	 * 		the password of that channel
+	 *
+	 * @return the files and directories in the parent directory
+	 *
+	 * @querycommands 1
+	 * @see FileInfo#getPath()
+	 * @see Channel#getId()
+	 */
+	public List<FileListEntry> getFileList(String directoryPath, int channelId, String channelPassword) {
+		final CFtGetFileList list = new CFtGetFileList(directoryPath, channelId, channelPassword);
+		if (query.doCommand(list)) {
+			final List<Wrapper> responses = list.getResponse();
+			final List<FileListEntry> files = new ArrayList<>(responses.size());
+
+			for (final Wrapper response : responses) {
+				files.add(new FileListEntry(response.getMap(), channelId, directoryPath));
+			}
+			return files;
+		}
+		return null;
+	}
+
+	/**
+	 * Gets a list of active or recently active file transfers.
+	 *
+	 * @return a list of file transfers
+	 */
+	public List<FileTransfer> getFileTransfers() {
+		final CFtList list = new CFtList();
+		if (query.doCommand(list)) {
+			final List<Wrapper> responses = list.getResponse();
+			final List<FileTransfer> transfers = new ArrayList<>(responses.size());
+
+			for (final Wrapper response : responses) {
+				transfers.add(new FileTransfer(response.getMap()));
+			}
+			return transfers;
+		}
+		return null;
+	}
+
+	/**
 	 * Displays detailed configuration information about the server instance including
 	 * uptime, number of virtual servers online, traffic information, etc.
 	 *
-	 * @return information about the
+	 * @return information about the host
+	 *
+	 * @querycommands 1
 	 */
 	public HostInfo getHostInfo() {
 		final CHostInfo info = new CHostInfo();
@@ -1817,10 +2517,28 @@ public class TS3Api {
 	}
 
 	/**
+	 * Gets a list of all icon files on this virtual server.
+	 *
+	 * @return a list of all icons
+	 */
+	public List<IconFile> getIconList() {
+		List<FileListEntry> files = getFileList("/icons/", 0);
+		if (files == null) return null;
+		List<IconFile> icons = new ArrayList<>(files.size());
+		for (FileListEntry file : files) {
+			if (file.isDirectory() || file.isStillUploading()) continue;
+			icons.add(new IconFile(file.getMap(), 0, "/icons/"));
+		}
+		return icons;
+	}
+
+	/**
 	 * Displays the server instance configuration including database revision number,
 	 * the file transfer port, default group IDs, etc.
 	 *
 	 * @return information about the TeamSpeak server instance.
+	 *
+	 * @querycommands 1
 	 */
 	public InstanceInfo getInstanceInfo() {
 		final CInstanceInfo info = new CInstanceInfo();
@@ -1838,6 +2556,7 @@ public class TS3Api {
 	 *
 	 * @return the body of the message with the specified ID or {@code null} if there was no message with that ID
 	 *
+	 * @querycommands 1
 	 * @see Message#getId()
 	 * @see #setMessageRead(int)
 	 */
@@ -1857,6 +2576,7 @@ public class TS3Api {
 	 *
 	 * @return the body of the message with the specified ID or {@code null} if there was no message with that ID
 	 *
+	 * @querycommands 1
 	 * @see Message#getId()
 	 * @see #setMessageRead(Message)
 	 */
@@ -1870,6 +2590,8 @@ public class TS3Api {
 	 * To read the actual message, use {@link #getOfflineMessage(int)} or {@link #getOfflineMessage(Message)}.
 	 *
 	 * @return a list of all offline messages this server query has received
+	 *
+	 * @querycommands 1
 	 */
 	public List<Message> getOfflineMessages() {
 		final CMessageList list = new CMessageList();
@@ -1895,16 +2617,17 @@ public class TS3Api {
 	 *
 	 * @return a list of permission assignments
 	 *
+	 * @querycommands 1
 	 * @see #getPermissionOverview(int, int)
 	 */
-	public List<AdvancedPermission> getPermissionAssignments(String permName) {
+	public List<PermissionAssignment> getPermissionAssignments(String permName) {
 		final CPermFind find = new CPermFind(permName);
 		if (query.doCommand(find)) {
 			final List<Wrapper> responses = find.getResponse();
-			final List<AdvancedPermission> assignments = new ArrayList<>(responses.size());
+			final List<PermissionAssignment> assignments = new ArrayList<>(responses.size());
 
 			for (final Wrapper response : responses) {
-				assignments.add(new AdvancedPermission(response.getMap()));
+				assignments.add(new PermissionAssignment(response.getMap()));
 			}
 			return assignments;
 		}
@@ -1922,6 +2645,8 @@ public class TS3Api {
 	 * 		the name of the permission
 	 *
 	 * @return the numeric ID of the specified permission
+	 *
+	 * @querycommands 1
 	 */
 	public int getPermissionIdByName(String permName) {
 		final CPermIdGetByName get = new CPermIdGetByName(permName);
@@ -1929,6 +2654,37 @@ public class TS3Api {
 			return get.getFirstResponse().getInt("permid");
 		}
 		return -1;
+	}
+
+	/**
+	 * Gets the IDs of the permissions specified by {@code permNames}.
+	 * <p>
+	 * Note that the use of numeric permission IDs is deprecated
+	 * and that this API only uses the string variant of the IDs.
+	 * </p>
+	 *
+	 * @param permNames
+	 * 		the names of the permissions
+	 *
+	 * @return the numeric IDs of the specified permission
+	 *
+	 * @throws IllegalArgumentException
+	 * 		if {@code permNames} is {@code null}
+	 * @querycommands 1
+	 */
+	public int[] getPermissionIdsByName(String[] permNames) {
+		if (permNames == null) throw new IllegalArgumentException("permNames was null");
+
+		final CPermIdGetByName get = new CPermIdGetByName(permNames);
+		if (query.doCommand(get)) {
+			int[] ids = new int[get.getResponse().size()];
+			int i = 0;
+			for (Wrapper response : get.getResponse()) {
+				ids[i++] = response.getInt("permid");
+			}
+			return ids;
+		}
+		return null;
 	}
 
 	/**
@@ -1942,17 +2698,18 @@ public class TS3Api {
 	 *
 	 * @return a list of all permission assignments for the client in the specified channel
 	 *
+	 * @querycommands 1
 	 * @see Channel#getId()
 	 * @see Client#getDatabaseId()
 	 */
-	public List<AdvancedPermission> getPermissionOverview(int channelId, int clientDBId) {
+	public List<PermissionAssignment> getPermissionOverview(int channelId, int clientDBId) {
 		final CPermOverview overview = new CPermOverview(channelId, clientDBId);
 		if (query.doCommand(overview)) {
 			final List<Wrapper> responses = overview.getResponse();
-			final List<AdvancedPermission> permissions = new ArrayList<>(responses.size());
+			final List<PermissionAssignment> permissions = new ArrayList<>(responses.size());
 
 			for (final Wrapper response : responses) {
-				permissions.add(new AdvancedPermission(response.getMap()));
+				permissions.add(new PermissionAssignment(response.getMap()));
 			}
 			return permissions;
 		}
@@ -1963,6 +2720,8 @@ public class TS3Api {
 	 * Displays a list of all permissions, including ID, name and description.
 	 *
 	 * @return a list of all permissions
+	 *
+	 * @querycommands 1
 	 */
 	public List<PermissionInfo> getPermissions() {
 		final CPermissionList list = new CPermissionList();
@@ -1985,6 +2744,8 @@ public class TS3Api {
 	 * 		the name of the permission
 	 *
 	 * @return the permission value, usually ranging from 0 to 100
+	 *
+	 * @querycommands 1
 	 */
 	public int getPermissionValue(String permName) {
 		final CPermGet get = new CPermGet(permName);
@@ -1995,12 +2756,40 @@ public class TS3Api {
 	}
 
 	/**
+	 * Displays the current values of the specified permissions for this server query instance.
+	 *
+	 * @param permNames
+	 * 		the names of the permissions
+	 *
+	 * @return the permission values, usually ranging from 0 to 100
+	 *
+	 * @throws IllegalArgumentException
+	 * 		if {@code permNames} is {@code null}
+	 * @querycommands 1
+	 */
+	public int[] getPermissionValues(String[] permNames) {
+		if (permNames == null) throw new IllegalArgumentException("permNames was null");
+
+		final CPermGet get = new CPermGet(permNames);
+		if (query.doCommand(get)) {
+			int[] values = new int[get.getResponse().size()];
+			int i = 0;
+			for (Wrapper response : get.getResponse()) {
+				values[i++] = response.getInt("permvalue");
+			}
+			return values;
+		}
+		return null;
+	}
+
+	/**
 	 * Gets a list of all available tokens to join channel or server groups,
 	 * including their type and group IDs.
 	 *
 	 * @return a list of all generated, but still unclaimed privilege keys
 	 *
-	 * @see #addPrivilegeKey(TokenType, int, int, String)
+	 * @querycommands 1
+	 * @see #addPrivilegeKey(PrivilegeKeyType, int, int, String)
 	 * @see #usePrivilegeKey(String)
 	 */
 	public List<PrivilegeKey> getPrivilegeKeys() {
@@ -2024,6 +2813,8 @@ public class TS3Api {
 	 * 		the ID of the server group for which the clients should be looked up
 	 *
 	 * @return a list of all clients in the server group
+	 *
+	 * @querycommands 1
 	 */
 	public List<ServerGroupClient> getServerGroupClients(int serverGroupId) {
 		final CServerGroupClientList list = new CServerGroupClientList(serverGroupId);
@@ -2046,6 +2837,8 @@ public class TS3Api {
 	 * 		the server group for which the clients should be looked up
 	 *
 	 * @return a list of all clients in the server group
+	 *
+	 * @querycommands 1
 	 */
 	public List<ServerGroupClient> getServerGroupClients(ServerGroup serverGroup) {
 		return getServerGroupClients(serverGroup.getId());
@@ -2059,6 +2852,7 @@ public class TS3Api {
 	 *
 	 * @return a list of all permissions assigned to the server group
 	 *
+	 * @querycommands 1
 	 * @see ServerGroup#getId()
 	 * @see #getServerGroupPermissions(ServerGroup)
 	 */
@@ -2083,6 +2877,8 @@ public class TS3Api {
 	 * 		the server group for which the permissions should be looked up
 	 *
 	 * @return a list of all permissions assigned to the server group
+	 *
+	 * @querycommands 1
 	 */
 	public List<Permission> getServerGroupPermissions(ServerGroup serverGroup) {
 		return getServerGroupPermissions(serverGroup.getId());
@@ -2096,6 +2892,8 @@ public class TS3Api {
 	 * </p>
 	 *
 	 * @return a list of all server groups
+	 *
+	 * @querycommands 1
 	 */
 	public List<ServerGroup> getServerGroups() {
 		final CServerGroupList list = new CServerGroupList();
@@ -2119,6 +2917,7 @@ public class TS3Api {
 	 *
 	 * @return a list of all server groups set for the client
 	 *
+	 * @querycommands 2
 	 * @see Client#getDatabaseId()
 	 * @see #getServerGroupsByClient(Client)
 	 */
@@ -2149,6 +2948,7 @@ public class TS3Api {
 	 *
 	 * @return a list of all server group set for the client
 	 *
+	 * @querycommands 2
 	 * @see #getServerGroupsByClientId(int)
 	 */
 	public List<ServerGroup> getServerGroupsByClient(Client client) {
@@ -2163,6 +2963,7 @@ public class TS3Api {
 	 *
 	 * @return the ID of the virtual server
 	 *
+	 * @querycommands 1
 	 * @see VirtualServer#getPort()
 	 * @see VirtualServer#getId()
 	 */
@@ -2178,6 +2979,8 @@ public class TS3Api {
 	 * Gets detailed information about the virtual server the server query is currently in.
 	 *
 	 * @return information about the current virtual server
+	 *
+	 * @querycommands 1
 	 */
 	public VirtualServerInfo getServerInfo() {
 		final CServerInfo info = new CServerInfo();
@@ -2191,6 +2994,8 @@ public class TS3Api {
 	 * Gets the version, build number and platform of the TeamSpeak3 server.
 	 *
 	 * @return the version information of the server
+	 *
+	 * @querycommands 1
 	 */
 	public Version getVersion() {
 		final CVersion version = new CVersion();
@@ -2204,6 +3009,8 @@ public class TS3Api {
 	 * Gets a list of all virtual servers including their ID, status, number of clients online, etc.
 	 *
 	 * @return a list of all virtual servers
+	 *
+	 * @querycommands 1
 	 */
 	public List<VirtualServer> getVirtualServers() {
 		final CServerList serverList = new CServerList();
@@ -2229,6 +3036,7 @@ public class TS3Api {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see #kickClientFromChannel(Client...)
 	 * @see #kickClientFromChannel(String, int...)
 	 */
@@ -2246,6 +3054,7 @@ public class TS3Api {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see #kickClientFromChannel(int...)
 	 * @see #kickClientFromChannel(String, Client...)
 	 */
@@ -2265,6 +3074,7 @@ public class TS3Api {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see Client#getId()
 	 * @see #kickClientFromChannel(int...)
 	 * @see #kickClientFromChannel(String, Client...)
@@ -2285,6 +3095,7 @@ public class TS3Api {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see #kickClientFromChannel(Client...)
 	 * @see #kickClientFromChannel(String, int...)
 	 */
@@ -2300,6 +3111,7 @@ public class TS3Api {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see Client#getId()
 	 * @see #kickClientFromServer(Client...)
 	 * @see #kickClientFromServer(String, int...)
@@ -2316,6 +3128,7 @@ public class TS3Api {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see #kickClientFromServer(int...)
 	 * @see #kickClientFromServer(String, Client...)
 	 */
@@ -2333,6 +3146,7 @@ public class TS3Api {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see Client#getId()
 	 * @see #kickClientFromServer(int...)
 	 * @see #kickClientFromServer(String, Client...)
@@ -2351,6 +3165,7 @@ public class TS3Api {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see #kickClientFromServer(Client...)
 	 * @see #kickClientFromServer(String, int...)
 	 */
@@ -2369,6 +3184,8 @@ public class TS3Api {
 	 * 		the clients to kick
 	 *
 	 * @return whether the command succeeded or not
+	 *
+	 * @querycommands 1
 	 */
 	private boolean kickClients(ReasonIdentifier reason, String message, Client... clients) {
 		int[] clientIds = new int[clients.length];
@@ -2390,6 +3207,7 @@ public class TS3Api {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see Client#getId()
 	 */
 	private boolean kickClients(ReasonIdentifier reason, String message, int... clientIds) {
@@ -2411,7 +3229,7 @@ public class TS3Api {
 	 *
 	 * @return whether the command succeeded or not
 	 *
-	 * @see TS3Config#setLoginCredentials(String, String)
+	 * @querycommands 1
 	 * @see #logout()
 	 */
 	public boolean login(String username, String password) {
@@ -2424,6 +3242,7 @@ public class TS3Api {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see #login(String, String)
 	 */
 	public boolean logout() {
@@ -2436,7 +3255,7 @@ public class TS3Api {
 	 * To move a channel to root level, set {@code channelTargetId} to {@code 0}.
 	 * <p>
 	 * This will move the channel right below the specified parent channel, above all other child channels.
-	 * This command will fail if the channel already has the specified target channel as the parent channel.
+	 * The command will fail if the channel already has the specified target channel as the parent channel.
 	 * </p>
 	 *
 	 * @param channelId
@@ -2446,6 +3265,7 @@ public class TS3Api {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see Channel#getId()
 	 * @see #moveChannel(int, int, int)
 	 */
@@ -2459,7 +3279,9 @@ public class TS3Api {
 	 * <p>
 	 * The channel will be ordered below the channel with the ID specified by {@code order}.
 	 * To move the channel right below the parent channel, set {@code order} to {@code 0}.
-	 * Also note that a channel cannot be re-ordered without also changing its parent channel.
+	 * </p><p>
+	 * Note that re-ordering a channel without also changing its parent channel cannot be done with this method.
+	 * Use {@link #editChannel(int, Map)} to change {@link ChannelProperty#CHANNEL_ORDER} instead.
 	 * </p>
 	 *
 	 * @param channelId
@@ -2471,6 +3293,7 @@ public class TS3Api {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see Channel#getId()
 	 * @see #moveChannel(int, int)
 	 */
@@ -2480,63 +3303,11 @@ public class TS3Api {
 	}
 
 	/**
-	 * Moves the server query into the specified channel.
-	 *
-	 * @param channelId
-	 * 		the ID of the channel to move the client into
-	 *
-	 * @return whether the command succeeded or not
-	 *
-	 * @see Channel#getId()
-	 */
-	public boolean moveClient(int channelId) {
-		return moveClient(channelId, null);
-	}
-
-	/**
-	 * Moves the server query into the specified channel.
-	 *
-	 * @param channel
-	 * 		the channel to move the client into
-	 *
-	 * @return whether the command succeeded or not
-	 */
-	public boolean moveClient(ChannelBase channel) {
-		return moveClient(channel.getId(), null);
-	}
-
-	/**
-	 * Moves the server query into the specified channel using the specified password.
-	 *
-	 * @param channelId
-	 * 		the ID of the channel to move the client into
-	 * @param channelPassword
-	 * 		the password of the channel
-	 *
-	 * @return whether the command succeeded or not
-	 *
-	 * @see Channel#getId()
-	 */
-	public boolean moveClient(int channelId, String channelPassword) {
-		return moveClient(0, channelId, channelPassword);
-	}
-
-	/**
-	 * Moves the server query into the specified channel using the specified password.
-	 *
-	 * @param channel
-	 * 		the channel to move the client into
-	 * @param channelPassword
-	 * 		the password of the channel
-	 *
-	 * @return whether the command succeeded or not
-	 */
-	public boolean moveClient(ChannelBase channel, String channelPassword) {
-		return moveClient(0, channel.getId(), channelPassword);
-	}
-
-	/**
-	 * Moves a client into the specified channel.
+	 * Moves a client into a channel.
+	 * <p>
+	 * Consider using {@link #moveClients(int[], int)}
+	 * for moving multiple clients.
+	 * </p>
 	 *
 	 * @param clientId
 	 * 		the ID of the client to move
@@ -2545,6 +3316,7 @@ public class TS3Api {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see Client#getId()
 	 * @see Channel#getId()
 	 */
@@ -2553,31 +3325,92 @@ public class TS3Api {
 	}
 
 	/**
-	 * Moves a client into the specified channel.
+	 * Moves multiple clients into a channel.
+	 * Immediately returns {@code true} for an empty client ID array.
+	 * <p>
+	 * Use this method instead of {@link #moveClient(int, int)} for moving
+	 * several clients as this will only send 1 command to the server and thus complete faster.
+	 * </p>
 	 *
-	 * @param client
-	 * 		the client to move
-	 * @param channel
-	 * 		the channel to move the client into
+	 * @param clientIds
+	 * 		the IDs of the clients to move, cannot be {@code null}
+	 * @param channelId
+	 * 		the ID of the channel to move the clients into
 	 *
 	 * @return whether the command succeeded or not
+	 *
+	 * @throws IllegalArgumentException
+	 * 		if {@code clientIds} is {@code null}
+	 * @querycommands 1
+	 * @see Client#getId()
+	 * @see Channel#getId()
 	 */
-	public boolean moveClient(Client client, ChannelBase channel) {
-		return moveClient(client.getId(), channel.getId(), null);
+	public boolean moveClients(int[] clientIds, int channelId) {
+		return moveClients(clientIds, channelId, null);
 	}
 
 	/**
-	 * Moves a client into the specified channel using the specified password.
+	 * Moves a client into a channel.
+	 * <p>
+	 * Consider using {@link #moveClients(Client[], ChannelBase)}
+	 * for moving multiple clients.
+	 * </p>
+	 *
+	 * @param client
+	 * 		the client to move, cannot be {@code null}
+	 * @param channel
+	 * 		the channel to move the client into, cannot be {@code null}
+	 *
+	 * @return whether the command succeeded or not
+	 *
+	 * @throws IllegalArgumentException
+	 * 		if {@code client} or {@code channel} is {@code null}
+	 * @querycommands 1
+	 */
+	public boolean moveClient(Client client, ChannelBase channel) {
+		return moveClient(client, channel, null);
+	}
+
+	/**
+	 * Moves multiple clients into a channel.
+	 * Immediately returns {@code true} for an empty client array.
+	 * <p>
+	 * Use this method instead of {@link #moveClient(Client, ChannelBase)} for moving
+	 * several clients as this will only send 1 command to the server and thus complete faster.
+	 * </p>
+	 *
+	 * @param clients
+	 * 		the clients to move, cannot be {@code null}
+	 * @param channel
+	 * 		the channel to move the clients into, cannot be {@code null}
+	 *
+	 * @return whether the command succeeded or not
+	 *
+	 * @throws IllegalArgumentException
+	 * 		if {@code clients} or {@code channel} is {@code null}
+	 * @querycommands 1
+	 */
+	public boolean moveClients(Client[] clients, ChannelBase channel) {
+		return moveClients(clients, channel, null);
+	}
+
+	/**
+	 * Moves a client into a channel using the specified password.
+	 * <p>
+	 * Consider using {@link #moveClients(int[], int, String)}
+	 * for moving multiple clients.
+	 * </p>
 	 *
 	 * @param clientId
 	 * 		the ID of the client to move
 	 * @param channelId
 	 * 		the ID of the channel to move the client into
 	 * @param channelPassword
-	 * 		the password of the channel
+	 * 		the password of the channel, can be {@code null}
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see Client#getId()
 	 * @see Channel#getId()
 	 */
@@ -2587,19 +3420,260 @@ public class TS3Api {
 	}
 
 	/**
-	 * Moves a client into the specified channel using the specified password.
+	 * Moves multiple clients into a channel using the specified password.
+	 * Immediately returns {@code true} for an empty client ID array.
+	 * <p>
+	 * Use this method instead of {@link #moveClient(int, int, String)} for moving
+	 * several clients as this will only send 1 command to the server and thus complete faster.
+	 * </p>
+	 *
+	 * @param clientIds
+	 * 		the IDs of the clients to move, cannot be {@code null}
+	 * @param channelId
+	 * 		the ID of the channel to move the clients into
+	 * @param channelPassword
+	 * 		the password of the channel, can be {@code null}
+	 *
+	 * @return whether the command succeeded or not
+	 *
+	 * @throws IllegalArgumentException
+	 * 		if {@code clientIds} is {@code null}
+	 * @querycommands 1
+	 * @see Client#getId()
+	 * @see Channel#getId()
+	 */
+	public boolean moveClients(int[] clientIds, int channelId, String channelPassword) {
+		if (clientIds == null) throw new IllegalArgumentException("clientIds was null");
+		if (clientIds.length == 0) return true;
+
+		final CClientMove move = new CClientMove(clientIds, channelId, channelPassword);
+		return query.doCommand(move);
+	}
+
+	/**
+	 * Moves a single client into a channel using the specified password.
+	 * <p>
+	 * Consider using {@link #moveClients(Client[], ChannelBase, String)}
+	 * for moving multiple clients.
+	 * </p>
 	 *
 	 * @param client
-	 * 		the client to move
+	 * 		the client to move, cannot be {@code null}
 	 * @param channel
-	 * 		the channel to move the client into
+	 * 		the channel to move the client into, cannot be {@code null}
+	 * @param channelPassword
+	 * 		the password of the channel, can be {@code null}
+	 *
+	 * @return whether the command succeeded or not
+	 *
+	 * @throws IllegalArgumentException
+	 * 		if {@code client} or {@code channel} is {@code null}
+	 * @querycommands 1
+	 */
+	public boolean moveClient(Client client, ChannelBase channel, String channelPassword) {
+		if (client == null) throw new IllegalArgumentException("client was null");
+		if (channel == null) throw new IllegalArgumentException("channel was null");
+
+		return moveClient(client.getId(), channel.getId(), channelPassword);
+	}
+
+	/**
+	 * Moves multiple clients into a channel using the specified password.
+	 * Immediately returns {@code true} for an empty client array.
+	 * <p>
+	 * Use this method instead of {@link #moveClient(Client, ChannelBase, String)} for moving
+	 * several clients as this will only send 1 command to the server and thus complete faster.
+	 * </p>
+	 *
+	 * @param clients
+	 * 		the clients to move, cannot be {@code null}
+	 * @param channel
+	 * 		the channel to move the clients into, cannot be {@code null}
+	 * @param channelPassword
+	 * 		the password of the channel, can be {@code null}
+	 *
+	 * @return whether the command succeeded or not
+	 *
+	 * @throws IllegalArgumentException
+	 * 		if {@code clients} or {@code channel} is {@code null}
+	 * @querycommands 1
+	 */
+	public boolean moveClients(Client[] clients, ChannelBase channel, String channelPassword) {
+		if (clients == null) throw new IllegalArgumentException("clients was null");
+		if (channel == null) throw new IllegalArgumentException("channel was null");
+
+		int[] clientIds = new int[clients.length];
+		for (int i = 0; i < clients.length; i++) {
+			Client client = clients[i];
+			clientIds[i] = client.getId();
+		}
+		return moveClients(clientIds, channel.getId(), channelPassword);
+	}
+
+	/**
+	 * Moves and renames a file on the file repository within the same channel.
+	 *
+	 * @param oldPath
+	 * 		the current path to the file
+	 * @param newPath
+	 * 		the desired new path
+	 * @param channelId
+	 * 		the ID of the channel the file resides in
+	 *
+	 * @return whether the command succeeded or not
+	 *
+	 * @querycommands 1
+	 * @see FileInfo#getPath()
+	 * @see Channel#getId()
+	 * @see #moveFile(String, String, int, int) moveFile to a different channel
+	 */
+	public boolean moveFile(String oldPath, String newPath, int channelId) {
+		return moveFile(oldPath, newPath, channelId, null);
+	}
+
+	/**
+	 * Renames a file on the file repository and moves it to a new path in a different channel.
+	 *
+	 * @param oldPath
+	 * 		the current path to the file
+	 * @param newPath
+	 * 		the desired new path
+	 * @param oldChannelId
+	 * 		the ID of the channel the file currently resides in
+	 * @param newChannelId
+	 * 		the ID of the channel the file should be moved to
+	 *
+	 * @return whether the command succeeded or not
+	 *
+	 * @querycommands 1
+	 * @see FileInfo#getPath()
+	 * @see Channel#getId()
+	 * @see #moveFile(String, String, int) moveFile within the same channel
+	 */
+	public boolean moveFile(String oldPath, String newPath, int oldChannelId, int newChannelId) {
+		return moveFile(oldPath, newPath, oldChannelId, null, newChannelId, null);
+	}
+
+	/**
+	 * Moves and renames a file on the file repository within the same channel.
+	 *
+	 * @param oldPath
+	 * 		the current path to the file
+	 * @param newPath
+	 * 		the desired new path
+	 * @param channelId
+	 * 		the ID of the channel the file resides in
 	 * @param channelPassword
 	 * 		the password of the channel
 	 *
 	 * @return whether the command succeeded or not
+	 *
+	 * @querycommands 1
+	 * @see FileInfo#getPath()
+	 * @see Channel#getId()
+	 * @see #moveFile(String, String, int, String, int, String) moveFile to a different channel
 	 */
-	public boolean moveClient(Client client, ChannelBase channel, String channelPassword) {
-		return moveClient(client.getId(), channel.getId(), channelPassword);
+	public boolean moveFile(String oldPath, String newPath, int channelId, String channelPassword) {
+		final CFtRenameFile rename = new CFtRenameFile(oldPath, newPath, channelId, channelPassword);
+		return query.doCommand(rename);
+	}
+
+	/**
+	 * Renames a file on the file repository and moves it to a new path in a different channel.
+	 *
+	 * @param oldPath
+	 * 		the current path to the file
+	 * @param newPath
+	 * 		the desired new path
+	 * @param oldChannelId
+	 * 		the ID of the channel the file currently resides in
+	 * @param oldPassword
+	 * 		the password of the current channel
+	 * @param newChannelId
+	 * 		the ID of the channel the file should be moved to
+	 * @param newPassword
+	 * 		the password of the new channel
+	 *
+	 * @return whether the command succeeded or not
+	 *
+	 * @querycommands 1
+	 * @see FileInfo#getPath()
+	 * @see Channel#getId()
+	 * @see #moveFile(String, String, int, String) moveFile within the same channel
+	 */
+	public boolean moveFile(String oldPath, String newPath, int oldChannelId, String oldPassword, int newChannelId, String newPassword) {
+		final CFtRenameFile rename = new CFtRenameFile(oldPath, newPath, oldChannelId, oldPassword, newChannelId, newPassword);
+		return query.doCommand(rename);
+	}
+
+	/**
+	 * Moves the server query into a channel.
+	 *
+	 * @param channelId
+	 * 		the ID of the channel to move the server query into
+	 *
+	 * @return whether the command succeeded or not
+	 *
+	 * @querycommands 1
+	 * @see Channel#getId()
+	 */
+	public boolean moveQuery(int channelId) {
+		return moveClient(0, channelId, null);
+	}
+
+	/**
+	 * Moves the server query into a channel.
+	 *
+	 * @param channel
+	 * 		the channel to move the server query into, cannot be {@code null}
+	 *
+	 * @return whether the command succeeded or not
+	 *
+	 * @throws IllegalArgumentException
+	 * 		if {@code channel} is {@code null}
+	 * @querycommands 1
+	 */
+	public boolean moveQuery(ChannelBase channel) {
+		if (channel == null) throw new IllegalArgumentException("channel was null");
+
+		return moveClient(0, channel.getId(), null);
+	}
+
+	/**
+	 * Moves the server query into a channel using the specified password.
+	 *
+	 * @param channelId
+	 * 		the ID of the channel to move the client into
+	 * @param channelPassword
+	 * 		the password of the channel, can be {@code null}
+	 *
+	 * @return whether the command succeeded or not
+	 *
+	 * @querycommands 1
+	 * @see Channel#getId()
+	 */
+	public boolean moveQuery(int channelId, String channelPassword) {
+		return moveClient(0, channelId, channelPassword);
+	}
+
+	/**
+	 * Moves the server query into a channel using the specified password.
+	 *
+	 * @param channel
+	 * 		the channel to move the client into, cannot be {@code null}
+	 * @param channelPassword
+	 * 		the password of the channel, can be {@code null}
+	 *
+	 * @return whether the command succeeded or not
+	 *
+	 * @throws IllegalArgumentException
+	 * 		if {@code channel} is {@code null}
+	 * @querycommands 1
+	 */
+	public boolean moveQuery(ChannelBase channel, String channelPassword) {
+		if (channel == null) throw new IllegalArgumentException("channel was null");
+
+		return moveClient(0, channel.getId(), channelPassword);
 	}
 
 	/**
@@ -2620,6 +3694,7 @@ public class TS3Api {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see Client#getId()
 	 */
 	public boolean pokeClient(int clientId, String message) {
@@ -2633,6 +3708,7 @@ public class TS3Api {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @deprecated This command leaves the query in an undefined state,
 	 * where the connection is closed without the socket being closed and no more command can be executed.
 	 * To terminate a connection, use {@link TS3Query#exit()}.
@@ -2661,6 +3737,7 @@ public class TS3Api {
 	 *
 	 * @return whether all commands succeeded or not
 	 *
+	 * @querycommands 6
 	 * @see #addTS3Listeners(TS3Listener...)
 	 */
 	public boolean registerAllEvents() {
@@ -2670,6 +3747,7 @@ public class TS3Api {
 		success &= registerEvent(TS3EventType.CHANNEL, 0);
 		success &= registerEvent(TS3EventType.TEXT_CHANNEL, 0);
 		success &= registerEvent(TS3EventType.TEXT_PRIVATE);
+		success &= registerEvent(TS3EventType.PRIVILEGE_KEY_USED);
 
 		return success;
 	}
@@ -2687,6 +3765,7 @@ public class TS3Api {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see #addTS3Listeners(TS3Listener...)
 	 * @see #registerEvent(TS3EventType, int)
 	 * @see #registerAllEvents()
@@ -2709,6 +3788,7 @@ public class TS3Api {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see Channel#getId()
 	 * @see #addTS3Listeners(TS3Listener...)
 	 * @see #registerAllEvents()
@@ -2731,6 +3811,7 @@ public class TS3Api {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands n, one command per TS3EventType
 	 * @see #addTS3Listeners(TS3Listener...)
 	 * @see #registerEvent(TS3EventType, int)
 	 * @see #registerAllEvents()
@@ -2752,6 +3833,7 @@ public class TS3Api {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see ServerGroup#getId()
 	 * @see Client#getDatabaseId()
 	 * @see #removeClientFromServerGroup(ServerGroup, Client)
@@ -2771,6 +3853,7 @@ public class TS3Api {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see #removeClientFromServerGroup(int, int)
 	 */
 	public boolean removeClientFromServerGroup(ServerGroup serverGroup, Client client) {
@@ -2804,6 +3887,7 @@ public class TS3Api {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see ChannelGroup#getId()
 	 * @see #renameChannelGroup(ChannelGroup, String)
 	 */
@@ -2822,6 +3906,7 @@ public class TS3Api {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see #renameChannelGroup(int, String)
 	 */
 	public boolean renameChannelGroup(ChannelGroup channelGroup, String name) {
@@ -2838,6 +3923,7 @@ public class TS3Api {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see ServerGroup#getId()
 	 * @see #renameServerGroup(ServerGroup, String)
 	 */
@@ -2856,6 +3942,7 @@ public class TS3Api {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see #renameServerGroup(int, String)
 	 */
 	public boolean renameServerGroup(ServerGroup serverGroup, String name) {
@@ -2866,6 +3953,8 @@ public class TS3Api {
 	 * Resets all permissions and deletes all server / channel groups. Use carefully.
 	 *
 	 * @return a token for a new administrator account
+	 *
+	 * @querycommands 1
 	 */
 	public String resetPermissions() {
 		final CPermReset reset = new CPermReset();
@@ -2883,6 +3972,7 @@ public class TS3Api {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see VirtualServer#getId()
 	 * @see #selectVirtualServerByPort(int)
 	 * @see #selectVirtualServer(VirtualServer)
@@ -2900,6 +3990,7 @@ public class TS3Api {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see VirtualServer#getPort()
 	 * @see #selectVirtualServerById(int)
 	 * @see #selectVirtualServer(VirtualServer)
@@ -2917,6 +4008,7 @@ public class TS3Api {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see #selectVirtualServerById(int)
 	 * @see #selectVirtualServerByPort(int)
 	 */
@@ -2940,6 +4032,7 @@ public class TS3Api {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see Client#getUniqueIdentifier()
 	 * @see Message
 	 */
@@ -2965,6 +4058,7 @@ public class TS3Api {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see Client#getId()
 	 */
 	public boolean sendTextMessage(TextMessageTargetMode targetMode, int targetId, String message) {
@@ -2987,11 +4081,12 @@ public class TS3Api {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see #sendChannelMessage(String)
 	 * @see Channel#getId()
 	 */
 	public boolean sendChannelMessage(int channelId, String message) {
-		return moveClient(channelId) && sendTextMessage(TextMessageTargetMode.CHANNEL, 0, message);
+		return moveQuery(channelId) && sendTextMessage(TextMessageTargetMode.CHANNEL, 0, message);
 	}
 
 	/**
@@ -3002,6 +4097,8 @@ public class TS3Api {
 	 * 		the text message to send
 	 *
 	 * @return whether the command succeeded or not
+	 *
+	 * @querycommands 1
 	 */
 	public boolean sendChannelMessage(String message) {
 		return sendTextMessage(TextMessageTargetMode.CHANNEL, 0, message);
@@ -3022,6 +4119,7 @@ public class TS3Api {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see #sendServerMessage(String)
 	 * @see VirtualServer#getId()
 	 */
@@ -3037,6 +4135,8 @@ public class TS3Api {
 	 * 		the text message to send
 	 *
 	 * @return whether the command succeeded or not
+	 *
+	 * @querycommands 1
 	 */
 	public boolean sendServerMessage(String message) {
 		return sendTextMessage(TextMessageTargetMode.SERVER, 0, message);
@@ -3053,6 +4153,7 @@ public class TS3Api {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see Client#getId()
 	 */
 	public boolean sendPrivateMessage(int clientId, String message) {
@@ -3071,6 +4172,7 @@ public class TS3Api {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see ChannelGroup#getId()
 	 * @see Channel#getId()
 	 * @see Client#getDatabaseId()
@@ -3088,6 +4190,7 @@ public class TS3Api {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see #setMessageReadFlag(int, boolean)
 	 */
 	public boolean setMessageRead(int messageId) {
@@ -3102,6 +4205,7 @@ public class TS3Api {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see #setMessageRead(int)
 	 * @see #setMessageReadFlag(Message, boolean)
 	 * @see #deleteOfflineMessage(int)
@@ -3120,16 +4224,14 @@ public class TS3Api {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see #setMessageRead(int)
 	 * @see #setMessageReadFlag(Message, boolean)
 	 * @see #deleteOfflineMessage(int)
 	 */
 	public boolean setMessageReadFlag(int messageId, boolean read) {
 		final CMessageUpdateFlag flag = new CMessageUpdateFlag(messageId, read);
-		if (query.doCommand(flag)) {
-			return flag.getError().isSuccessful();
-		}
-		return read;
+		return query.doCommand(flag);
 	}
 
 	/**
@@ -3142,6 +4244,7 @@ public class TS3Api {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see #setMessageRead(Message)
 	 * @see #setMessageReadFlag(int, boolean)
 	 * @see #deleteOfflineMessage(int)
@@ -3159,6 +4262,7 @@ public class TS3Api {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see #updateClient(Map)
 	 */
 	public boolean setNickname(String nickname) {
@@ -3173,6 +4277,8 @@ public class TS3Api {
 	 * 		the ID of the virtual server
 	 *
 	 * @return whether the command succeeded or not
+	 *
+	 * @querycommands 1
 	 */
 	public boolean startServer(int serverId) {
 		final CServerStart start = new CServerStart(serverId);
@@ -3186,6 +4292,8 @@ public class TS3Api {
 	 * 		the virtual server to start
 	 *
 	 * @return whether the command succeeded or not
+	 *
+	 * @querycommands 1
 	 */
 	public boolean startServer(VirtualServer virtualServer) {
 		return startServer(virtualServer.getId());
@@ -3198,6 +4306,8 @@ public class TS3Api {
 	 * 		the ID of the virtual server
 	 *
 	 * @return whether the command succeeded or not
+	 *
+	 * @querycommands 1
 	 */
 	public boolean stopServer(int serverId) {
 		final CServerStop stop = new CServerStop(serverId);
@@ -3211,6 +4321,8 @@ public class TS3Api {
 	 * 		the virtual server to stop
 	 *
 	 * @return whether the command succeeded or not
+	 *
+	 * @querycommands 1
 	 */
 	public boolean stopServer(VirtualServer virtualServer) {
 		return stopServer(virtualServer.getId());
@@ -3223,6 +4335,8 @@ public class TS3Api {
 	 * </p>
 	 *
 	 * @return whether the command succeeded or not
+	 *
+	 * @querycommands 1
 	 */
 	public boolean stopServerProcess() {
 		final CServerProcessStop stop = new CServerProcessStop();
@@ -3233,6 +4347,8 @@ public class TS3Api {
 	 * Unregisters the server query from receiving any event notifications.
 	 *
 	 * @return whether the command succeeded or not
+	 *
+	 * @querycommands 1
 	 */
 	public boolean unregisterAllEvents() {
 		final CServerNotifyUnregister unr = new CServerNotifyUnregister();
@@ -3247,6 +4363,7 @@ public class TS3Api {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see #editClient(int, Map)
 	 */
 	public boolean updateClient(Map<ClientProperty, String> options) {
@@ -3265,6 +4382,8 @@ public class TS3Api {
 	 * 		the name for the server query login
 	 *
 	 * @return the generated password for the server query login
+	 *
+	 * @querycommands 1
 	 */
 	public String updateServerQueryLogin(String loginName) {
 		final CClientSetServerQueryLogin login = new CClientSetServerQueryLogin(loginName);
@@ -3275,6 +4394,222 @@ public class TS3Api {
 	}
 
 	/**
+	 * Uploads a file to the file repository at a given path and channel
+	 * by reading {@code dataLength} bytes from an open {@link InputStream}.
+	 * <p>
+	 * It is the user's responsibility to ensure that the given {@code InputStream} is
+	 * open and that {@code dataLength} bytes can eventually be read from it. The user is
+	 * also responsible for closing the stream once the upload has finished.
+	 * </p><p>
+	 * Note that this method will not read the entire file to memory and can thus
+	 * upload arbitrarily sized files to the file repository.
+	 * </p>
+	 *
+	 * @param dataIn
+	 * 		a stream that contains the data that should be uploaded
+	 * @param dataLength
+	 * 		how many bytes should be read from the stream
+	 * @param filePath
+	 * 		the path the file should have after being uploaded
+	 * @param overwrite
+	 * 		if {@code false}, fails if there's already a file at {@code filePath}
+	 * @param channelId
+	 * 		the ID of the channel to upload the file to
+	 *
+	 * @return whether the command succeeded or not
+	 *
+	 * @throws TS3FileTransferFailedException
+	 * 		if the file transfer fails for any reason
+	 * @querycommands 1
+	 * @see FileInfo#getPath()
+	 * @see Channel#getId()
+	 * @see #uploadFileDirect(byte[], String, boolean, int, String)
+	 */
+	public boolean uploadFile(InputStream dataIn, long dataLength, String filePath, boolean overwrite, int channelId) {
+		return uploadFile(dataIn, dataLength, filePath, overwrite, channelId, null);
+	}
+
+	/**
+	 * Uploads a file to the file repository at a given path and channel
+	 * by reading {@code dataLength} bytes from an open {@link InputStream}.
+	 * <p>
+	 * It is the user's responsibility to ensure that the given {@code InputStream} is
+	 * open and that {@code dataLength} bytes can eventually be read from it. The user is
+	 * also responsible for closing the stream once the upload has finished.
+	 * </p><p>
+	 * Note that this method will not read the entire file to memory and can thus
+	 * upload arbitrarily sized files to the file repository.
+	 * </p>
+	 *
+	 * @param dataIn
+	 * 		a stream that contains the data that should be uploaded
+	 * @param dataLength
+	 * 		how many bytes should be read from the stream
+	 * @param filePath
+	 * 		the path the file should have after being uploaded
+	 * @param overwrite
+	 * 		if {@code false}, fails if there's already a file at {@code filePath}
+	 * @param channelId
+	 * 		the ID of the channel to upload the file to
+	 * @param channelPassword
+	 * 		that channel's password
+	 *
+	 * @return whether the command succeeded or not
+	 *
+	 * @throws TS3FileTransferFailedException
+	 * 		if the file transfer fails for any reason
+	 * @querycommands 1
+	 * @see FileInfo#getPath()
+	 * @see Channel#getId()
+	 * @see #uploadFileDirect(byte[], String, boolean, int, String)
+	 */
+	public boolean uploadFile(InputStream dataIn, long dataLength, String filePath, boolean overwrite, int channelId, String channelPassword) {
+		final FileTransferHelper helper = query.getFileTransferHelper();
+		final int transferId = helper.getClientTransferId();
+		final CFtInitUpload upload = new CFtInitUpload(transferId, filePath, channelId, channelPassword, dataLength, overwrite);
+
+		if (!query.doCommand(upload)) return false;
+		FileTransferParameters params = new FileTransferParameters(upload.getFirstResponse().getMap());
+		QueryError error = params.getQueryError();
+		if (!error.isSuccessful()) return false;
+
+		try {
+			query.getFileTransferHelper().uploadFile(dataIn, dataLength, params);
+		} catch (IOException e) {
+			throw new TS3FileTransferFailedException("Upload failed", e);
+		}
+		return true;
+	}
+
+	/**
+	 * Uploads a file that is already stored in memory to the file repository
+	 * at a given path and channel.
+	 *
+	 * @param data
+	 * 		the file's data as a byte array
+	 * @param filePath
+	 * 		the path the file should have after being uploaded
+	 * @param overwrite
+	 * 		if {@code false}, fails if there's already a file at {@code filePath}
+	 * @param channelId
+	 * 		the ID of the channel to upload the file to
+	 *
+	 * @return whether the command succeeded or not
+	 *
+	 * @throws TS3FileTransferFailedException
+	 * 		if the file transfer fails for any reason
+	 * @querycommands 1
+	 * @see FileInfo#getPath()
+	 * @see Channel#getId()
+	 * @see #uploadFile(InputStream, long, String, boolean, int)
+	 */
+	public boolean uploadFileDirect(byte[] data, String filePath, boolean overwrite, int channelId) {
+		return uploadFileDirect(data, filePath, overwrite, channelId, null);
+	}
+
+	/**
+	 * Uploads a file that is already stored in memory to the file repository
+	 * at a given path and channel.
+	 *
+	 * @param data
+	 * 		the file's data as a byte array
+	 * @param filePath
+	 * 		the path the file should have after being uploaded
+	 * @param overwrite
+	 * 		if {@code false}, fails if there's already a file at {@code filePath}
+	 * @param channelId
+	 * 		the ID of the channel to upload the file to
+	 * @param channelPassword
+	 * 		that channel's password
+	 *
+	 * @return whether the command succeeded or not
+	 *
+	 * @throws TS3FileTransferFailedException
+	 * 		if the file transfer fails for any reason
+	 * @querycommands 1
+	 * @see FileInfo#getPath()
+	 * @see Channel#getId()
+	 * @see #uploadFile(InputStream, long, String, boolean, int, String)
+	 */
+	public boolean uploadFileDirect(byte[] data, String filePath, boolean overwrite, int channelId, String channelPassword) {
+		return uploadFile(new ByteArrayInputStream(data), data.length, filePath, overwrite, channelId, channelPassword);
+	}
+
+	/**
+	 * Uploads an icon to the icon directory in the file repository
+	 * by reading {@code dataLength} bytes from an open {@link InputStream}.
+	 * <p>
+	 * It is the user's responsibility to ensure that the given {@code InputStream} is
+	 * open and that {@code dataLength} bytes can eventually be read from it. The user is
+	 * also responsible for closing the stream once the upload has finished.
+	 * </p><p>
+	 * Note that unlike the file upload methods, this <strong>will read the entire file to memory</strong>.
+	 * This is because the CRC32 hash must be calculated before the icon can be uploaded.
+	 * That means that all icon files must be less than 2<sup>31</sup>-1 bytes in size.
+	 * </p>
+	 * Uploads  that is already stored in memory to the icon directory
+	 * in the file repository. If this icon has already been uploaded or
+	 * if a hash collision occurs (CRC32), this command will fail.
+	 *
+	 * @param dataIn
+	 * 		a stream that contains the data that should be uploaded
+	 * @param dataLength
+	 * 		how many bytes should be read from the stream
+	 *
+	 * @return the ID of the uploaded icon
+	 *
+	 * @throws TS3FileTransferFailedException
+	 * 		if the file transfer fails for any reason
+	 * @querycommands 1
+	 * @see IconFile#getIconId()
+	 * @see #uploadIconDirect(byte[])
+	 * @see #downloadIcon(OutputStream, long)
+	 */
+	public long uploadIcon(InputStream dataIn, long dataLength) {
+		final FileTransferHelper helper = query.getFileTransferHelper();
+		final byte[] data;
+		try {
+			data = helper.readFully(dataIn, dataLength);
+		} catch (IOException e) {
+			throw new TS3FileTransferFailedException("Reading stream failed", e);
+		}
+		return uploadIconDirect(data);
+	}
+
+	/**
+	 * Uploads an icon that is already stored in memory to the icon directory
+	 * in the file repository. If this icon has already been uploaded or
+	 * if a CRC32 hash collision occurs, this command will fail.
+	 *
+	 * @param data
+	 * 		the icon's data as a byte array
+	 *
+	 * @return the ID of the uploaded icon
+	 *
+	 * @throws TS3FileTransferFailedException
+	 * 		if the file transfer fails for any reason
+	 * @querycommands 1
+	 * @see IconFile#getIconId()
+	 * @see #uploadIcon(InputStream, long)
+	 * @see #downloadIconDirect(long)
+	 */
+	public long uploadIconDirect(byte[] data) {
+		final FileTransferHelper helper = query.getFileTransferHelper();
+		final long iconId;
+		try {
+			iconId = helper.getIconId(data);
+		} catch (IOException e) {
+			throw new TS3FileTransferFailedException("Reading stream failed", e);
+		}
+
+		final String path = "/icon_" + iconId;
+		if (uploadFileDirect(data, path, false, 0)) {
+			return iconId;
+		}
+		return -1L;
+	}
+
+	/**
 	 * Uses an existing privilege key to join a server or channel group.
 	 *
 	 * @param token
@@ -3282,8 +4617,9 @@ public class TS3Api {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see PrivilegeKey
-	 * @see #addPrivilegeKey(TokenType, int, int, String)
+	 * @see #addPrivilegeKey(PrivilegeKeyType, int, int, String)
 	 * @see #usePrivilegeKey(PrivilegeKey)
 	 */
 	public boolean usePrivilegeKey(String token) {
@@ -3299,8 +4635,9 @@ public class TS3Api {
 	 *
 	 * @return whether the command succeeded or not
 	 *
+	 * @querycommands 1
 	 * @see PrivilegeKey
-	 * @see #addPrivilegeKey(TokenType, int, int, String)
+	 * @see #addPrivilegeKey(PrivilegeKeyType, int, int, String)
 	 * @see #usePrivilegeKey(String)
 	 */
 	public boolean usePrivilegeKey(PrivilegeKey privilegeKey) {
@@ -3312,6 +4649,7 @@ public class TS3Api {
 	 *
 	 * @return information about the server query instance
 	 *
+	 * @querycommands 1
 	 * @see #getClientInfo(int)
 	 */
 	public ServerQueryInfo whoAmI() {
