@@ -62,7 +62,7 @@ public class DefaultListener implements TS3Listener {
 
 	public void onClientMoved(ClientMovedEvent e) {
 		System.out.println("[Client Moved] id: " + e.getClientId()
-				+ "target-id:" + e.getClientTargetId());
+				+ "target-id:" + e.getClientId());
 
 	}
 
@@ -80,6 +80,12 @@ public class DefaultListener implements TS3Listener {
 
 	public void onChannelPasswordChanged(ChannelPasswordChangedEvent e) {
 
+	}
+
+	@Override
+	public void onPrivilegeKeyUsed(PrivilegeKeyUsedEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
