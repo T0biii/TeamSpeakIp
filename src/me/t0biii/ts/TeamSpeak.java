@@ -101,7 +101,6 @@ public class TeamSpeak extends JavaPlugin{
 		config.setHost(host);
 		config.setQueryPort(Queryport);
 		config.setDebugLevel(Level.OFF);
-		config.setLoginCredentials(queryname, querypw);
 		try{
 		query.connect();
 		log.info(prefix+"Connectet to Teamspeak!");
@@ -113,8 +112,9 @@ public class TeamSpeak extends JavaPlugin{
 		
 		if(!error){	
 			try{
-			api.selectVirtualServerByPort(ts3port);
-			api.setNickname(querydisplayname);
+				api.login(queryname, querypw);
+				api.selectVirtualServerByPort(ts3port);
+				api.setNickname(querydisplayname);
 			}catch(Exception e){
 				error = true;
 				log.info(prefix+"Cant connect to Teamspeak!");
