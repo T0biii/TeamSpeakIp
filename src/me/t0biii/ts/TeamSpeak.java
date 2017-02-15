@@ -107,7 +107,7 @@ public class TeamSpeak extends JavaPlugin{
 		log.info(prefix+"Connectet to Teamspeak!");
 		}catch(Exception e){
 			
-			log.info(prefix+"Can´t connect to Teamspeak!");
+			log.info(prefix+"Cant connect to Teamspeak!");
 			error = true;
 		}
 		
@@ -117,7 +117,7 @@ public class TeamSpeak extends JavaPlugin{
 			api.setNickname(querydisplayname);
 			}catch(Exception e){
 				error = true;
-				log.info(prefix+"Can´t connect to Teamspeak!");
+				log.info(prefix+"Cant connect to Teamspeak!");
 			}						
 		} 
 		
