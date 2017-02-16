@@ -29,15 +29,15 @@ public class TeamSpeak extends JavaPlugin{
 	 */
 	public String prefix = "[TeamSpeakIP] ";
 	public String Prefix = "§8[§6TeamSpeakIP§8] §f";
+	public String path = "plugins/TeamSpeakIP/";
 	private int uid = 70774;
 	public Updater updater;
 	
 	
 	public static TeamSpeak instance;
-	public ConfigManager cm = new ConfigManager(this);
+	private ConfigManager cm = new ConfigManager(this);
  	public Cache ca = new Cache(this);
- 	public Messages ms = new Messages(this);
- 	private Filter fl = new Filter(this);
+ 	private Messages ms = new Messages(this);
  	public Filter fi = new Filter(this);
 	public Logger log = Bukkit.getLogger();
 

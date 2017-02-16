@@ -14,12 +14,8 @@ import me.t0biii.ts.TeamSpeak;
 */
 public class Cache {
 
-	@SuppressWarnings("unused")
 	private TeamSpeak plugin;
-	  public Cache(TeamSpeak plugin)
-	  {
-		  this.plugin = plugin; 
-	  }	
+	public Cache(TeamSpeak plugin){ this.plugin = plugin; }	
 	   
 	public  void loadCache(TS3Api api){
 		File file = getFile();
@@ -57,7 +53,7 @@ public class Cache {
 		}
 	}
 	public File getFile(){
-		File file = new File("plugins/TeamSpeakIP/cache.yml");
+		File file = new File(plugin.path + "cache.yml");
 		return file;
 	}
 	public YamlConfiguration getcfg(){

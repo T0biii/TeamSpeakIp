@@ -23,9 +23,7 @@ import me.t0biii.ts.methods.Updater.UpdateResult;
 public class Ts implements CommandExecutor{
 	
 	private static TeamSpeak pl;
-	public Ts(TeamSpeak main){
-		Ts.pl = main;
-	}
+	public Ts(TeamSpeak pl){ Ts.pl = pl; }
 
 	static String tsip = "";
 	static Messages me = new Messages(pl);

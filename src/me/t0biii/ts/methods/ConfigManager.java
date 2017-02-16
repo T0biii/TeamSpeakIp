@@ -6,10 +6,7 @@ public class ConfigManager {
 	
 	  //Import
 	  private TeamSpeak plugin;
-	  public ConfigManager(TeamSpeak plugin)
-	  {
-		  this.plugin = plugin; 
-	  }	
+	  public ConfigManager(TeamSpeak plugin){ this.plugin = plugin; }	
 	  
 	 /**
 	  * Conf set up

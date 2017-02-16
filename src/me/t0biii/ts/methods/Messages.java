@@ -11,11 +11,8 @@ import me.t0biii.ts.TeamSpeak;
 * Created by Tobias on 06.01.2017.
 */
 public class Messages {
-	  private TeamSpeak plugin;
-	  public Messages(TeamSpeak plugin)
-	  {
-		  this.plugin = plugin; 
-	  }
+	private TeamSpeak plugin;
+	public Messages(TeamSpeak plugin){ this.plugin = plugin; }
 	  
 	public  void loadMessages(){
 		File file = getFile();
@@ -25,7 +22,7 @@ public class Messages {
 				file.createNewFile();
 				cfg.options().header("Plugin by T0biii!");
 			} catch (IOException e) {
-				plugin.log.info("");
+				plugin.log.info(plugin.prefix+"Cant Create Messages.YML");
 			}
 		}
 		cfg.options().copyDefaults(true);
@@ -39,12 +36,13 @@ public class Messages {
 		cfg.addDefault("messages.no-permission", "&4Du Hast keine Rechte dafuer!");
 		cfg.addDefault("messages.update-info", "Neues Update ist verfuegbar!");
 		cfg.addDefault("messages.no-update", "&aDu hast bereits die neuste Version!");
-		/**
-		 * Save
-		 */
+		// Save
 		save(file, cfg);
 	}
-	
+	/**
+	 * @param file The File you want save
+	 * @param cfg The YamlConfiguration you want save
+	 */
 	private void save(File file, YamlConfiguration cfg){
 		try {
 			cfg.save(file);
@@ -52,7 +50,7 @@ public class Messages {
 		}
 	}
 	public File getFile(){
-		File file = new File("plugins/TeamSpeakIP/messages.yml");
+		File file = new File(plugin.path+"messages.yml");
 		return file;
 	}
 	public YamlConfiguration getcfg(){
