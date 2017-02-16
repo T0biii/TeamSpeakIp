@@ -161,12 +161,11 @@ public class Ts implements CommandExecutor{
 						List<String> filter = fcfg.getStringList("ignore");
 						List<String> cachelist = cfg.getStringList("ts.cache");
 						
-				if(!pl.getConfig().getBoolean("options.realtime")){
-					   
+				if(!pl.getConfig().getBoolean("options.realtime")){ 
 					prefixsend(p);	
 					p.sendMessage(ChatColor.AQUA+"Teamspeak: "+ tsip + " §cCached");
 					p.sendMessage(ChatColor.AQUA+"Online: §2"+ (anzahl) +" of " +max);
-					p.sendMessage(ChatColor.AQUA+"List of People: "+ ChatColor.RED + "(Hidden: " + cachelist.size()+ ")");
+					p.sendMessage(ChatColor.AQUA+"List of People: ");
 					for(String Users : cachelist){
 						if(!filter.contains(Users)){
 							p.sendMessage("§2"+Users);
@@ -180,7 +179,7 @@ public class Ts implements CommandExecutor{
 					p.sendMessage(ChatColor.AQUA+"Online: §2"+ (pl.api.getClients().size()) +" of " + pl.api.getHostInfo().getTotalMaxClients());
 					p.sendMessage(ChatColor.AQUA+"List of People:");
 					for (Client c : pl.api.getClients()) {
-						if(!filter.contains(c.getNickname())){		
+						if(!filter.contains(c.getNickname())){	
 							p.sendMessage("§2"+c.getNickname());
 						}
 					}

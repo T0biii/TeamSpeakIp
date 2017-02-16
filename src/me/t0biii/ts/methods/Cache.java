@@ -53,7 +53,7 @@ public class Cache {
 		}
 	}
 	public File getFile(){
-		File file = new File(plugin.path + "cache.yml");
+		File file = new File("plugins/TeamSpeakIP/cache.yml");
 		return file;
 	}
 	public YamlConfiguration getcfg(){

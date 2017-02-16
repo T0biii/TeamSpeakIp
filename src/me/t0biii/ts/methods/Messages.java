@@ -50,7 +50,7 @@ public class Messages {
 		}
 	}
 	public File getFile(){
-		File file = new File(plugin.path+"messages.yml");
+		File file = new File("plugins/TeamSpeakIP/messages.yml");
 		return file;
 	}
 	public YamlConfiguration getcfg(){

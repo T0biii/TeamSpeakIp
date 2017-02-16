@@ -41,7 +41,7 @@ public class Filter {
 		}	
 	}
 	public File getFile(){
-		File file = new File(plugin.path + "filter.yml");
+		File file = new File("plugins/TeamSpeakIP/filter.yml");
 		return file;
 	}
 	public YamlConfiguration getcfg(){
