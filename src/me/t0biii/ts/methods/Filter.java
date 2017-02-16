@@ -49,5 +49,4 @@ public class Filter {
 		YamlConfiguration cfg = YamlConfiguration.loadConfiguration(file);
 		return cfg;
 	}
-	
 }
