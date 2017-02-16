@@ -29,7 +29,6 @@ public class TeamSpeak extends JavaPlugin{
 	 */
 	public String prefix = "[TeamSpeakIP] ";
 	public String Prefix = "§8[§6TeamSpeakIP§8] §f";
-	public String path = "plugins/TeamSpeakIP/";
 	private int uid = 70774;
 	public Updater updater;
 	
