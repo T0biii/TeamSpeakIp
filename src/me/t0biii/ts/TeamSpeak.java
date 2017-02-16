@@ -132,7 +132,9 @@ public class TeamSpeak extends JavaPlugin{
      	 * Metrics start
      	 */	
 		if(getConfig().getBoolean("options.Metrics")){		
+					@SuppressWarnings("unused")
 					Metrics metrics = new Metrics(this);
+					
 					
 		}
 		
