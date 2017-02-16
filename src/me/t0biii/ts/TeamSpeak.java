@@ -37,6 +37,7 @@ public class TeamSpeak extends JavaPlugin{
 	public ConfigManager cm = new ConfigManager(this);
  	public Cache ca = new Cache(this);
  	public Messages ms = new Messages(this);
+ 	private Filter fl = new Filter(this);
  	public Filter fi = new Filter(this);
 	public Logger log = Bukkit.getLogger();
 
@@ -98,18 +99,16 @@ public class TeamSpeak extends JavaPlugin{
      	/**
      	 * TS3 Connect
      	 */
+     	try{
 		config.setHost(host);
 		config.setQueryPort(Queryport);
 		config.setDebugLevel(Level.OFF);
-		try{
 		query.connect();
 		log.info(prefix+"Connectet to Teamspeak!");
 		}catch(Exception e){
-			
 			log.info(prefix+"Cant connect to Teamspeak!");
 			error = true;
 		}
-		
 		if(!error){	
 			try{
 				api.login(queryname, querypw);
@@ -133,9 +132,7 @@ public class TeamSpeak extends JavaPlugin{
      	 */	
 		if(getConfig().getBoolean("options.Metrics")){		
 					@SuppressWarnings("unused")
-					Metrics metrics = new Metrics(this);
-					
-					
+					Metrics metrics = new Metrics(this);			
 		}
 		
 		/**
@@ -144,11 +141,10 @@ public class TeamSpeak extends JavaPlugin{
         updater = new Updater(this, uid, getFile(), UpdateType.NO_DOWNLOAD, true);
         
         /**
-         * start auto chache
+         * Start Auto Chache
          */
 		int interval = 60;
 		interval = getConfig().getInt("options.realtime.update");
-		
 		if(!error){
 		Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
 			@Override
