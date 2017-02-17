@@ -82,7 +82,7 @@
 	<build>
 
 		<!--Datei Namen -->
-		<finalName>TeamSpeak5.30</finalName>
+		<finalName>TeamSpeak5.3</finalName>
 		<!-- -->
 
 		<sourceDirectory>${basedir}/src</sourceDirectory>
