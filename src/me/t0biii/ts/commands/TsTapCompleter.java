@@ -8,17 +8,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
-import me.t0biii.ts.TeamSpeak;
-
-public class TsTapCompleter implements TabCompleter {
-	
-	@SuppressWarnings("unused")
-	private TeamSpeak plugin;
-	
-	public TsTapCompleter(TeamSpeak main){
-		this.plugin = main;
-	}
-	 
+public class TsTapCompleter implements TabCompleter {	 
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command cmd, String label, String[] args) {
 		//Set Strings

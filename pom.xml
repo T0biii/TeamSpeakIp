@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>me.t0biii.ts</groupId>
 	<artifactId>TeamSpeak</artifactId>
-	<version>5.0</version>
+	<version>5.3</version>
 	<name>TeamSpeakIP</name>
 	<description>TeamSpeak IP</description>
 	<url>http://dev.T0biii.de</url>
@@ -29,11 +29,6 @@
 		<repository>
 			<id>spigot-repo</id>
 			<url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
-		</repository>
-		<!-- MCStats -->
-		<repository>
-			<id>Plugin Metrics</id>
-			<url>http://repo.mcstats.org/content/repositories/public</url>
 		</repository>
 		<!-- CI Server -->
 		<repository>
@@ -87,7 +82,7 @@
 	<build>
 
 		<!--Datei Namen -->
-		<finalName>TeamSpeak5.0</finalName>
+		<finalName>TeamSpeak5.30</finalName>
 		<!-- -->
 
 		<sourceDirectory>${basedir}/src</sourceDirectory>

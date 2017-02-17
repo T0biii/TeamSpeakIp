@@ -14,6 +14,7 @@ import me.t0biii.ts.TeamSpeak;
 */
 public class Cache {
 
+	@SuppressWarnings("unused")
 	private TeamSpeak plugin;
 	public Cache(TeamSpeak plugin){ this.plugin = plugin; }	
 	   

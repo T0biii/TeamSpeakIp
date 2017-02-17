@@ -88,7 +88,7 @@ public class TeamSpeak extends JavaPlugin{
     	 * TS Command and TapCompleter
     	 */
       	this.getCommand("ts").setExecutor(new Ts(this));
-     	this.getCommand("ts").setTabCompleter(new TsTapCompleter(this));
+     	this.getCommand("ts").setTabCompleter(new TsTapCompleter());
       	
      	/**
      	 * Events registrieren
