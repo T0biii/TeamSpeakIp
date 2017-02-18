@@ -31,7 +31,7 @@ public class Ts implements CommandExecutor{
 	static Cache ca = new Cache(pl);
 	static File file = me.getFile();
 	static YamlConfiguration cfg = me.getcfg();	
-
+	
 	
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args)
@@ -116,24 +116,42 @@ public class Ts implements CommandExecutor{
 				
 			}else if(args[0].equalsIgnoreCase("cache-off")){
 				if(p.isOp() || p.hasPermission("ts.cache")){
-				pl.getConfig().set("options.realtime", true);
-				prefixsend(p);
-				p.sendMessage("");
-				p.sendMessage("§3Live data §2Activated. \n§3Cache §cDisabled.");
-				p.sendMessage("");
-				prefixsend(p);
+					if(!pl.getConfig().getBoolean("options.realtime.activated")){
+						pl.getConfig().set("options.realtime.activated", true);
+						pl.saveConfig();
+						prefixsend(p);
+						p.sendMessage("");
+						p.sendMessage("§3Live data §2activated. \n§3Cache §cdisabled.");
+						p.sendMessage("");
+						prefixsend(p);						
+					}else{
+						prefixsend(p);
+						p.sendMessage("");
+						p.sendMessage("§3Live data is already §2activated");
+						p.sendMessage("");
+						prefixsend(p);
+					}
 				}else{
 					tsipsend(p);
 				}
 
 			}else if(args[0].equalsIgnoreCase("cache-on")){
 				if(p.isOp() || p.hasPermission("ts.cache")){
-				pl.getConfig().set("options.realtime", false);
-				prefixsend(p);
-				p.sendMessage("");
-				p.sendMessage("§3Live data §cDisabled. \n§3Cache §2Activated.");
-				p.sendMessage("");
-				prefixsend(p);					
+					if(pl.getConfig().getBoolean("options.realtime.activated")){
+						pl.getConfig().set("options.realtime.activated", false);
+						pl.saveConfig();
+						prefixsend(p);
+						p.sendMessage("");
+						p.sendMessage("§3Live data §cdisabled. \n§3Cache §2activated.");
+						p.sendMessage("");
+						prefixsend(p);		
+					}else{
+						prefixsend(p);
+						p.sendMessage("");
+						p.sendMessage("§3Live data is already §cdisabled");
+						p.sendMessage("");
+						prefixsend(p);
+					}
 				}else{
 					tsipsend(p);
 				}
@@ -161,7 +179,7 @@ public class Ts implements CommandExecutor{
 						List<String> filter = fcfg.getStringList("ignore");
 						List<String> cachelist = cfg.getStringList("ts.cache");
 						
-				if(!pl.getConfig().getBoolean("options.realtime")){ 
+				if(!pl.getConfig().getBoolean("options.realtime.activated")){ 
 					prefixsend(p);	
 					p.sendMessage(ChatColor.AQUA+"Teamspeak: "+ tsip + " §cCached");
 					p.sendMessage(ChatColor.AQUA+"Online: §2"+ (anzahl) +" of " +max);

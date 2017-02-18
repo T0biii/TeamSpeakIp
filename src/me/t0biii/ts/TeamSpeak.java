@@ -130,8 +130,8 @@ public class TeamSpeak extends JavaPlugin{
      	 * Metrics start
      	 */	
 		if(getConfig().getBoolean("options.Metrics")){		
-					@SuppressWarnings("unused")
-					Metrics metrics = new Metrics(this);			
+					Metrics metrics = new Metrics(this);
+					startBstat(metrics);
 		}
 		
 		/**
@@ -152,5 +152,17 @@ public class TeamSpeak extends JavaPlugin{
 			}
 		}, 20L, interval*20L);
 		} 
+	}
+	
+	public void startBstat(Metrics bstats){
+		bstats.addCustomChart(new Metrics.SimplePie("update-info") {
+		public String getValue() {
+			String re = getConfig().getString("options.Update-info");
+			if(re.equalsIgnoreCase("true") || re.equalsIgnoreCase("false")){
+				return re;
+			}
+				return "unknow";
+			}
+		});	
 	}
 }
