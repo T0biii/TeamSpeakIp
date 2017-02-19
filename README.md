@@ -6,6 +6,7 @@ http://dev.t0biii.de/
 
 Do you want to join the Beta Programm of the Cloudbot?(German only for now)
    Then read [this](https://github.com/T0biii/TeamSpeakIp/issues/9#issuecomment-280025709).
+   Or [register now](https://t0biii.de/cloudbot).
 
 Commands:
 ```
