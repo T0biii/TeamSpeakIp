@@ -8,8 +8,8 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 import me.t0biii.ts.TeamSpeak;
 import me.t0biii.ts.methods.JsonMessage;
-import me.t0biii.ts.methods.Messages;
 import me.t0biii.ts.methods.Updater;
+import me.t0biii.ts.methods.files.Messages;
 
 public class PlayerJoin implements Listener{
 	

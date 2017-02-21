@@ -11,16 +11,16 @@ import com.github.theholywaffle.teamspeak3.TS3Api;
 import com.github.theholywaffle.teamspeak3.TS3Config;
 import com.github.theholywaffle.teamspeak3.TS3Query;
 
-import me.t0biii.ts.methods.Cache;
-import me.t0biii.ts.methods.ConfigManager;
-import me.t0biii.ts.methods.Filter;
-import me.t0biii.ts.methods.Messages;
+import me.t0biii.ts.commands.Ts;
+import me.t0biii.ts.commands.TsTapCompleter;
+import me.t0biii.ts.listener.PlayerJoin;
 import me.t0biii.ts.methods.Metrics;
 import me.t0biii.ts.methods.Updater;
 import me.t0biii.ts.methods.Updater.UpdateType;
-import me.t0biii.ts.commands.TsTapCompleter;
-import me.t0biii.ts.commands.Ts;
-import me.t0biii.ts.listener.PlayerJoin;
+import me.t0biii.ts.methods.files.Cache;
+import me.t0biii.ts.methods.files.ConfigManager;
+import me.t0biii.ts.methods.files.Filter;
+import me.t0biii.ts.methods.files.Messages;
 
 public class TeamSpeak extends JavaPlugin{
 	

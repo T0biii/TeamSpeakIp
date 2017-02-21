@@ -1,4 +1,4 @@
-package me.t0biii.ts.methods;
+package me.t0biii.ts.methods.files;
 
 import java.io.File;
 import java.io.IOException;
