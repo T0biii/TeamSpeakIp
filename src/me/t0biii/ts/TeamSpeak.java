@@ -28,7 +28,7 @@ public class TeamSpeak extends JavaPlugin{
 	 * TS3 Prefix and Updater id
 	 */
 	public String prefix = "[TeamSpeakIP] ";
-	public String Prefix = "§8[§6TeamSpeakIP§8] §f";
+	public String Prefix = "§8[§6TeamSpeakIP§8] §f"; 
 	private int uid = 70774;
 	public Updater updater;
 	
