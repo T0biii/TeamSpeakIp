@@ -1,5 +1,6 @@
 package de.t0biii.ts;
 
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -10,14 +11,15 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.github.theholywaffle.teamspeak3.TS3Api;
 import com.github.theholywaffle.teamspeak3.TS3Config;
 import com.github.theholywaffle.teamspeak3.TS3Query;
+import com.github.theholywaffle.teamspeak3.api.wrapper.Client;
 
 import de.t0biii.ts.commands.Ts;
 import de.t0biii.ts.commands.TsTapCompleter;
 import de.t0biii.ts.listener.PlayerJoin;
+import de.t0biii.ts.methods.DBManager;
 import de.t0biii.ts.methods.Metrics;
 import de.t0biii.ts.methods.Updater;
 import de.t0biii.ts.methods.Updater.UpdateType;
-import de.t0biii.ts.methods.files.Cache;
 import de.t0biii.ts.methods.files.ConfigManager;
 import de.t0biii.ts.methods.files.Filter;
 import de.t0biii.ts.methods.files.Messages;
@@ -35,11 +37,10 @@ public class TeamSpeak extends JavaPlugin{
 	
 	public static TeamSpeak instance;
 	private ConfigManager cm = new ConfigManager(this);
- 	public Cache ca = new Cache(this);
  	private Messages ms = new Messages(this);
  	public Filter fi = new Filter(this);
 	public Logger log = Bukkit.getLogger();
-
+	private DBManager db = new DBManager(this);
 	/**
 	 * TS Api
 	 */
@@ -80,8 +81,10 @@ public class TeamSpeak extends JavaPlugin{
 		/**
 		 * Config load and save
 		 */
+		db.connect();
 		cm.loadConfig();
 		ms.loadMessages();
+     	fi.loadFilter();
       	saveConfig();
     	
       	/**
@@ -119,12 +122,6 @@ public class TeamSpeak extends JavaPlugin{
 			}						
 		} 
 		
-		/**
-		 * Load Configurations
-		 */
-		if(!error)
-     	ca.loadCache(api);
-     	fi.loadFilter();
      	
      	/**
      	 * Metrics start
@@ -148,7 +145,15 @@ public class TeamSpeak extends JavaPlugin{
 		Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
 			@Override
 			public void run() {
-				ca.cachetoconfig(api);
+				db.ceck();
+				int max = api.getHostInfo().getTotalMaxClients();
+				int min = api.getClients().size();
+				ArrayList<String> list = new ArrayList<>();
+				for (Client c : api.getClients()) {
+					list.add(c.getNickname());
+				}
+				
+				db.update(max, min, list);
 			}
 		}, 20L, interval*20L);
 		} 
@@ -165,4 +170,8 @@ public class TeamSpeak extends JavaPlugin{
 			}
 		});	
 	}
+	public static TeamSpeak getInstance() {
+		return instance;
+	}
+	
 }

@@ -1,12 +1,12 @@
 name: TeamSpeakIP
 author: T0biii
-version: 5.4
+version: 5.5
 website: http://dev.bukkit.org/bukkit-plugins/teamspeak-ip/
 description: Plugin zeigt dir die TeamspeakIP
 prefix: TeamSpeakIP 
 database: false
 
-main: me.t0biii.ts.TeamSpeak
+main: de.t0biii.ts.TeamSpeak
 commands:
   ts:
     description: Shows the TS IP

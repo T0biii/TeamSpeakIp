@@ -13,11 +13,11 @@ import org.bukkit.entity.Player;
 import com.github.theholywaffle.teamspeak3.api.wrapper.Client;
 
 import de.t0biii.ts.TeamSpeak;
+import de.t0biii.ts.methods.DBManager;
 import de.t0biii.ts.methods.JsonMessage;
 import de.t0biii.ts.methods.SendHelp;
 import de.t0biii.ts.methods.Updater;
 import de.t0biii.ts.methods.Updater.UpdateResult;
-import de.t0biii.ts.methods.files.Cache;
 import de.t0biii.ts.methods.files.Filter;
 import de.t0biii.ts.methods.files.Messages;
 
@@ -30,7 +30,7 @@ public class Ts implements CommandExecutor{
 	static String tsip = "";
 	static Messages me = new Messages(pl);
 	static Filter fil = new Filter(pl);
-	static Cache ca = new Cache(pl);
+	static DBManager db = new DBManager(pl);
 	static File file = me.getFile();
 	static YamlConfiguration cfg = me.getcfg();	
 	
@@ -174,12 +174,11 @@ public class Ts implements CommandExecutor{
 					p.sendMessage("§cTeamspeak is unreachable!");
 				}else{
 					try{
-						YamlConfiguration cfg = ca.getcfg();
 						YamlConfiguration fcfg = fil.getcfg();
-						int anzahl = cfg.getInt("ts.anzahl");
-						int max = cfg.getInt("ts.max");
+						int anzahl = db.getInt("min");
+						int max = db.getInt("max");
+						List<String> cachelist = db.getArray();
 						List<String> filter = fcfg.getStringList("ignore");
-						List<String> cachelist = cfg.getStringList("ts.cache");
 						
 				if(!pl.getConfig().getBoolean("options.realtime.activated")){ 
 					prefixsend(p);	
