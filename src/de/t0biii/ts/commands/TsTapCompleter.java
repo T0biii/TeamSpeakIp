@@ -1,4 +1,4 @@
-package me.t0biii.ts.commands;
+package de.t0biii.ts.commands;
 
 import java.util.ArrayList;
 import java.util.List;

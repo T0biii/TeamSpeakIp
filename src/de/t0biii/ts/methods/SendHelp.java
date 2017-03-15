@@ -1,9 +1,9 @@
-package me.t0biii.ts.methods;
+package de.t0biii.ts.methods;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import me.t0biii.ts.commands.Ts;
+import de.t0biii.ts.commands.Ts;
 
 /**
 * Created by Tobias on 06.01.2017.

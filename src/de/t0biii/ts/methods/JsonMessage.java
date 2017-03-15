@@ -1,4 +1,4 @@
-package me.t0biii.ts.methods;
+package de.t0biii.ts.methods;
 
 import java.util.ArrayList;
 import java.util.List;

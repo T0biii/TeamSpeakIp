@@ -1,4 +1,4 @@
-package me.t0biii.ts.commands;
+package de.t0biii.ts.commands;
 
 import java.io.File;
 import java.util.List;
@@ -12,14 +12,14 @@ import org.bukkit.entity.Player;
 
 import com.github.theholywaffle.teamspeak3.api.wrapper.Client;
 
-import me.t0biii.ts.TeamSpeak;
-import me.t0biii.ts.methods.JsonMessage;
-import me.t0biii.ts.methods.SendHelp;
-import me.t0biii.ts.methods.Updater;
-import me.t0biii.ts.methods.Updater.UpdateResult;
-import me.t0biii.ts.methods.files.Cache;
-import me.t0biii.ts.methods.files.Filter;
-import me.t0biii.ts.methods.files.Messages;
+import de.t0biii.ts.TeamSpeak;
+import de.t0biii.ts.methods.JsonMessage;
+import de.t0biii.ts.methods.SendHelp;
+import de.t0biii.ts.methods.Updater;
+import de.t0biii.ts.methods.Updater.UpdateResult;
+import de.t0biii.ts.methods.files.Cache;
+import de.t0biii.ts.methods.files.Filter;
+import de.t0biii.ts.methods.files.Messages;
 
 
 public class Ts implements CommandExecutor{

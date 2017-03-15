@@ -1,13 +1,15 @@
-package me.t0biii.ts.methods.files;
+package de.t0biii.ts.methods.files;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+
 import org.bukkit.configuration.file.YamlConfiguration;
+
 import com.github.theholywaffle.teamspeak3.TS3Api;
 import com.github.theholywaffle.teamspeak3.api.wrapper.Client;
 
-import me.t0biii.ts.TeamSpeak;
+import de.t0biii.ts.TeamSpeak;
 
 /**
 * Created by Tobias on 05.01.2017.

@@ -1,4 +1,4 @@
-package me.t0biii.ts.listener;
+package de.t0biii.ts.listener;
 
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -6,10 +6,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
-import me.t0biii.ts.TeamSpeak;
-import me.t0biii.ts.methods.JsonMessage;
-import me.t0biii.ts.methods.Updater;
-import me.t0biii.ts.methods.files.Messages;
+import de.t0biii.ts.TeamSpeak;
+import de.t0biii.ts.methods.JsonMessage;
+import de.t0biii.ts.methods.Updater;
+import de.t0biii.ts.methods.files.Messages;
 
 public class PlayerJoin implements Listener{
 	

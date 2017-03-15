@@ -1,6 +1,6 @@
-package me.t0biii.ts.methods.files;
+package de.t0biii.ts.methods.files;
 
-import me.t0biii.ts.TeamSpeak;
+import de.t0biii.ts.TeamSpeak;
 
 public class ConfigManager {
 	
