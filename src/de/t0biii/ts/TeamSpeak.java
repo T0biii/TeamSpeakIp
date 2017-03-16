@@ -16,11 +16,11 @@ import com.github.theholywaffle.teamspeak3.api.wrapper.Client;
 import de.t0biii.ts.commands.Ts;
 import de.t0biii.ts.commands.TsTapCompleter;
 import de.t0biii.ts.listener.PlayerJoin;
-import de.t0biii.ts.methods.DBManager;
 import de.t0biii.ts.methods.Metrics;
 import de.t0biii.ts.methods.Updater;
 import de.t0biii.ts.methods.Updater.UpdateType;
 import de.t0biii.ts.methods.files.ConfigManager;
+import de.t0biii.ts.methods.files.DBManager;
 import de.t0biii.ts.methods.files.Filter;
 import de.t0biii.ts.methods.files.Messages;
 
@@ -163,6 +163,8 @@ public class TeamSpeak extends JavaPlugin{
 		db.update(max, min, list);
 	}
 	//Metrics start 
+	
+	//Default QueryPort / and Default Teamspeak3 Port
 	public void startBstat(Metrics bstats){
 		bstats.addCustomChart(new Metrics.SimplePie("update-info") {
 		public String getValue() {

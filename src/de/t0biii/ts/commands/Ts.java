@@ -13,11 +13,11 @@ import org.bukkit.entity.Player;
 import com.github.theholywaffle.teamspeak3.api.wrapper.Client;
 
 import de.t0biii.ts.TeamSpeak;
-import de.t0biii.ts.methods.DBManager;
 import de.t0biii.ts.methods.JsonMessage;
 import de.t0biii.ts.methods.SendHelp;
 import de.t0biii.ts.methods.Updater;
 import de.t0biii.ts.methods.Updater.UpdateResult;
+import de.t0biii.ts.methods.files.DBManager;
 import de.t0biii.ts.methods.files.Filter;
 import de.t0biii.ts.methods.files.Messages;
 
