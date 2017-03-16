@@ -24,7 +24,7 @@ public class DBManager {
 	}
 	
     private static Connection connection;
-    private static final String DB_PATH = "plugins/TeamSpeakIP/testdb.db";
+    private static final String DB_PATH = "plugins/TeamSpeakIP/cache.db";
     static {
         try {
             Class.forName("org.sqlite.JDBC");
