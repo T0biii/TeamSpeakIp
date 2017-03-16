@@ -25,7 +25,7 @@ public class PlayerJoin implements Listener{
 		if(p.hasPermission("ts.update") || p.isOp()){
 			if(pl.updater.getResult() == Updater.UpdateResult.UPDATE_AVAILABLE){
 				if(pl.getConfig().getBoolean("options.Update-info")){
-					String UpdateinfoMes = pl.Prefix+"§4"+cfg.getString("messages.update-info");
+					String UpdateinfoMes = pl.Prefix+"§4§l"+cfg.getString("messages.update-info");
 					sendChat(p, UpdateinfoMes, "/ts update", "§a/ts update");
 				}
 			}

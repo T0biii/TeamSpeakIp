@@ -77,6 +77,13 @@ public class SendHelp {
 		    	 .setClickAsExecuteCmd("/ts cache-on")
 		    	 .setHoverAsTooltip("/ts cache-on").save().send(p);
 		     }
+			  //   p.sendMessage(ChatColor.YELLOW+"/ts cache" + ChatColor.GRAY + "   | Renew the cache");
+		     {
+		    	 JsonMessage jm = new JsonMessage();
+		    	 jm.append(ChatColor.YELLOW+"/ts cache" + ChatColor.GRAY + "   | Renew the cache")
+		    	 .setClickAsExecuteCmd("/ts cache")
+		    	 .setHoverAsTooltip("/ts cache").save().send(p);
+		     }
             p.sendMessage("");
             Ts.prefixsend(p);	
 		}else{

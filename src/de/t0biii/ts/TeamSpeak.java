@@ -26,11 +26,11 @@ import de.t0biii.ts.methods.files.Messages;
 
 public class TeamSpeak extends JavaPlugin{
 	
-	/** 
+	/*
 	 * TS3 Prefix and Updater id
 	 */
 	public String prefix = "[TeamSpeakIP] ";
-	public String Prefix = "§8[§6TeamSpeakIP§8] §f"; 
+	public String Prefix = "§8[§6§lTeamSpeakIP§r§8] §f"; 
 	private int uid = 70774;
 	public Updater updater;
 	
@@ -41,14 +41,14 @@ public class TeamSpeak extends JavaPlugin{
  	public Filter fi = new Filter(this);
 	public Logger log = Bukkit.getLogger();
 	private DBManager db = new DBManager(this);
-	/**
+	/*
 	 * TS Api
 	 */
 	public boolean error = false;   	
 	public final TS3Config config = new TS3Config();
 	public final TS3Query query = new TS3Query(config);
 	public final TS3Api api = query.getApi();
-	/**
+	/*
 	 * Load TS3 Login data
 	 */
  	String host = getConfig().getString("ts3.ip");
@@ -58,7 +58,7 @@ public class TeamSpeak extends JavaPlugin{
 	String querypw = getConfig().getString("ts3.querylogin.pw");
 	String querydisplayname = getConfig().getString("ts3.queryname");
 	
-	/**
+	/*
 	 * Disable Part
 	 */
 	@Override
@@ -70,7 +70,7 @@ public class TeamSpeak extends JavaPlugin{
 		log.info(prefix +"Plugin disabeld.");
 	}
 	
-	/**
+	/*
 	 * Enable Part
 	 */
 	@Override
@@ -78,7 +78,7 @@ public class TeamSpeak extends JavaPlugin{
 		PluginManager pm = Bukkit.getPluginManager();
 		instance = this;
 	    
-		/**
+		/*
 		 * Config load and save
 		 */
 		db.connect();
@@ -87,18 +87,18 @@ public class TeamSpeak extends JavaPlugin{
      	fi.loadFilter();
       	saveConfig();
     	
-      	/**
+      	/*
     	 * TS Command and TapCompleter
     	 */
       	this.getCommand("ts").setExecutor(new Ts(this));
      	this.getCommand("ts").setTabCompleter(new TsTapCompleter());
       	
-     	/**
+     	/*
      	 * Events registrieren
      	 */
      	pm.registerEvents(new PlayerJoin(this),this);
      	
-     	/**
+     	/*
      	 * TS3 Connect
      	 */
      	try{
@@ -123,7 +123,7 @@ public class TeamSpeak extends JavaPlugin{
 		} 
 		
      	
-     	/**
+     	/*
      	 * Metrics start
      	 */	
 		if(getConfig().getBoolean("options.Metrics")){		
@@ -131,12 +131,12 @@ public class TeamSpeak extends JavaPlugin{
 					startBstat(metrics);
 		}
 		
-		/**
+		/*
          * Updater 
          */
         updater = new Updater(this, uid, getFile(), UpdateType.NO_DOWNLOAD, true);
         
-        /**
+        /*
          * Start Auto Chache
          */
 		int interval = 60;
@@ -145,20 +145,24 @@ public class TeamSpeak extends JavaPlugin{
 		Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
 			@Override
 			public void run() {
-				db.ceck();
-				int max = api.getHostInfo().getTotalMaxClients();
-				int min = api.getClients().size();
-				ArrayList<String> list = new ArrayList<>();
-				for (Client c : api.getClients()) {
-					list.add(c.getNickname());
-				}
-				
-				db.update(max, min, list);
+				dbupdate();
 			}
 		}, 20L, interval*20L);
 		} 
 	}
 	
+	//Update Database
+	public void dbupdate(){
+		db.check();
+		int max = api.getHostInfo().getTotalMaxClients();
+		int min = api.getClients().size();
+		ArrayList<String> list = new ArrayList<>();
+		for (Client c : api.getClients()) {
+			list.add(c.getNickname());
+		}
+		db.update(max, min, list);
+	}
+	//Metrics start 
 	public void startBstat(Metrics bstats){
 		bstats.addCustomChart(new Metrics.SimplePie("update-info") {
 		public String getValue() {
@@ -170,6 +174,7 @@ public class TeamSpeak extends JavaPlugin{
 			}
 		});	
 	}
+	//Retrun Instance
 	public static TeamSpeak getInstance() {
 		return instance;
 	}

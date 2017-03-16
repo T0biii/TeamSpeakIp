@@ -34,7 +34,7 @@ public class ConfigManager {
    	 /**
    	  * Optionen
    	  */
-   	 this.plugin.getConfig().addDefault("options.realtime.activated", true);
+   	 this.plugin.getConfig().addDefault("options.realtime.activated", false);
    	 this.plugin.getConfig().addDefault("options.realtime.update", 60);
    	 this.plugin.getConfig().addDefault("options.Update-info", true);
    	 this.plugin.getConfig().addDefault("options.Metrics", true);

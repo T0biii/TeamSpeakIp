@@ -33,8 +33,10 @@ public class DBManager {
             e.printStackTrace();
         }
     }
-
-    public void ceck() {
+    /**
+     * Check connections to the DB
+     */
+    public void check() {
     	try{
     		if(connection == null){
     			connect();		
@@ -45,7 +47,9 @@ public class DBManager {
     		e.printStackTrace();
     	}
     }
-    
+    /**
+     * Connect to the DB
+     */
     public void connect() {
         try {
             if (connection != null) return;
@@ -68,6 +72,7 @@ public class DBManager {
             }
         });
     }
+    //Check if value Exists
     private boolean exists(){
     	try{
     		PreparedStatement ps = connection.prepareStatement("SELECT value FROM TS3IP WHERE value = ?");
@@ -82,7 +87,12 @@ public class DBManager {
     	}
     	return false;
     }
-    
+    /**
+     * Update the DB with new Data
+     * @param max Max Clients
+     * @param min Clients online
+     * @param cache Clientslist 
+     */
     public void update(int max, int min, List<String> cache){
     	try {
 			Statement stmt = connection.createStatement();
@@ -115,6 +125,10 @@ public class DBManager {
 			e.printStackTrace();
 		}
     }
+    /**
+     * Returns the Arraylist of Teamspeak3 Clients
+     * @return ArrayList 
+     */
     public ArrayList<String> getArray(){
     	PreparedStatement ps;
     	ArrayList<String> list = new ArrayList<>();
@@ -130,6 +144,11 @@ public class DBManager {
     	}
     	return list;
     }
+    /**
+     * Returns the int form the spalte
+     * @param spalte in the DB
+     * @return int
+     */
 	public int getInt(String spalte){
 		PreparedStatement ps;
 		int output = -1;

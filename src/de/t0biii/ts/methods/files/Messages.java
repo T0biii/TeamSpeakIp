@@ -36,6 +36,7 @@ public class Messages {
 		cfg.addDefault("messages.no-permission", "&4Du Hast keine Rechte dafuer!");
 		cfg.addDefault("messages.update-info", "Neues Update ist verfuegbar!");
 		cfg.addDefault("messages.no-update", "&aDu hast bereits die neuste Version!");
+		cfg.addDefault("messages.cachenew", "&2&lDer Cache wurde neu befüllt");
 		// Save
 		save(file, cfg);
 	}

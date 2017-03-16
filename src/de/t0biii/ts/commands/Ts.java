@@ -37,14 +37,12 @@ public class Ts implements CommandExecutor{
 	
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args)
-	{ 
-		
+	{	
 		if(pl.getConfig().getInt("ts3.port") == 9987){
 			tsip = pl.getConfig().getString("ts3.ip");
 		}else{
 			 tsip = pl.getConfig().getString("ts3.ip") + ":" + pl.getConfig().getString("ts3.port");
 		}
-		
 		if(sender instanceof Player)
 		{
 			final Player p = (Player) sender;
@@ -69,7 +67,7 @@ public class Ts implements CommandExecutor{
 			}else if(args[0].equalsIgnoreCase("help")){
 				SendHelp sh = new SendHelp();
 				sh.sendHelp(p);
-             /**
+             /*
               * UPDATE COMMAND    
               */
 			}else if(args[0].equalsIgnoreCase("update")){
@@ -91,6 +89,7 @@ public class Ts implements CommandExecutor{
 					}
 				}		
 			}
+			//GET IP COMMAND
 			else if(args[0].equalsIgnoreCase("getip")){
 				prefixsend(p);	
 				p.sendMessage("");
@@ -101,8 +100,8 @@ public class Ts implements CommandExecutor{
 					.setHoverAsTooltip(ChatColor.translateAlternateColorCodes('&', tsip)).save().send(p);
 				}
 				p.sendMessage("");
-				prefixsend(p);		
-				
+				prefixsend(p);	
+			//RL-Filter COMMAND	
 			}else if(args[0].equalsIgnoreCase("rl-filter")){
 				if(p.isOp() || p.hasPermission("ts.filter")){
 				pl.fi.loadFilter();
@@ -113,9 +112,8 @@ public class Ts implements CommandExecutor{
 				prefixsend(p);
 				}else{
 					tsipsend(p);
-				}
-
-				
+				}	
+			//cache-off COMMAND	
 			}else if(args[0].equalsIgnoreCase("cache-off")){
 				if(p.isOp() || p.hasPermission("ts.cache")){
 					if(!pl.getConfig().getBoolean("options.realtime.activated")){
@@ -136,7 +134,7 @@ public class Ts implements CommandExecutor{
 				}else{
 					tsipsend(p);
 				}
-
+			//cache-on COMMAND	
 			}else if(args[0].equalsIgnoreCase("cache-on")){
 				if(p.isOp() || p.hasPermission("ts.cache")){
 					if(pl.getConfig().getBoolean("options.realtime.activated")){
@@ -157,18 +155,18 @@ public class Ts implements CommandExecutor{
 				}else{
 					tsipsend(p);
 				}
-
+			//cache COMMAND
 			}else if(args[0].equalsIgnoreCase("cache")){
 				if(p.isOp() || p.hasPermission("ts.cache")){
-				 pl.ca.cachetoconfig(pl.api);
+				 pl.dbupdate();
 				 prefixsend(p);
 				 {
 					 JsonMessage jm = new JsonMessage();
-					 jm.append("§cDer Cache wurde neu befüllt").save().send(p);;
+					 jm.append(ChatColor.translateAlternateColorCodes('&', cfg.getString("messages.cachenew")) ).save().send(p);;
 				 }
 				 prefixsend(p);
 				}
-
+			//List COMMAND
 			}else if(args[0].equalsIgnoreCase("list")){
 				if(pl.error){
 					p.sendMessage("§cTeamspeak is unreachable!");
@@ -239,6 +237,6 @@ public class Ts implements CommandExecutor{
 	}
 	
 	public static void prefixsend(Player p){
-		p.sendMessage(ChatColor.YELLOW+"[]================"+ChatColor.GOLD +" TeamSpeak " +ChatColor.YELLOW+"===============[]");
+		p.sendMessage(ChatColor.YELLOW+"[]================"+ChatColor.GOLD +ChatColor.BOLD +" TeamSpeak "+ChatColor.RESET +ChatColor.YELLOW+"===============[]");
 	}
 }

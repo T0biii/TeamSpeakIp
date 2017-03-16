@@ -27,7 +27,7 @@ public class TsTapCompleter implements TabCompleter {
 		String rlfilter = "rl-filter";
 		String getip = "getIP";
 		String list = "list";
-		//Create 2 ArrayLists
+		//Create Second ArrayLists
 		ArrayList<String> tsnames = new ArrayList<String>();
 		ArrayList<String> tsnames2 = new ArrayList<String>();
 		
