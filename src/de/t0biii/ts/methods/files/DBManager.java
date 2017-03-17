@@ -17,11 +17,11 @@ import de.t0biii.ts.TeamSpeak;
 */
 public class DBManager {
    
-	@SuppressWarnings("unused")
-	private TeamSpeak pl;
-	public DBManager(TeamSpeak pl){
-		this.pl = pl;
-	}
+//	@SuppressWarnings("unused")
+//	private TeamSpeak pl;
+//	public DBManager(TeamSpeak pl){
+//		this.pl = pl;
+//	}
 	
     private static Connection connection;
     private static final String DB_PATH = "plugins/TeamSpeakIP/cache.db";

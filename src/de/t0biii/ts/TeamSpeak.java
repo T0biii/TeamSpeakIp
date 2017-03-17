@@ -40,7 +40,7 @@ public class TeamSpeak extends JavaPlugin{
  	private Messages ms = new Messages(this);
  	public Filter fi = new Filter(this);
 	public Logger log = Bukkit.getLogger();
-	private DBManager db = new DBManager(this);
+	private DBManager db = new DBManager();
 	/*
 	 * TS Api
 	 */

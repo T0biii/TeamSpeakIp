@@ -30,7 +30,7 @@ public class Ts implements CommandExecutor{
 	static String tsip = "";
 	static Messages me = new Messages(pl);
 	static Filter fil = new Filter(pl);
-	static DBManager db = new DBManager(pl);
+	static DBManager db = new DBManager();
 	static File file = me.getFile();
 	static YamlConfiguration cfg = me.getcfg();	
 	
