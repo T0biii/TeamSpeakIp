@@ -4,7 +4,6 @@ version: 6.0
 website: http://dev.bukkit.org/bukkit-plugins/teamspeak-ip/
 description: Shows you the Teamspeak3IP
 prefix: TeamSpeakIP 
-database: false
 
 main: de.t0biii.ts.TeamSpeak
 commands:

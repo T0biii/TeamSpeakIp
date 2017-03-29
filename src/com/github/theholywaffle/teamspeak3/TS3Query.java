@@ -46,7 +46,7 @@ public class TS3Query {
 		public static final FloodRate DEFAULT = new FloodRate(350);
 		public static final FloodRate UNLIMITED = new FloodRate(0);
 
-		public static final FloodRate custom(int milliseconds) {
+		public static FloodRate custom(int milliseconds) {
 			if (milliseconds < 0) throw new IllegalArgumentException("Timeout must be positive");
 			return new FloodRate(milliseconds);
 		}
@@ -64,15 +64,17 @@ public class TS3Query {
 
 	public static final Logger log = Logger.getLogger(TS3Query.class.getName());
 
-	private final ExecutorService userThreadPool = Executors.newCachedThreadPool();
-	private final EventManager eventManager = new EventManager();
-	private final FileTransferHelper fileTransferHelper;
-	private final TS3Config config;
 	private final ConnectionHandler connectionHandler;
+	private final EventManager eventManager = new EventManager();
+	private final ExecutorService userThreadPool = Executors.newCachedThreadPool();
+	private final FileTransferHelper fileTransferHelper;
+	private final TS3Api api;
+	private final TS3ApiAsync asyncApi;
+	private final TS3Config config;
 
 	private QueryIO io;
-	private TS3Api api;
-	private TS3ApiAsync asyncApi;
+
+	private volatile boolean connected;
 
 	/**
 	 * Creates a TS3Query that connects to a TS3 server at
@@ -96,11 +98,15 @@ public class TS3Query {
 		this.config = config;
 		this.fileTransferHelper = new FileTransferHelper(config.getHost());
 		this.connectionHandler = config.getReconnectStrategy().create(config.getConnectionHandler());
+		this.connected = false;
+
+		this.api = new TS3Api(this);
+		this.asyncApi = new TS3ApiAsync(this);
 	}
 
 	// PUBLIC
 
-	public TS3Query connect() {
+	public void connect() {
 		QueryIO oldIO = io;
 		if (oldIO != null) {
 			oldIO.disconnect();
@@ -108,8 +114,8 @@ public class TS3Query {
 
 		try {
 			io = new QueryIO(this, config);
+			connected = true;
 		} catch (TS3ConnectionFailedException conFailed) {
-			fireDisconnect();
 			throw conFailed;
 		}
 
@@ -119,17 +125,17 @@ public class TS3Query {
 			log.log(Level.SEVERE, "ConnectionHandler threw exception in connect handler", t);
 		}
 		io.continueFrom(oldIO);
-
-		return this;
 	}
 
 	/**
 	 * Removes and closes all used resources to the teamspeak server.
 	 */
 	public void exit() {
-		// Send a quit command synchronously
-		// This will guarantee that all previously sent commands have been processed
-		doCommand(new CQuit());
+		if (connected) {
+			// Send a quit command synchronously
+			// This will guarantee that all previously sent commands have been processed
+			doCommand(new CQuit());
+		}
 
 		io.disconnect();
 		userThreadPool.shutdown();
@@ -139,49 +145,18 @@ public class TS3Query {
 	}
 
 	public TS3Api getApi() {
-		if (api == null) {
-			api = new TS3Api(this);
-		}
 		return api;
 	}
 
 	public TS3ApiAsync getAsyncApi() {
-		if (asyncApi == null) {
-			asyncApi = new TS3ApiAsync(this);
-		}
 		return asyncApi;
 	}
 
 	// INTERNAL
 
 	boolean doCommand(Command c) {
-		final long end = System.currentTimeMillis() + config.getCommandTimeout();
-		final Object signal = new Object();
-		c.setCallback(new Callback() {
-			@Override
-			public void handle() {
-				synchronized (signal) {
-					signal.notifyAll();
-				}
-			}
-		});
-
 		io.enqueueCommand(c);
-
-		boolean interrupted = false;
-		while (!c.isAnswered() && System.currentTimeMillis() < end) {
-			try {
-				synchronized (signal) {
-					signal.wait(end - System.currentTimeMillis());
-				}
-			} catch (final InterruptedException e) {
-				interrupted = true;
-			}
-		}
-		if (interrupted) {
-			// Restore the interrupt
-			Thread.currentThread().interrupt();
-		}
+		io.awaitCommand(c);
 
 		if (!c.isAnswered()) {
 			log.severe("Command " + c.getName() + " was not answered in time.");
@@ -209,6 +184,8 @@ public class TS3Query {
 	}
 
 	void fireDisconnect() {
+		connected = false;
+
 		userThreadPool.submit(new Runnable() {
 			@Override
 			public void run() {
@@ -216,6 +193,10 @@ public class TS3Query {
 					connectionHandler.onDisconnect(TS3Query.this);
 				} catch (Throwable t) {
 					log.log(Level.SEVERE, "ConnectionHandler threw exception in disconnect handler", t);
+				}
+
+				if (!connected) {
+					exit();
 				}
 			}
 		});

@@ -26,14 +26,19 @@ package com.github.theholywaffle.teamspeak3;
  * #L%
  */
 
+import com.github.theholywaffle.teamspeak3.api.Callback;
 import com.github.theholywaffle.teamspeak3.api.exception.TS3ConnectionFailedException;
+import com.github.theholywaffle.teamspeak3.api.reconnect.ConnectionHandler;
+import com.github.theholywaffle.teamspeak3.api.reconnect.DisconnectingConnectionHandler;
 import com.github.theholywaffle.teamspeak3.commands.Command;
 
 import java.io.IOException;
 import java.net.Socket;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 public class QueryIO {
 
@@ -45,9 +50,13 @@ public class QueryIO {
 	private final BlockingQueue<Command> sendQueue;
 	private final BlockingQueue<Command> receiveQueue;
 
+	private final int commandTimeout;
+
 	QueryIO(TS3Query query, TS3Config config) {
+		commandTimeout = config.getCommandTimeout();
 		sendQueue = new LinkedBlockingQueue<>();
-		if (config.getFloodRate() == TS3Query.FloodRate.UNLIMITED) {
+		ConnectionHandler handler = config.getReconnectStrategy().create(null);
+		if (config.getFloodRate() == TS3Query.FloodRate.UNLIMITED && handler instanceof DisconnectingConnectionHandler) {
 			// Don't wait for the last response before sending more commands
 			receiveQueue = new LinkedBlockingQueue<>();
 		} else {
@@ -117,6 +126,30 @@ public class QueryIO {
 	public void enqueueCommand(Command command) {
 		if (command == null) throw new NullPointerException("Command cannot be null!");
 		sendQueue.add(command);
+	}
+
+	public void awaitCommand(Command command) {
+		if (command == null) throw new NullPointerException("Command cannot be null!");
+
+		final CountDownLatch latch = new CountDownLatch(1);
+		command.setCallback(new Callback() {
+			@Override
+			public void handle() {
+				latch.countDown();
+			}
+		});
+
+		boolean interrupted = false;
+		try {
+			latch.await(commandTimeout, TimeUnit.MILLISECONDS);
+		} catch (final InterruptedException e) {
+			interrupted = true;
+		}
+
+		if (interrupted) {
+			// Restore the interrupt
+			Thread.currentThread().interrupt();
+		}
 	}
 
 	// Internals for communication with other IO classes
