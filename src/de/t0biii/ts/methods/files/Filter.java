@@ -9,43 +9,45 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import de.t0biii.ts.TeamSpeak;
 
 /**
-* Created by Tobias on 05.01.2017.
-*/
-public class Filter {
-	
+ * Created by Tobias on 05.01.2017.
+ */
+public class Filter{
+
 	private TeamSpeak plugin;
-	  public Filter(TeamSpeak plugin)
-	  {
-		  this.plugin = plugin; 
-	  }	
-	  
-	public  void loadFilter(){
+
+	public Filter(TeamSpeak plugin){
+		this.plugin = plugin;
+	}
+
+	public void loadFilter(){
 		File file = getFile();
 		YamlConfiguration cfg = getcfg();
-		if(!file.exists()){
-			try {
+		if (!file.exists()){
+			try{
 				file.createNewFile();
-			} catch (IOException e) {
+			} catch (IOException e){
 			}
 		}
-		ArrayList<String> list = new ArrayList<>();	
+		ArrayList<String> list = new ArrayList<>();
 		list.add(plugin.getConfig().getString("ts3.queryname"));
 		cfg.addDefault("ignore", list);
 		cfg.options().copyDefaults(true);
 		save(file, cfg);
 	}
-	
+
 	public void save(File file, YamlConfiguration cfg){
-		try {
+		try{
 			cfg.save(file);
-		} catch (IOException e) {
-		}	
+		} catch (IOException e){
+		}
 	}
-	public File getFile(){
+
+	public static File getFile(){
 		File file = new File("plugins/TeamSpeakIP/filter.yml");
 		return file;
 	}
-	public YamlConfiguration getcfg(){
+
+	public static YamlConfiguration getcfg(){
 		File file = getFile();
 		YamlConfiguration cfg = YamlConfiguration.loadConfiguration(file);
 		return cfg;
