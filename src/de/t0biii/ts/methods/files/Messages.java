@@ -8,21 +8,24 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import de.t0biii.ts.TeamSpeak;
 
 /**
-* Created by Tobias on 06.01.2017.
-*/
-public class Messages {
+ * Created by Tobias on 06.01.2017.
+ */
+public class Messages{
 	private TeamSpeak plugin;
-	public Messages(TeamSpeak plugin){ this.plugin = plugin; }
-	  
-	public  void loadMessages(){
+
+	public Messages(TeamSpeak plugin){
+		this.plugin = plugin;
+	}
+
+	public void loadMessages(){
 		File file = getFile();
 		YamlConfiguration cfg = getcfg();
-		if(!file.exists()){
-			try {
+		if (!file.exists()){
+			try{
 				file.createNewFile();
 				cfg.options().header("Plugin by T0biii!");
-			} catch (IOException e) {
-				plugin.log.info(plugin.prefix+"Cant Create Messages.YML");
+			} catch (IOException e){
+				plugin.log.info(plugin.prefix + "Cant Create Messages.YML");
 			}
 		}
 		cfg.options().copyDefaults(true);
@@ -40,21 +43,26 @@ public class Messages {
 		// Save
 		save(file, cfg);
 	}
+
 	/**
-	 * @param file The File you want save
-	 * @param cfg The YamlConfiguration you want save
+	 * @param file
+	 *            The File you want save
+	 * @param cfg
+	 *            The YamlConfiguration you want save
 	 */
 	private void save(File file, YamlConfiguration cfg){
-		try {
+		try{
 			cfg.save(file);
-		} catch (IOException e) {
+		} catch (IOException e){
 		}
 	}
-	public File getFile(){
+
+	public static File getFile(){
 		File file = new File("plugins/TeamSpeakIP/messages.yml");
 		return file;
 	}
-	public YamlConfiguration getcfg(){
+
+	public static YamlConfiguration getcfg(){
 		File file = getFile();
 		YamlConfiguration cfg = YamlConfiguration.loadConfiguration(file);
 		return cfg;
