@@ -56,7 +56,7 @@ public class TeamSpeak extends JavaPlugin{
 	String queryname = getConfig().getString("ts3.querylogin.name");
 	String querypw = getConfig().getString("ts3.querylogin.pw");
 	String querydisplayname = getConfig().getString("ts3.queryname");
-
+ 
 	/*
 	 * Disable Part
 	 */
