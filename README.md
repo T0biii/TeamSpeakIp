@@ -20,6 +20,7 @@ Commands:
 /ts cache-on
 ```
 
+Jenkins Server: DOWN
 Dev Builds:
 https://ci.t0biii.ovh/job/TeamSpeakIP/
 
