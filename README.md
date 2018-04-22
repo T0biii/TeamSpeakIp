@@ -21,6 +21,4 @@ Commands:
 ```
 
 Jenkins Server: DOWN
-Dev Builds:
-https://ci.t0biii.ovh/job/TeamSpeakIP/
 
