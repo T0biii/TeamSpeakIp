@@ -35,6 +35,7 @@ public class HelpMessages{
 	}
 
 	public static void sendUpdate(Player p, TeamSpeak pl){
+	    String updateSite = pl.getDescription().getWebsite();
 		if (p.hasPermission("ts.update") || p.isOp()){
 			if (pl.updater.getResult() == Updater.UpdateResult.UPDATE_AVAILABLE){
 				prefixsend(p);
@@ -48,7 +49,8 @@ public class HelpMessages{
 			} else if (pl.updater.getResult() != UpdateResult.UPDATE_AVAILABLE){
 				prefixsend(p);
 				p.sendMessage("");
-				p.sendMessage(ChatColor.translateAlternateColorCodes('&', cfg.getString("messages.no-update")));
+				JsonMessage jm = new JsonMessage();
+				jm.append(ChatColor.translateAlternateColorCodes('&', cfg.getString("messages.no-update"))).setClickAsURL(updateSite).setHoverAsTooltip(updateSite).save().send(p);
 				p.sendMessage("");
 				prefixsend(p);
 			}
@@ -60,7 +62,7 @@ public class HelpMessages{
 		p.sendMessage("");
 		{
 			JsonMessage jm = new JsonMessage();
-			jm.append("§1§lClick This").setClickAsSuggestCmd(ChatColor.translateAlternateColorCodes('&', tsip))
+			jm.append(ChatColor.translateAlternateColorCodes('&', cfg.getString("messages.getIP"))).setClickAsSuggestCmd(ChatColor.translateAlternateColorCodes('&', tsip))
 					.setHoverAsTooltip(ChatColor.translateAlternateColorCodes('&', tsip)).save().send(p);
 		}
 		p.sendMessage("");
