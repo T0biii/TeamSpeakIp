@@ -1,5 +1,5 @@
 
-TeamSpeakIP [![TeamSpeakIP](https://api.travis-ci.org/T0biii/TeamSpeakIp.svg)](https://travis-ci.org/T0biii/TeamSpeakIp)
+TeamSpeakIP [![TeamSpeakIP](https://api.travis-ci.org/T0biii/TeamSpeakIp.svg)](https://travis-ci.org/T0biii/TeamSpeakIp) | [![CircleCI](https://circleci.com/gh/T0biii/TeamSpeakIp/tree/master.svg?style=svg)](https://circleci.com/gh/T0biii/TeamSpeakIp/tree/master)
 ===========
 
 This is a Bukkit Plugin for more information go to:
