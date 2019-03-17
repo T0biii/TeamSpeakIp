@@ -1,5 +1,5 @@
 
-TeamSpeakIP [![TeamSpeakIP](https://api.travis-ci.org/T0biii/TeamSpeakIp.svg)](https://travis-ci.org/T0biii/TeamSpeakIp) | [![Stories in Ready](https://badge.waffle.io/T0biii/TeamSpeakIp.png?label=ready&title=Ready)](https://waffle.io/T0biii/TeamSpeakIp?utm_source=badge)
+TeamSpeakIP [![TeamSpeakIP](https://api.travis-ci.org/T0biii/TeamSpeakIp.svg)](https://travis-ci.org/T0biii/TeamSpeakIp)
 ===========
 
 This is a Bukkit Plugin for more information go to:
