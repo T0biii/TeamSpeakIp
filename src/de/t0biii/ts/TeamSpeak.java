@@ -1,7 +1,6 @@
 package de.t0biii.ts;
 
 import java.util.ArrayList;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
@@ -104,7 +103,7 @@ public class TeamSpeak extends JavaPlugin{
 		try{
 			config.setHost(host);
 			config.setQueryPort(Queryport);
-			config.setDebugLevel(Level.OFF);
+//			config.setDebugLevel(Level.OFF);
 			query.connect();
 			log.info(prefix + "Connectet to Teamspeak!");
 		} catch (Exception e){
