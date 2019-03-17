@@ -84,4 +84,6 @@ jobs:
     - store_artifacts:
         path: target/TeamSpeak6.0.jar
     - store_artifacts:
+        path: target/TeamSpeak*.jar       
+    - store_artifacts:
         path: /tmp/circleci-test-results
