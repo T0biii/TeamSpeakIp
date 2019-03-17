@@ -21,7 +21,8 @@
 
 	<repositories>
 		<!-- Craftbukkit -->
-		<!--<repository>
+
+	<!--	<repository>
 			<id>tobiii-repo</id>
 			<url>http://maven.t0biii.de/repository/</url>
 		</repository> -->
@@ -31,10 +32,13 @@
 			<url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
 		</repository>
 		<!-- CI Server -->
-		<!--<repository>
+
+
+		<!-- <repository>
 			<id>upstream</id>
 			<url>https://ci.t0biii.ovh/plugin/repository/everything/</url>
-		</repository>-->
+		</repository> -->
+
 		<!-- TeamSpeakIP -->
 		<repository>
 			<id>TeamSpeak-3-Java-API-mvn-repo</id>
@@ -67,7 +71,8 @@
 			<artifactId>craftbukkit</artifactId>
 			<version>1.8.8-R0.1-SNAPSHOT</version>
 			<scope>provided</scope>
-		</dependency>-->
+
+		</dependency> -->
 		<!--Spigot -->
 		<!--<dependency>
 			<groupId>org.spigotmc</groupId>

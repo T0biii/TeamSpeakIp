@@ -40,6 +40,7 @@ public class Messages{
 		cfg.addDefault("messages.update-info", "Neues Update ist verfuegbar!");
 		cfg.addDefault("messages.no-update", "&aDu hast bereits die neuste Version!");
 		cfg.addDefault("messages.cachenew", "&2&lDer Cache wurde neu befüllt");
+		cfg.addDefault("messages.getIP", "&3&lClick This");
 		// Save
 		save(file, cfg);
 	}

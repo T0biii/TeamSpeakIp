@@ -16,6 +16,7 @@ import com.github.theholywaffle.teamspeak3.api.wrapper.Client;
 import de.t0biii.ts.commands.Ts;
 import de.t0biii.ts.commands.TsTapCompleter;
 import de.t0biii.ts.listener.PlayerJoin;
+import de.t0biii.ts.methods.Bstats;
 import de.t0biii.ts.methods.Metrics;
 import de.t0biii.ts.methods.Updater;
 import de.t0biii.ts.methods.Updater.UpdateType;
@@ -56,7 +57,7 @@ public class TeamSpeak extends JavaPlugin{
 	String queryname = getConfig().getString("ts3.querylogin.name");
 	String querypw = getConfig().getString("ts3.querylogin.pw");
 	String querydisplayname = getConfig().getString("ts3.queryname");
-
+ 
 	/*
 	 * Disable Part
 	 */
@@ -164,42 +165,7 @@ public class TeamSpeak extends JavaPlugin{
 
 	// Default QueryPort / and Default Teamspeak3 Port
 	public void startBstat(Metrics bstats){
-		bstats.addCustomChart(new Metrics.SimplePie("realtime_data"){
-			public String getValue(){
-				String re = getConfig().getString("options.realtime.activated");
-				if (re.equalsIgnoreCase("true") || re.equalsIgnoreCase("false")){
-					return re;
-				}
-				return "unknow";
-			}
-		});
-		bstats.addCustomChart(new Metrics.SimplePie("default_query_port"){
-			public String getValue(){
-				if(Queryport == 10011){
-					return "true";
-				}else{
-					return "false";
-				}
-			}
-		});
-		bstats.addCustomChart(new Metrics.SimplePie("default_voice_port"){
-			public String getValue(){
-				if (ts3port == 9987){
-					return "true";
-				} else{
-					return "false";
-				}
-			}
-		});
-		bstats.addCustomChart(new Metrics.SimplePie("update-info"){
-			public String getValue(){
-				String re = getConfig().getString("options.Update-info");
-				if (re.equalsIgnoreCase("true") || re.equalsIgnoreCase("false")){
-					return re;
-				}
-				return "unknow";
-			}
-		});
+	    Bstats.customCharts(bstats);
 	}
 
 	// Retrun Instance
