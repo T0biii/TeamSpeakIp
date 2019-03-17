@@ -85,8 +85,8 @@
 		<dependency>
     		<groupId>com.github.theholywaffle</groupId>
     		<artifactId>teamspeak3-api</artifactId>
-    		<version>1.2.0</version>
     		<scope>provided</scope>
+    		<version>1.2.0</version>
 		</dependency>
 	</dependencies>
 
@@ -126,6 +126,7 @@
 							<artifactSet>
 								<includes>
 									<include>org.mcstats.bukkit</include>
+									<include>com.github.theholywaffle</include>
 								</includes>
 							</artifactSet>
 						</configuration>
@@ -147,4 +148,8 @@
 			</plugin>
 		</plugins>
 	</build>
+	<issueManagement>
+		<url>https://github.com/T0biii/TeamSpeakIp/issues</url>
+		<system>GitHub Issues</system>
+	</issueManagement>
 </project>
