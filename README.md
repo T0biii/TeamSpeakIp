@@ -1,9 +1,9 @@
 
-TeamSpeakIP [![TeamSpeakIP](https://api.travis-ci.org/T0biii/TeamSpeakIp.svg)](https://travis-ci.org/T0biii/TeamSpeakIp) | [![Build Status](https://ci.t0biii.ovh/job/TeamSpeakIP/badge/icon)](https://ci.t0biii.ovh/job/TeamSpeakIP/) | [![Stories in Ready](https://badge.waffle.io/T0biii/TeamSpeakIp.png?label=ready&title=Ready)](https://waffle.io/T0biii/TeamSpeakIp?utm_source=badge)
+TeamSpeakIP [![TeamSpeakIP](https://api.travis-ci.org/T0biii/TeamSpeakIp.svg)](https://travis-ci.org/T0biii/TeamSpeakIp) | [![CircleCI](https://circleci.com/gh/T0biii/TeamSpeakIp/tree/master.svg?style=svg)](https://circleci.com/gh/T0biii/TeamSpeakIp/tree/master)
 ===========
 
 This is a Bukkit Plugin for more information go to:
-http://dev.t0biii.de/
+https://dev.bukkit.org/projects/teamspeak-ip
 
 
 Commands:
@@ -20,6 +20,5 @@ Commands:
 /ts cache-on
 ```
 
-Dev Builds:
-https://ci.t0biii.ovh/job/TeamSpeakIP/
+Jenkins Server: DOWN
 
