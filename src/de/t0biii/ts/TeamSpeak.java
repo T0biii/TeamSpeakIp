@@ -93,7 +93,7 @@ public class TeamSpeak extends JavaPlugin{
 		this.getCommand("ts").setTabCompleter(new TsTapCompleter());
 
 		/*
-		 * Events registrieren
+		 * Register Events
 		 */
 		pm.registerEvents(new PlayerJoin(this), this);
 
