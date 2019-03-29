@@ -3,7 +3,7 @@ TeamSpeakIP [![TeamSpeakIP](https://api.travis-ci.org/T0biii/TeamSpeakIp.svg)](h
 ===========
 
 This is a Bukkit Plugin for more information go to:
-https://dev.bukkit.org/projects/teamspeak-ip 
+https://dev.bukkit.org/projects/teamspeak-ip
 
 
 Commands:
