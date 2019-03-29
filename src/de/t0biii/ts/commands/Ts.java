@@ -31,37 +31,47 @@ public class Ts implements CommandExecutor{
 		if (sender instanceof Player){
 			final Player p = (Player) sender;
 			if (args.length == 1){
+				switch (args[0].toLowerCase()) {
 				// RELOAD COMMAND
-				if (args[0].equalsIgnoreCase("rl")){
+				case "rl":
 					HelpMessages.sendReload(p, pl);
+					break;
 				// HELP COMMAND
-				} else if (args[0].equalsIgnoreCase("help")){
+				case "help":
 					HelpMessages.sendHelp(p, tsip);
+					break;
 				// UPDATE COMMAND
-				} else if (args[0].equalsIgnoreCase("update")){
+				case "update":
 					HelpMessages.sendUpdate(p, pl);
+					break;
 				// GET IP COMMAND
-				} else if (args[0].equalsIgnoreCase("getip")){
+				case "getip":
 					HelpMessages.sendGetIP(p, tsip);
-				// RL-Filter COMMAND
-				} else if (args[0].equalsIgnoreCase("rl-filter")){
+					break;
+				// rl-filter COMMAND
+				case "rl-filter":
 					HelpMessages.sendReloadFiler(p, pl, tsip);
+					break;
 				// cache-off COMMAND
-				} else if (args[0].equalsIgnoreCase("cache-off")){
+				case "cache-off":
 					HelpMessages.sendCacheOFF(p, pl, tsip);
+					break;
 				// cache-on COMMAND
-				} else if (args[0].equalsIgnoreCase("cache-on")){
+				case "cache-on":
 					HelpMessages.sendCacheON(p, pl, tsip);
+					break;
 				// cache COMMAND
-				} else if (args[0].equalsIgnoreCase("cache")){
+				case "cache":
 					HelpMessages.sendCache(p, pl);
+					break;
 				// List COMMAND
-				} else if (args[0].equalsIgnoreCase("list")){
+				case "list":
 					HelpMessages.sendList(p, pl, tsip);
-				// Not Existing Command
-				} else{
+					break;
+				default:
 					HelpMessages.tsipsend(p, tsip);
-				}
+					break;
+				}	
 			//  if 1 < Args Lenght > 1
 			} else{
 				HelpMessages.tsipsend(p, tsip);
