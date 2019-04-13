@@ -18,6 +18,7 @@ public class TsTapCompleter implements TabCompleter{
 		String cperm = "ts.cache";
 		String fperm = "ts.filter";
 		String[] cache = new String[3];
+		String [] cache2 = {"cache", "cache-on", "cache-off"};
 		cache[0] = "cache";
 		cache[1] = "cache-on";
 		cache[2] = "cache-off";
@@ -40,9 +41,9 @@ public class TsTapCompleter implements TabCompleter{
 			if (p.isOp() || p.hasPermission(uperm))
 				tsnames.add(update);
 			if (p.isOp() || p.hasPermission(cperm)){
-				tsnames.add(cache[0]);
-				tsnames.add(cache[1]);
-				tsnames.add(cache[2]);
+				tsnames.add(cache2[0]);
+				tsnames.add(cache2[1]);
+				tsnames.add(cache2[2]);
 			}
 			if (p.isOp() || p.hasPermission(fperm))
 				tsnames.add(rlfilter);
@@ -56,8 +57,8 @@ public class TsTapCompleter implements TabCompleter{
 					if (ts.toLowerCase().startsWith(args[0].toLowerCase())){
 						if (p.hasPermission(fperm) && ts.equalsIgnoreCase(rlfilter)){
 							tsnames2.add(ts);
-						} else if (p.hasPermission(cperm) && (ts.equalsIgnoreCase(cache[0])
-								|| ts.equalsIgnoreCase(cache[1]) || ts.equalsIgnoreCase(cache[2]))){
+						} else if (p.hasPermission(cperm) && (ts.equalsIgnoreCase(cache2[0])
+								|| ts.equalsIgnoreCase(cache2[1]) || ts.equalsIgnoreCase(cache2[2]))){
 							tsnames2.add(ts);
 						} else if (p.hasPermission(uperm) && ts.equalsIgnoreCase(update)){
 							tsnames2.add(ts);
