@@ -17,10 +17,7 @@ public class TsTapCompleter implements TabCompleter{
 		String uperm = "ts.update";
 		String cperm = "ts.cache";
 		String fperm = "ts.filter";
-		String[] cache = new String[3];
-		cache[0] = "cache";
-		cache[1] = "cache-on";
-		cache[2] = "cache-off";
+		String[] cache = {"cache", "cache-on", "cache-off"};
 		String rl = "rl";
 		String help = "help";
 		String update = "update";
