@@ -135,13 +135,14 @@
             </plugin>
             <!-- Make a Jar -->
 			<plugin>
-   			 <groupId>org.apache.maven.plugins</groupId>
-    		 <artifactId>maven-compiler-plugin</artifactId>
-   			 <version>3.7.0</version>
-   			 <configuration>
- 		    	 <release>8</release>
-   		     	<verbose>true</verbose>
-  	 	 	 </configuration>
+			    <groupId>org.apache.maven.plugins</groupId>
+			    <artifactId>maven-compiler-plugin</artifactId>
+			    <version>3.7.0</version>
+			    <configuration>
+			        <source>1.8</source>
+			        <target>1.8</target>
+			        <verbose>true</verbose>
+			    </configuration>
 			</plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
