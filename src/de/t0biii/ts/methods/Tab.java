@@ -41,25 +41,6 @@ public class Tab
     * @return New aligned String
     */
     public static String fFS (String s, int tabSize) {
-     
-        String ret = s.toUpperCase();
-     
-        if ( s != null ) {
-     
-            for (int i=0; i < s.length(); i++) {
-                if ( s.charAt(i) == 'I' || s.charAt(i) == ' ') {
-                    ret += " ";
-                }
-            }
-     
-            int faltaEspacos = tabSize - s.length();
-            faltaEspacos = (faltaEspacos * 2);
-     
-            for (int i=0; i < faltaEspacos; i++) {
-                ret += " ";
-            }
-        }
-     
-        return (ret);
+     return fixFontSize(s, tabSize);
     }
 }
