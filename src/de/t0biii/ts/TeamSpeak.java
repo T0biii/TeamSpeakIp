@@ -104,7 +104,7 @@ public class TeamSpeak extends JavaPlugin{
 		try{
 			config.setHost(host);
 			config.setQueryPort(Queryport);
-			config.setDebugLevel(Level.OFF);
+//			config.setDebugLevel(Level.OFF);
 			query.connect();
 			log.info(prefix + "Connectet to Teamspeak!");
 		} catch (Exception e){
