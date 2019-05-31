@@ -9,6 +9,8 @@
 	<url>http://dev.T0biii.de</url>
 	<properties>
 		<project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
+		 <maven.compiler.source>1.8</maven.compiler.source>
+		 <maven.compiler.target>1.8</maven.compiler.target>
 	</properties>
 
 	<developers>
