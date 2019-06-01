@@ -2,7 +2,7 @@ package de.t0biii.ts;
 
 import java.util.ArrayList;
 import java.util.logging.Logger;
-
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -16,7 +16,6 @@ import de.t0biii.ts.commands.Ts;
 import de.t0biii.ts.commands.TsTapCompleter;
 import de.t0biii.ts.listener.PlayerJoin;
 import de.t0biii.ts.methods.Bstats;
-import de.t0biii.ts.methods.Metrics;
 import de.t0biii.ts.methods.Updater;
 import de.t0biii.ts.methods.Updater.UpdateType;
 import de.t0biii.ts.methods.files.ConfigManager;
