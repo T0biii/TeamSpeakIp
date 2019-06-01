@@ -75,13 +75,6 @@ jobs:
     - run: mvn integration-test -Dhttps.protocols=TLSv1.2
     # Teardown
     #   If you break your build into multiple jobs with workflows, you will probably want to do the parts of this that are relevant in each
-    # Save test results
-    - store_test_results:
-        path: /tmp/circleci-test-results
     # Save artifacts
     - store_artifacts:
-        path: /tmp/circleci-artifacts
-    - store_artifacts:
-        path: target/TeamSpeak6.0.jar
-    - store_artifacts:
-        path: /tmp/circleci-test-results
+        path: target/TeamSpeak5.7.jar
