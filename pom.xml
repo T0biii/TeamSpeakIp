@@ -69,7 +69,7 @@
 	<build>
 
 		<!--Datei Namen -->
-		<finalName>TeamSpeak6.0</finalName>
+		<finalName>TeamSpeak5.7</finalName>
 		<!-- -->
 
 		<sourceDirectory>${basedir}/src</sourceDirectory>
