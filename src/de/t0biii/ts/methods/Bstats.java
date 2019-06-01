@@ -4,6 +4,7 @@ package de.t0biii.ts.methods;
 import java.util.concurrent.Callable;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.configuration.file.YamlConfiguration;
+import de.t0biii.ts.TeamSpeak;
 import de.t0biii.ts.methods.files.Messages;
 
 public class Bstats {
@@ -13,7 +14,6 @@ public class Bstats {
   public static void customCharts(Metrics bstats) {
     final int queryport = cfg.getInt("ts3.queryport");
     final int ts3port = cfg.getInt("ts3.port");
-    final String queryname = cfg.getString("ts3.queryname");
 
 
     bstats.addCustomChart(new Metrics.SimplePie("realtime_data", new Callable<String>() {
@@ -63,6 +63,7 @@ public class Bstats {
     bstats.addCustomChart(new Metrics.SimplePie("default_queryname", new Callable<String>() {
       @Override
       public String call() throws Exception {
+        String queryname = cfg.getString("ts3.queryname");
         if (queryname != null) {
           if (queryname.equalsIgnoreCase("TeamspeakIP")) {
             return "true";
@@ -70,10 +71,9 @@ public class Bstats {
             return "false";
           }
         } else {
+          TeamSpeak.getInstance().getLogger().info(TeamSpeak.getInstance().prefix + " - ERROR: " + queryname);
           return "unknow";
         }
-
-
       }
     }));
 
