@@ -42,7 +42,4 @@ public class ConfigManager {
 
     this.plugin.getConfig().options().copyDefaults(true);
   }
-  
-  
-
 }
