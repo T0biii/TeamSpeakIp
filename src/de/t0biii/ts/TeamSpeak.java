@@ -1,6 +1,7 @@
 package de.t0biii.ts;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
@@ -8,8 +9,10 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.github.theholywaffle.teamspeak3.TS3Api;
+import com.github.theholywaffle.teamspeak3.TS3ApiAsync;
 import com.github.theholywaffle.teamspeak3.TS3Config;
 import com.github.theholywaffle.teamspeak3.TS3Query;
+import com.github.theholywaffle.teamspeak3.api.CommandFuture;
 import com.github.theholywaffle.teamspeak3.api.wrapper.Client;
 
 import de.t0biii.ts.commands.Ts;
@@ -46,6 +49,7 @@ public class TeamSpeak extends JavaPlugin{
 	public final TS3Config config = new TS3Config();
 	public final TS3Query query = new TS3Query(config);
 	public final TS3Api api = query.getApi();
+
 	/*
 	 * Load TS3 Login data
 	 */
@@ -55,7 +59,7 @@ public class TeamSpeak extends JavaPlugin{
 	String queryname = getConfig().getString("ts3.querylogin.name");
 	String querypw = getConfig().getString("ts3.querylogin.pw");
 	String querydisplayname = getConfig().getString("ts3.queryname");
- 
+	boolean ssh = false;
 	/*
 	 * Disable Part
 	 */
@@ -102,7 +106,6 @@ public class TeamSpeak extends JavaPlugin{
 		try{
 			config.setHost(host);
 			config.setQueryPort(Queryport);
-//			config.setDebugLevel(Level.OFF);
 			query.connect();
 			log.info(prefix + "Connectet to Teamspeak!");
 		} catch (Exception e){
@@ -151,6 +154,7 @@ public class TeamSpeak extends JavaPlugin{
 	// Update Database
 	public void dbupdate(){
 		db.check();
+		
 		int max = api.getHostInfo().getTotalMaxClients();
 		int min = api.getClients().size();
 		ArrayList<String> list = new ArrayList<>();
@@ -170,5 +174,8 @@ public class TeamSpeak extends JavaPlugin{
 	public static TeamSpeak getInstance(){
 		return instance;
 	}
-
+	
+	public TS3ApiAsync getTS3ApiAsync() {
+	  return query.getAsyncApi();
+	}
 }
