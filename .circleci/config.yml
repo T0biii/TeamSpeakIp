@@ -10,7 +10,7 @@ version: 2
 jobs:
   build:
     working_directory: ~/T0biii/TeamSpeakIp
-    parallelism: 4
+    parallelism: 1
     shell: /bin/bash --login
     # CircleCI 2.0 does not support environment variables that refer to each other the same way as 1.0 did.
     # If any of these refer to each other, rewrite them so that they don't or see https://circleci.com/docs/2.0/env-vars/#interpolating-environment-variables-to-set-other-environment-variables .
@@ -41,7 +41,7 @@ jobs:
     # This is based on your 1.0 configuration file or project settings
     - run:
         working_directory: ~/T0biii/TeamSpeakIp
-        command: sudo update-alternatives --set java /usr/lib/jvm/java-7-openjdk-amd64/jre/bin/java; sudo update-alternatives --set javac /usr/lib/jvm/java-7-openjdk-amd64/bin/javac; echo -e "export JAVA_HOME=/usr/lib/jvm/java-7-openjdk-amd64" >> $BASH_ENV
+        command: sudo update-alternatives --set java /usr/lib/jvm/jdk1.8.0/bin/java; sudo update-alternatives --set javac /usr/lib/jvm/java-8-openjdk-amd64/bin/javac; echo 'export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64' >> ~/.circlerc
     # Dependencies
     #   This would typically go in either a build or a build-and-test job when using workflows
     # Restore the dependency cache
@@ -61,19 +61,20 @@ jobs:
         paths:
         # This is a broad list of cache paths to include many possible development environments
         # You can probably delete some of these entries
+        - vendor/bundle
+        - ~/virtualenvs
         - ~/.m2
+        - ~/.ivy2
+        - ~/.bundle
+        - ~/.go_workspace
+        - ~/.gradle
+        - ~/.cache/bower
     # Test
     #   This would typically be a build job when using workflows, possibly combined with build
     # The following line was run implicitly in your 1.0 builds based on what CircleCI inferred about the structure of your project. In 2.0 you need to be explicit about which commands should be run. In some cases you can discard inferred commands if they are not relevant to your project.
     - run: mvn integration-test -Dhttps.protocols=TLSv1.2
-    - run: ls target/
     # Teardown
     #   If you break your build into multiple jobs with workflows, you will probably want to do the parts of this that are relevant in each
-    # Save test results
-    - store_test_results:
-        path: /tmp/circleci-test-results
     # Save artifacts
     - store_artifacts:
-        path: target/TeamSpeak6.0.jar
-    - store_artifacts:
-        path: target/TeamSpeak-6.0-shaded.jar       
+        path: target/TeamSpeak5.7.jar
