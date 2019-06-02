@@ -60,7 +60,13 @@ public class Ts implements CommandExecutor {
           // Not Existing Command
         } else {
           HelpMessages.tsipsend(p, tsip);
+          p.sendMessage("Teamspeak: "+ cfg.getString("ts3.queryname"));
+          
+          
         }
+        
+        
+        
         // if 1 < Args Lenght > 1
       } else {
         HelpMessages.tsipsend(p, tsip);
