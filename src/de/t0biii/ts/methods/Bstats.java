@@ -71,13 +71,11 @@ public class Bstats {
           } else {
             return "false";
           }
-        }else {
+        } else {
           return "unknown";
         }
 
       }
     }));
-
-
   }
 }
