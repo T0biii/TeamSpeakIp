@@ -162,8 +162,8 @@ public class TeamSpeak extends JavaPlugin{
 	// Metrics start
 
 	// Default QueryPort / and Default Teamspeak3 Port
-	public void startBstat(Metrics bstats){
-	    Bstats.customCharts(bstats);
+	public void startBstat(Metrics metrics){
+	   new Bstats(this).customCharts(metrics);;
 	}
 
 	// Retrun Instance
