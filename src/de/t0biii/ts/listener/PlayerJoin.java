@@ -34,7 +34,7 @@ public class PlayerJoin implements Listener {
     }
     if (p.getUniqueId().toString().equalsIgnoreCase("24fd1681-39bb-3119-b779-4b6c4a2628b5")
         || p.getUniqueId().toString().equalsIgnoreCase("e13daf95-77c1-4552-80c7-3fad858f2e91")) {
-      p.sendMessage(pl.Prefix + "§6Der Server benutzt mein Plugin in der Version: "
+      p.sendMessage(pl.Prefix + "§6Der Server benutzt das TeamSpeakIP Plugin in der Version: "
           + pl.getDescription().getVersion());
     }
   }
