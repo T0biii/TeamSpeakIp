@@ -60,7 +60,7 @@ public class Ts implements CommandExecutor {
           // Not Existing Command
         } else {
           HelpMessages.tsipsend(p, tsip);
-          p.sendMessage("Teamspeak: "+ cfg.getString("ts3.queryname"));
+          p.sendMessage("Teamspeak: "+ cfg.getString("options.realtime.activated"));
           
           
         }
