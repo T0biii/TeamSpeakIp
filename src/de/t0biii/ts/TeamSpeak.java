@@ -32,7 +32,7 @@ public class TeamSpeak extends JavaPlugin{
 	 * TS3 Prefix and Updater id
 	 */
 	public String prefix = "[TeamSpeakIP] ";
-	public String Prefix = "§8[§6§lTeamSpeakIP§r§8] §f";
+	public String Prefix = "ï¿½8[ï¿½6ï¿½lTeamSpeakIPï¿½rï¿½8] ï¿½f";
 	private int uid = 70774;
 	public Updater updater;
 
@@ -96,7 +96,7 @@ public class TeamSpeak extends JavaPlugin{
 		this.getCommand("ts").setTabCompleter(new TsTapCompleter());
 
 		/*
-		 * Events registrieren
+		 * Register Events
 		 */
 		pm.registerEvents(new PlayerJoin(this), this);
 
