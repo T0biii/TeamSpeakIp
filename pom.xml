@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.t0biii.ts</groupId>
 	<artifactId>TeamSpeak</artifactId>
-	<version>5.7</version>
+	<version>5.7.1</version>
 	<name>TeamSpeakIP</name>
 	<description>TeamSpeak IP</description>
 	<url>http://dev.T0biii.de</url>
@@ -78,7 +78,7 @@
 	<build>
 
 		<!--Datei Namen -->
-		<finalName>TeamSpeak5.7</finalName>
+		<finalName>TeamSpeak5.7.1</finalName>
 		<!-- -->
 
 		<sourceDirectory>${basedir}/src</sourceDirectory>

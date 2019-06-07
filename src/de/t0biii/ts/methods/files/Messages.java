@@ -24,6 +24,7 @@ public class Messages {
         cfg.options().header("Plugin by T0biii!");
       } catch (IOException e) {
         plugin.log.info(plugin.prefix + "Cant Create Messages.YML");
+        e.printStackTrace();
       }
     }
     cfg.options().copyDefaults(true);
