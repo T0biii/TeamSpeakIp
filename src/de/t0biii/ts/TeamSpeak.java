@@ -80,9 +80,9 @@ public class TeamSpeak extends JavaPlugin{
 		 * Config load and save
 		 */
 		cm.loadConfig();
-		ms.loadMessages();
-		fi.loadFilter();
 		saveConfig();
+	    ms.loadMessages();
+	    fi.loadFilter();
 	    db.connect();
 
 		/*
