@@ -42,6 +42,7 @@ public class Filter {
 
   public static File getFile() {
     File file = new File("plugins/TeamSpeakIP/filter.yml");
+    System.out.println(file.getAbsolutePath());
     return file;
   }
 
