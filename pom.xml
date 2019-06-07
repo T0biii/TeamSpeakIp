@@ -20,20 +20,10 @@
 
 
 	<repositories>
-		<!-- Craftbukkit -->
-		<repository>
-			<id>tobiii-repo</id>
-			<url>http://maven.t0biii.de/repository/</url>
-		</repository>
 		<!-- Spigot -->
 		<repository>
 			<id>spigot-repo</id>
 			<url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
-		</repository>
-		<!-- CI Server -->
-		<repository>
-			<id>upstream</id>
-			<url>https://ci.t0biii.ovh/plugin/repository/everything/</url>
 		</repository>
 		<!-- TeamSpeakIP -->
 		<repository>
@@ -53,29 +43,7 @@
 			<artifactId>spigot-api</artifactId>
 			<version>1.8.8-R0.1-SNAPSHOT</version>
 			<scope>provided</scope>
-		</dependency>
-		<!--Bukkit API -->
-		<dependency>
-			<groupId>org.bukkit</groupId>
-			<artifactId>bukkit</artifactId>
-			<version>1.8.8-R0.1-SNAPSHOT</version>
-			<scope>provided</scope>
-		</dependency>
-		<!--CraftBukkit -->
-		<dependency>
-			<groupId>org.bukkit</groupId>
-			<artifactId>craftbukkit</artifactId>
-			<version>1.8.8-R0.1-SNAPSHOT</version>
-			<scope>provided</scope>
-		</dependency>
-		<!--Spigot -->
-		<dependency>
-			<groupId>org.spigotmc</groupId>
-			<artifactId>spigot</artifactId>
-			<version>1.8.8-R0.1-SNAPSHOT</version>
-			<scope>provided</scope>
-		</dependency>
-		
+		</dependency>	
 		<!--TS3 -->
 	</dependencies>
 
