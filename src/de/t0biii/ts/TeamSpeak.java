@@ -79,11 +79,11 @@ public class TeamSpeak extends JavaPlugin{
 		/*
 		 * Config load and save
 		 */
-		db.connect();
 		cm.loadConfig();
 		ms.loadMessages();
 		fi.loadFilter();
 		saveConfig();
+	    db.connect();
 
 		/*
 		 * TS Command and TapCompleter
