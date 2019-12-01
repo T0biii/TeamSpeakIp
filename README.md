@@ -20,5 +20,4 @@ Commands:
 /ts cache-on
 ```
 
-Jenkins Server: DOWN
 
