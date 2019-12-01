@@ -19,6 +19,6 @@ jobs:
       uses: actions/upload-artifact@v1.0.0
       with:
         # Artifact name
-        name: TeamSpeak5.7.1.jar
+        name: TeamSpeakIP
         # Directory containing files to upload
         path: target/
