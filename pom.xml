@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.t0biii.ts</groupId>
 	<artifactId>TeamSpeak</artifactId>
-	<version>5.7.2</version>
+	<version>5.7.3</version>
 	<name>TeamSpeakIP</name>
 	<description>TeamSpeak IP</description>
 	<url>http://dev.T0biii.de</url>
@@ -42,11 +42,6 @@
 			<id>CodeMC</id>
 			<url>https://repo.codemc.org/repository/maven-public</url>
 		</repository>
-		<!--Gravity Repo -->
-		<repository>
-			<id>gravity-repo</id>
-			<url>http://repo.gravitydevelopment.net</url>
-		</repository>
 	</repositories>
 
 	<dependencies>
@@ -78,18 +73,12 @@
 			<version>1.1.1</version>
 			<scope>provided</scope>
 		</dependency>
-		<!--Gravity Updater -->
-		<dependency>
-			<groupId>net.gravitydevelopment.updater</groupId>
-			<artifactId>updater</artifactId>
-			<version>2.4</version>
-		</dependency>
 	</dependencies>
 
 	<build>
 
 		<!--Datei Namen -->
-		<finalName>TeamSpeak5.7.2</finalName>
+		<finalName>TeamSpeak5.7.3</finalName>
 		<!-- -->
 
 		<sourceDirectory>${basedir}/src</sourceDirectory>

@@ -77,4 +77,4 @@ jobs:
     #   If you break your build into multiple jobs with workflows, you will probably want to do the parts of this that are relevant in each
     # Save artifacts
     - store_artifacts:
-        path: target/TeamSpeak5.7.1.jar
+        path: target/TeamSpeak5.7.3.jar
