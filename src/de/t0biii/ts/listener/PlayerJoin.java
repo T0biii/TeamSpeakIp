@@ -7,8 +7,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import de.t0biii.ts.TeamSpeak;
 import de.t0biii.ts.methods.JsonMessage;
-import de.t0biii.ts.methods.Updater;
 import de.t0biii.ts.methods.files.Messages;
+import net.gravitydevelopment.updater.Updater.UpdateResult;
 
 public class PlayerJoin implements Listener {
 
@@ -25,7 +25,7 @@ public class PlayerJoin implements Listener {
     Player p = e.getPlayer();
     // If Player has Permission or is op
     if (p.hasPermission("ts.update") || p.isOp()) {
-      if (pl.updater.getResult() == Updater.UpdateResult.UPDATE_AVAILABLE) {
+      if (pl.updater.getResult() == UpdateResult.UPDATE_AVAILABLE) {
         if (pl.getConfig().getBoolean("options.Update-info")) {
           String UpdateinfoMes = pl.Prefix + "§4§l" + cfg.getString("messages.update-info");
           sendChat(p, UpdateinfoMes, "/ts update", "§a/ts update");

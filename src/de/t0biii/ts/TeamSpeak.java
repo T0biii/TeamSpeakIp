@@ -15,12 +15,12 @@ import de.t0biii.ts.commands.Ts;
 import de.t0biii.ts.commands.TsTapCompleter;
 import de.t0biii.ts.listener.PlayerJoin;
 import de.t0biii.ts.methods.Bstats;
-import de.t0biii.ts.methods.Updater;
-import de.t0biii.ts.methods.Updater.UpdateType;
 import de.t0biii.ts.methods.files.ConfigManager;
 import de.t0biii.ts.methods.files.DBManager;
 import de.t0biii.ts.methods.files.Filter;
 import de.t0biii.ts.methods.files.Messages;
+import net.gravitydevelopment.updater.Updater;
+import net.gravitydevelopment.updater.Updater.UpdateType;
 
 public class TeamSpeak extends JavaPlugin{
 
