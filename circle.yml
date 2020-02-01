@@ -1,6 +1,0 @@
-machine:
-  java:
-    version: openjdk8
-general:
-  artifacts:
-    - "target/TeamSpeak5.7.2.jar"
