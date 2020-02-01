@@ -15,12 +15,12 @@ import de.t0biii.ts.commands.Ts;
 import de.t0biii.ts.commands.TsTapCompleter;
 import de.t0biii.ts.listener.PlayerJoin;
 import de.t0biii.ts.methods.Bstats;
-import de.t0biii.ts.methods.Updater;
-import de.t0biii.ts.methods.Updater.UpdateType;
 import de.t0biii.ts.methods.files.ConfigManager;
 import de.t0biii.ts.methods.files.DBManager;
 import de.t0biii.ts.methods.files.Filter;
 import de.t0biii.ts.methods.files.Messages;
+import net.gravitydevelopment.updater.Updater;
+import net.gravitydevelopment.updater.Updater.UpdateType;
 
 public class TeamSpeak extends JavaPlugin{
 
@@ -65,7 +65,7 @@ public class TeamSpeak extends JavaPlugin{
 			api.logout();
 			query.exit();
 		}
-		log.info(prefix + "Plugin disabeld.");
+		log.info(prefix + "Plugin disabled.");
 	}
 
 	/*
@@ -103,9 +103,9 @@ public class TeamSpeak extends JavaPlugin{
 			config.setHost(host);
 			config.setQueryPort(Queryport);
 			query.connect();
-			log.info(prefix + "Connectet to Teamspeak!");
+			log.info(prefix + "Connected to Teamspeak!");
 		} catch (Exception e){
-			log.info(prefix + "Cant connect to Teamspeak!");
+			log.info(prefix + "Can't connect to Teamspeak Server ("+ host+ ":" + Queryport +")!");
 			error = true;
 		}
 		if (!error){
@@ -115,7 +115,7 @@ public class TeamSpeak extends JavaPlugin{
 				api.setNickname(querydisplayname);
 			} catch (Exception e){
 				error = true;
-				log.info(prefix + "Cant connect to Teamspeak!");
+	            log.info(prefix + "Can't connect to Teamspeak Server ("+ host+ ":" + ts3port +")!");
 			}
 		}
 

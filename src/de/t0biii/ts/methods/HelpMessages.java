@@ -6,10 +6,10 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import com.github.theholywaffle.teamspeak3.api.wrapper.Client;
 import de.t0biii.ts.TeamSpeak;
-import de.t0biii.ts.methods.Updater.UpdateResult;
 import de.t0biii.ts.methods.files.DBManager;
 import de.t0biii.ts.methods.files.Filter;
 import de.t0biii.ts.methods.files.Messages;
+import net.gravitydevelopment.updater.Updater.UpdateResult;
 
 /**
  * Created by T0biii on 21.07.2017.
@@ -35,7 +35,7 @@ public class HelpMessages {
   public static void sendUpdate(Player p, TeamSpeak pl) {
     String updateSite = pl.getDescription().getWebsite();
     if (p.hasPermission("ts.update") || p.isOp()) {
-      if (pl.updater.getResult() == Updater.UpdateResult.UPDATE_AVAILABLE) {
+      if (pl.updater.getResult() == UpdateResult.UPDATE_AVAILABLE) {
         prefixsend(p);
         p.sendMessage("");
         p.sendMessage(ChatColor.translateAlternateColorCodes('&',

@@ -42,6 +42,11 @@
 			<id>CodeMC</id>
 			<url>https://repo.codemc.org/repository/maven-public</url>
 		</repository>
+		<!--Gravity Repo -->
+		<repository>
+			<id>gravity-repo</id>
+			<url>http://repo.gravitydevelopment.net</url>
+		</repository>
 	</repositories>
 
 	<dependencies>
@@ -72,6 +77,12 @@
 			<artifactId>json-simple</artifactId>
 			<version>1.1.1</version>
 			<scope>provided</scope>
+		</dependency>
+		<!--Gravity Updater -->
+		<dependency>
+			<groupId>net.gravitydevelopment.updater</groupId>
+			<artifactId>updater</artifactId>
+			<version>2.4</version>
 		</dependency>
 	</dependencies>
 
