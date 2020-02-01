@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.t0biii.ts</groupId>
 	<artifactId>TeamSpeak</artifactId>
-	<version>5.7.1</version>
+	<version>5.7.2</version>
 	<name>TeamSpeakIP</name>
 	<description>TeamSpeak IP</description>
 	<url>http://dev.T0biii.de</url>
@@ -63,7 +63,7 @@
 		<dependency>
 			<groupId>org.bstats</groupId>
 			<artifactId>bstats-bukkit</artifactId>
-			<version>1.5</version>
+			<version>1.7</version>
 			<scope>compile</scope>
 		</dependency>
 		<!--Json-Simple API -->
@@ -78,7 +78,7 @@
 	<build>
 
 		<!--Datei Namen -->
-		<finalName>TeamSpeak5.7.1</finalName>
+		<finalName>TeamSpeak5.7.2</finalName>
 		<!-- -->
 
 		<sourceDirectory>${basedir}/src</sourceDirectory>

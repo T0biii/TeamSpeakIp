@@ -123,7 +123,8 @@ public class TeamSpeak extends JavaPlugin{
 		 * Metrics start
 		 */
 		if (getConfig().getBoolean("options.Metrics")){
-			Metrics metrics = new Metrics(this);
+		    int bstatsID = 203;
+			Metrics metrics = new Metrics(this, bstatsID);
 			startBstat(metrics);
 		}
 
@@ -131,7 +132,7 @@ public class TeamSpeak extends JavaPlugin{
 		 * Updater
 		 */
 		updater = new Updater(this, uid, getFile(), UpdateType.NO_DOWNLOAD, true);
-
+		
 		/*
 		 * Start Auto Chache
 		 */
