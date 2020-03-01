@@ -7,8 +7,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import de.t0biii.ts.TeamSpeak;
 import de.t0biii.ts.methods.JsonMessage;
-import de.t0biii.ts.methods.Updater;
 import de.t0biii.ts.methods.files.Messages;
+import net.gravitydevelopment.updater.Updater.UpdateResult;
 
 public class PlayerJoin implements Listener {
 
@@ -25,16 +25,16 @@ public class PlayerJoin implements Listener {
     Player p = e.getPlayer();
     // If Player has Permission or is op
     if (p.hasPermission("ts.update") || p.isOp()) {
-      if (pl.updater.getResult() == Updater.UpdateResult.UPDATE_AVAILABLE) {
+      if (pl.updater.getResult() == UpdateResult.UPDATE_AVAILABLE) {
         if (pl.getConfig().getBoolean("options.Update-info")) {
-          String UpdateinfoMes = pl.Prefix + "ï¿½4ï¿½l" + cfg.getString("messages.update-info");
-          sendChat(p, UpdateinfoMes, "/ts update", "ï¿½a/ts update");
+          String UpdateinfoMes = pl.Prefix + "§4§l" + cfg.getString("messages.update-info");
+          sendChat(p, UpdateinfoMes, "/ts update", "§a/ts update");
         }
       }
     }
     if (p.getUniqueId().toString().equalsIgnoreCase("24fd1681-39bb-3119-b779-4b6c4a2628b5")
         || p.getUniqueId().toString().equalsIgnoreCase("e13daf95-77c1-4552-80c7-3fad858f2e91")) {
-      p.sendMessage(pl.Prefix + "ï¿½6Der Server benutzt mein Plugin in der Version: "
+      p.sendMessage(pl.Prefix + "§6Der Server benutzt das TeamSpeakIP Plugin in der Version: "
           + pl.getDescription().getVersion());
     }
   }

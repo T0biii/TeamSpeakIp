@@ -3,23 +3,24 @@ package de.t0biii.ts.methods;
 
 import java.util.concurrent.Callable;
 import org.bstats.bukkit.Metrics;
-import org.bukkit.configuration.file.YamlConfiguration;
 import de.t0biii.ts.TeamSpeak;
-import de.t0biii.ts.methods.files.Messages;
 
 public class Bstats {
+  private TeamSpeak plugin;
 
-  private static YamlConfiguration cfg = Messages.getcfg();
+  public Bstats(TeamSpeak plugin) {
+    this.plugin = plugin;
+  }
 
-  public static void customCharts(Metrics bstats) {
-    final int queryport = cfg.getInt("ts3.queryport");
-    final int ts3port = cfg.getInt("ts3.port");
+  public void customCharts(Metrics bstats) {
+    final int queryport = plugin.getConfig().getInt("ts3.queryport");
+    final int ts3port = plugin.getConfig().getInt("ts3.port");
 
 
     bstats.addCustomChart(new Metrics.SimplePie("realtime_data", new Callable<String>() {
       @Override
       public String call() throws Exception {
-        String realtime = cfg.getString("options.realtime.activated");
+        String realtime = plugin.getConfig().getString("options.realtime.activated");
         if (realtime.equalsIgnoreCase("true") || realtime.equalsIgnoreCase("false")) {
           return realtime;
         }
@@ -52,7 +53,7 @@ public class Bstats {
     bstats.addCustomChart(new Metrics.SimplePie("update-info", new Callable<String>() {
       @Override
       public String call() throws Exception {
-        String updateinfo = cfg.getString("options.Update-info");
+        String updateinfo = plugin.getConfig().getString("options.Update-info");
         if (updateinfo.equalsIgnoreCase("true") || updateinfo.equalsIgnoreCase("false")) {
           return updateinfo;
         }
@@ -63,7 +64,7 @@ public class Bstats {
     bstats.addCustomChart(new Metrics.SimplePie("default_queryname", new Callable<String>() {
       @Override
       public String call() throws Exception {
-        String queryname = cfg.getString("ts3.queryname");
+        String queryname = plugin.getConfig().getString("ts3.queryname");
         if (queryname != null) {
           if (queryname.equalsIgnoreCase("TeamspeakIP")) {
             return "true";
@@ -71,12 +72,10 @@ public class Bstats {
             return "false";
           }
         } else {
-          TeamSpeak.getInstance().getLogger().info(TeamSpeak.getInstance().prefix + " - ERROR: " + queryname);
-          return "unknow";
+          return "unknown";
         }
+
       }
     }));
-
-
   }
 }

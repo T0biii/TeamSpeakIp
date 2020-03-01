@@ -1,30 +1,26 @@
 package de.t0biii.ts;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Logger;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-
 import com.github.theholywaffle.teamspeak3.TS3Api;
 import com.github.theholywaffle.teamspeak3.TS3ApiAsync;
 import com.github.theholywaffle.teamspeak3.TS3Config;
 import com.github.theholywaffle.teamspeak3.TS3Query;
-import com.github.theholywaffle.teamspeak3.api.CommandFuture;
 import com.github.theholywaffle.teamspeak3.api.wrapper.Client;
-
 import de.t0biii.ts.commands.Ts;
 import de.t0biii.ts.commands.TsTapCompleter;
 import de.t0biii.ts.listener.PlayerJoin;
 import de.t0biii.ts.methods.Bstats;
-import de.t0biii.ts.methods.Updater;
-import de.t0biii.ts.methods.Updater.UpdateType;
 import de.t0biii.ts.methods.files.ConfigManager;
 import de.t0biii.ts.methods.files.DBManager;
 import de.t0biii.ts.methods.files.Filter;
 import de.t0biii.ts.methods.files.Messages;
+import net.gravitydevelopment.updater.Updater;
+import net.gravitydevelopment.updater.Updater.UpdateType;
 
 public class TeamSpeak extends JavaPlugin{
 
@@ -32,7 +28,7 @@ public class TeamSpeak extends JavaPlugin{
 	 * TS3 Prefix and Updater id
 	 */
 	public String prefix = "[TeamSpeakIP] ";
-	public String Prefix = "ï¿½8[ï¿½6ï¿½lTeamSpeakIPï¿½rï¿½8] ï¿½f";
+	public String Prefix = "§8[§6§lTeamSpeakIP§r§8] §f";
 	private int uid = 70774;
 	public Updater updater;
 
@@ -69,7 +65,7 @@ public class TeamSpeak extends JavaPlugin{
 			api.logout();
 			query.exit();
 		}
-		log.info(prefix + "Plugin disabeld.");
+		log.info(prefix + "Plugin disabled.");
 	}
 
 	/*
@@ -83,11 +79,11 @@ public class TeamSpeak extends JavaPlugin{
 		/*
 		 * Config load and save
 		 */
-		db.connect();
 		cm.loadConfig();
-		ms.loadMessages();
-		fi.loadFilter();
 		saveConfig();
+	    ms.loadMessages();
+	    fi.loadFilter();
+	    db.connect();
 
 		/*
 		 * TS Command and TapCompleter
@@ -107,9 +103,9 @@ public class TeamSpeak extends JavaPlugin{
 			config.setHost(host);
 			config.setQueryPort(Queryport);
 			query.connect();
-			log.info(prefix + "Connectet to Teamspeak!");
+			log.info(prefix + "Connected to Teamspeak!");
 		} catch (Exception e){
-			log.info(prefix + "Cant connect to Teamspeak!");
+			log.info(prefix + "Can't connect to Teamspeak Server ("+ host+ ":" + Queryport +")!");
 			error = true;
 		}
 		if (!error){
@@ -119,7 +115,7 @@ public class TeamSpeak extends JavaPlugin{
 				api.setNickname(querydisplayname);
 			} catch (Exception e){
 				error = true;
-				log.info(prefix + "Cant connect to Teamspeak!");
+	            log.info(prefix + "Can't connect to Teamspeak Server ("+ host+ ":" + ts3port +")!");
 			}
 		}
 
@@ -127,7 +123,8 @@ public class TeamSpeak extends JavaPlugin{
 		 * Metrics start
 		 */
 		if (getConfig().getBoolean("options.Metrics")){
-			Metrics metrics = new Metrics(this);
+		    int bstatsID = 203;
+			Metrics metrics = new Metrics(this, bstatsID);
 			startBstat(metrics);
 		}
 
@@ -135,7 +132,7 @@ public class TeamSpeak extends JavaPlugin{
 		 * Updater
 		 */
 		updater = new Updater(this, uid, getFile(), UpdateType.NO_DOWNLOAD, true);
-
+		
 		/*
 		 * Start Auto Chache
 		 */
@@ -166,8 +163,8 @@ public class TeamSpeak extends JavaPlugin{
 	// Metrics start
 
 	// Default QueryPort / and Default Teamspeak3 Port
-	public void startBstat(Metrics bstats){
-	    Bstats.customCharts(bstats);
+	public void startBstat(Metrics metrics){
+	   new Bstats(this).customCharts(metrics);;
 	}
 
 	// Retrun Instance
