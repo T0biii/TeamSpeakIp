@@ -1,0 +1,22 @@
+
+TeamSpeakIP [![TeamSpeakIP](https://api.travis-ci.org/T0biii/TeamSpeakIp.svg)](https://travis-ci.org/T0biii/TeamSpeakIp) | ![Java CI](https://github.com/T0biii/TeamSpeakIp/workflows/Java%20CI/badge.svg)
+===========
+
+This is a Bukkit Plugin for more information go to:
+https://dev.bukkit.org/projects/teamspeak-ip
+
+
+Commands:
+```
+/ts
+/ts help
+/ts getip
+/ts rl
+/ts update
+/ts list
+/ts rl-filter
+/ts cache
+/ts cache-off
+/ts cache-on
+```
+
