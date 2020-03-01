@@ -1,5 +1,5 @@
 
-TeamSpeakIP [![TeamSpeakIP](https://api.travis-ci.org/T0biii/TeamSpeakIp.svg)](https://travis-ci.org/T0biii/TeamSpeakIp) | ![Java CI](https://github.com/T0biii/TeamSpeakIp/workflows/Java%20CI/badge.svg)
+TeamSpeakIP [![TeamSpeakIP](https://api.travis-ci.org/T0biii/TeamSpeakIp.svg)](https://travis-ci.org/T0biii/TeamSpeakIp) | [![CircleCI](https://circleci.com/gh/T0biii/TeamSpeakIp/tree/master.svg?style=svg)](https://circleci.com/gh/T0biii/TeamSpeakIp/tree/master) | [![Dependabot Status](https://api.dependabot.com/badges/status?host=github&repo=T0biii/TeamSpeakIp)](https://dependabot.com)
 ===========
 
 This is a Bukkit Plugin for more information go to:
@@ -19,4 +19,5 @@ Commands:
 /ts cache-off
 /ts cache-on
 ```
+
 
