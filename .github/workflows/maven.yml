@@ -21,4 +21,4 @@ jobs:
         # Artifact name
         name: TeamSpeakIP
         # Directory containing files to upload
-        path: target/TeamSpeak5.7.3.jar
+        path: target/TeamSpeak.jar
