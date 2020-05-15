@@ -29,7 +29,7 @@ public class PlayerJoin implements Listener {
       if (pl.updater.getResult() == UpdateResult.UPDATE_AVAILABLE) {
         if (pl.getConfig().getBoolean("options.Update-info")) {
           String UpdateinfoMes = pl.Prefix + ChatColor.RED + ChatColor.BOLD + cfg.getString("messages.update-info");
-          sendChat(p, UpdateinfoMes, "/ts update", "§a/ts update");
+          sendChat(p, UpdateinfoMes, "/ts update", ChatColor.GREEN + "/ts update");
         }
       }
     }
