@@ -113,7 +113,7 @@ public class HelpMessages {
         pl.saveConfig();
         prefixsend(p);
         p.sendMessage("");
-        p.sendMessage(ChatColor.DARK_AQUA + "Live data &cdisabled.");
+        p.sendMessage(ChatColor.DARK_AQUA + "Live data " + ChatColor.RED + "disabled.");
         p.sendMessage(ChatColor.DARK_AQUA+ "Cache " + ChatColor.DARK_GREEN + "activated.");
         p.sendMessage("");
         prefixsend(p);
