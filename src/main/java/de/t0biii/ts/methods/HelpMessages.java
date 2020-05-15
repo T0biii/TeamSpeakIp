@@ -120,7 +120,7 @@ public class HelpMessages {
       } else {
         prefixsend(p);
         p.sendMessage("");
-        p.sendMessage(ChatColor.DARK_AQUA + "Live data is already "+ ChatColor.RED +"disabled.s");
+        p.sendMessage(ChatColor.DARK_AQUA + "Live data is already "+ ChatColor.RED +"disabled.");
         p.sendMessage("");
         prefixsend(p);
       }
