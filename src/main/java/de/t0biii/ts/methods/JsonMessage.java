@@ -46,7 +46,7 @@ public class JsonMessage {
 
 	/**
 	 * Send the json string to specified player(s)
-	 * @param player to send the message to.
+	 * @param p to send the message to.
 	 */
 	public void send(Player... p) {
 		String nmsClass = ((!getServerVersion().startsWith("v1_7_R")) ? "IChatBaseComponent$" : "") + "ChatSerializer";
