@@ -6,8 +6,8 @@ public class Tab
     * Fix string spaces to align text in minecraft chat
     *
     * @author David Toledo ([EMAIL]david.oracle@gmail.com[/EMAIL])
-    * @param String to be resized
-    * @param Size to align
+    * @param s to be resized
+    * @param size to align
     * @return New aligned String
     */
     public static String fixFontSize (String s, int size) {
@@ -36,8 +36,8 @@ public class Tab
     * Fix string spaces to align text in minecraft chat
     *
     * @author David Toledo ([EMAIL]david.oracle@gmail.com[/EMAIL])
-    * @param String to be resized
-    * @param Size to align
+    * @param s to be resized
+    * @param tabSize to align
     * @return New aligned String
     */
     public static String fFS (String s, int tabSize) {
