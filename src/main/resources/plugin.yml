@@ -6,7 +6,7 @@ description: Shows you the Teamspeak3IP
 prefix: TeamSpeakIP 
 
 main: de.t0biii.ts.TeamSpeak
-api-version: 1.13
+api-version: "1.13"
 commands:
   ts:
     description: Shows the TS IP

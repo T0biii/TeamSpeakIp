@@ -12,7 +12,7 @@ import net.gravitydevelopment.updater.Updater.UpdateResult;
 
 public class PlayerJoin implements Listener {
 
-  private TeamSpeak pl;
+  private final TeamSpeak pl;
 
   public PlayerJoin(TeamSpeak pl) {
     this.pl = pl;

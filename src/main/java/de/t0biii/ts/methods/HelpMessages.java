@@ -16,7 +16,7 @@ import net.gravitydevelopment.updater.Updater.UpdateResult;
  */
 public class HelpMessages {
 
-  private static YamlConfiguration cfg = Messages.getcfg();
+  private static final YamlConfiguration cfg = Messages.getcfg();
 
   public static void sendReload(Player p, TeamSpeak pl) {
     if (p.hasPermission("ts.reload")) {

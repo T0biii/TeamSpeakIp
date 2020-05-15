@@ -28,11 +28,11 @@ public class TsTapCompleter implements TabCompleter {
     String getip = "getIP";
     String list = "list";
     // Create Second ArrayLists
-    ArrayList<String> tsnames = new ArrayList<String>();
-    ArrayList<String> tsnames2 = new ArrayList<String>();
+    ArrayList<String> tsnames = new ArrayList<>();
+    ArrayList<String> tsnames2 = new ArrayList<>();
 
     final Player p = (Player) sender;
-    if (sender instanceof Player) {
+    if (sender != null) {
       if (p.isOp() || p.hasPermission(rlperm))
         tsnames.add(rl);
       if (p.isOp() || p.hasPermission(hperm))

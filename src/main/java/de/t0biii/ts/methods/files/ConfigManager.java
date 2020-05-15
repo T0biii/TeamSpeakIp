@@ -5,7 +5,7 @@ import de.t0biii.ts.TeamSpeak;
 public class ConfigManager {
 
   // Import
-  private TeamSpeak plugin;
+  private final TeamSpeak plugin;
 
   public ConfigManager(TeamSpeak plugin) {
     this.plugin = plugin;
