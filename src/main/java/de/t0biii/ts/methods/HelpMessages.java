@@ -155,18 +155,18 @@ public class HelpMessages {
         if (!pl.getConfig().getBoolean("options.realtime.activated")) {
           prefixsend(p);
           p.sendMessage(ChatColor.AQUA + "Teamspeak: " + tsip + " §cCached");
-          p.sendMessage(ChatColor.AQUA + "Online: §2" + (anzahl) + " of " + max);
+          p.sendMessage(ChatColor.AQUA + "Online: " + ChatColor.DARK_GREEN + (anzahl) + " of " + max);
           p.sendMessage(ChatColor.AQUA + "List of People: ");
           for (String Users : cachelist) {
             if (!filter.contains(Users)) {
-              p.sendMessage("§2" + Users);
+              p.sendMessage(ChatColor.DARK_GREEN + Users);
             }
           }
           prefixsend(p);
         } else {
           prefixsend(p);
           p.sendMessage(ChatColor.AQUA + "Teamspeak: " + tsip + " §2Realtime");
-          p.sendMessage(ChatColor.AQUA + "Online: §2" + (pl.api.getClients().size()) + " of "
+          p.sendMessage(ChatColor.AQUA + "Online: " + ChatColor.DARK_GREEN + (pl.api.getClients().size()) + " of "
               + pl.api.getHostInfo().getTotalMaxClients());
           p.sendMessage(ChatColor.AQUA + "List of People:");
           for (Client c : pl.api.getClients()) {
@@ -179,7 +179,7 @@ public class HelpMessages {
       } catch (Exception e) {
         p.sendMessage(ChatColor.AQUA + "Online: §2- of -");
         p.sendMessage(ChatColor.AQUA + "List of People:");
-        p.sendMessage("§4Not enough Teamspeak§ permissions");
+        p.sendMessage(ChatColor.RED + "Not enough Teamspeak3 permissions");
         prefixsend(p);
       }
     }
