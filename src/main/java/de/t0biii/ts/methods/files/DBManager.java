@@ -61,17 +61,15 @@ public class DBManager {
     } catch (SQLException e) {
       throw new RuntimeException(e);
     }
-    Runtime.getRuntime().addShutdownHook(new Thread() {
-      public void run() {
-        try {
-          if (!connection.isClosed() && connection != null) {
-            connection.close();
-          }
-        } catch (SQLException e) {
-          e.printStackTrace();
+    Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+      try {
+        if (!connection.isClosed() && connection != null) {
+          connection.close();
         }
+      } catch (SQLException e) {
+        e.printStackTrace();
       }
-    });
+    }));
   }
 
   // Check if value Exists
