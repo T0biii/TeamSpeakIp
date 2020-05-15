@@ -6,9 +6,7 @@ import java.util.ArrayList;
 import org.bukkit.configuration.file.YamlConfiguration;
 import de.t0biii.ts.TeamSpeak;
 
-/**
- * Created by Tobias on 05.01.2017.
- */
+/** Created by Tobias on 05.01.2017. */
 public class Filter {
 
   private final TeamSpeak plugin;

@@ -10,9 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import de.t0biii.ts.TeamSpeak;
 
-/**
- * Created by Tobias on 15.03.2017.
- */
+/** Created by Tobias on 15.03.2017. */
 public class DBManager {
 
   // @SuppressWarnings("unused")
@@ -23,6 +21,7 @@ public class DBManager {
 
   private static Connection connection;
   private static final String DB_PATH = "plugins/TeamSpeakIP/cache.db";
+
   static {
     try {
       Class.forName("org.sqlite.JDBC");
@@ -32,9 +31,7 @@ public class DBManager {
     }
   }
 
-  /**
-   * Check connections to the DB
-   */
+  /** Check connections to the DB */
   public void check() {
     try {
       if (connection == null) {
@@ -47,13 +44,10 @@ public class DBManager {
     }
   }
 
-  /**
-   * Connect to the DB
-   */
+  /** Connect to the DB */
   public void connect() {
     try {
-      if (connection != null)
-        return;
+      if (connection != null) return;
 
       connection = DriverManager.getConnection("jdbc:sqlite:" + DB_PATH);
       Statement stmt = connection.createStatement();
@@ -61,15 +55,18 @@ public class DBManager {
     } catch (SQLException e) {
       throw new RuntimeException(e);
     }
-    Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-      try {
-        if (!connection.isClosed() && connection != null) {
-          connection.close();
-        }
-      } catch (SQLException e) {
-        e.printStackTrace();
-      }
-    }));
+    Runtime.getRuntime()
+        .addShutdownHook(
+            new Thread(
+                () -> {
+                  try {
+                    if (!connection.isClosed() && connection != null) {
+                      connection.close();
+                    }
+                  } catch (SQLException e) {
+                    e.printStackTrace();
+                  }
+                }));
   }
 
   // Check if value Exists
@@ -83,14 +80,13 @@ public class DBManager {
       return r;
     } catch (SQLException e) {
       e.printStackTrace();
-
     }
     return false;
   }
 
   /**
    * Update the DB with new Data
-   * 
+   *
    * @param max Max Clients
    * @param min Clients online
    * @param cache Clientslist
@@ -133,7 +129,7 @@ public class DBManager {
 
   /**
    * Returns the Arraylist of Teamspeak3 Clients
-   * 
+   *
    * @return ArrayList
    */
   public static ArrayList<String> getArray() {
@@ -154,7 +150,7 @@ public class DBManager {
 
   /**
    * Returns the int form the spalte
-   * 
+   *
    * @param spalte in the DB
    * @return int
    */
