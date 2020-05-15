@@ -154,7 +154,7 @@ public class HelpMessages {
 
         if (!pl.getConfig().getBoolean("options.realtime.activated")) {
           prefixsend(p);
-          p.sendMessage(ChatColor.AQUA + "Teamspeak: " + tsip + " §cCached");
+          p.sendMessage(ChatColor.AQUA + "Teamspeak: " + tsip + ChatColor.RED + " Cached");
           p.sendMessage(ChatColor.AQUA + "Online: " + ChatColor.DARK_GREEN + (anzahl) + " of " + max);
           p.sendMessage(ChatColor.AQUA + "List of People: ");
           for (String Users : cachelist) {
