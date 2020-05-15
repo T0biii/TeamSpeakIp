@@ -9,7 +9,7 @@ import de.t0biii.ts.TeamSpeak;
  * Created by Tobias on 06.01.2017.
  */
 public class Messages {
-  private TeamSpeak plugin;
+  private final TeamSpeak plugin;
 
   public Messages(TeamSpeak plugin) {
     this.plugin = plugin;
@@ -57,13 +57,11 @@ public class Messages {
   }
 
   public static File getFile() {
-    File file = new File("plugins/TeamSpeakIP/messages.yml");
-    return file;
+    return new File("plugins/TeamSpeakIP/messages.yml");
   }
 
   public static YamlConfiguration getcfg() {
     File file = getFile();
-    YamlConfiguration cfg = YamlConfiguration.loadConfiguration(file);
-    return cfg;
+    return YamlConfiguration.loadConfiguration(file);
   }
 }

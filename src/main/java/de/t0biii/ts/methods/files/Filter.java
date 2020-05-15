@@ -11,7 +11,7 @@ import de.t0biii.ts.TeamSpeak;
  */
 public class Filter {
 
-  private TeamSpeak plugin;
+  private final TeamSpeak plugin;
 
   public Filter(TeamSpeak plugin) {
     this.plugin = plugin;
@@ -24,6 +24,7 @@ public class Filter {
       try {
         file.createNewFile();
       } catch (IOException e) {
+
       }
     }
     ArrayList<String> list = new ArrayList<>();
@@ -41,13 +42,11 @@ public class Filter {
   }
 
   public static File getFile() {
-    File file = new File("plugins/TeamSpeakIP/filter.yml");
-    return file;
+    return new File("plugins/TeamSpeakIP/filter.yml");
   }
 
   public static YamlConfiguration getcfg() {
     File file = getFile();
-    YamlConfiguration cfg = YamlConfiguration.loadConfiguration(file);
-    return cfg;
+    return YamlConfiguration.loadConfiguration(file);
   }
 }

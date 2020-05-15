@@ -29,15 +29,14 @@ public class TeamSpeak extends JavaPlugin{
 	 */
 	public String prefix = "[TeamSpeakIP] ";
 	public String Prefix = "§8[§6§lTeamSpeakIP§r§8] §f";
-	private int uid = 70774;
 	public Updater updater;
 
 	public static TeamSpeak instance;
-	private ConfigManager cm = new ConfigManager(this);
-	private Messages ms = new Messages(this);
+	private final ConfigManager cm = new ConfigManager(this);
+	private final Messages ms = new Messages(this);
 	public Filter fi = new Filter(this);
 	public Logger log = Bukkit.getLogger();
-	private DBManager db = new DBManager();
+	private final DBManager db = new DBManager();
 	/*
 	 * TS Api
 	 */
@@ -131,20 +130,15 @@ public class TeamSpeak extends JavaPlugin{
 		/*
 		 * Updater
 		 */
+		int uid = 70774;
 		updater = new Updater(this, uid, getFile(), UpdateType.NO_DOWNLOAD, true);
 		
 		/*
 		 * Start Auto Chache
 		 */
-		int interval = 60;
-		interval = getConfig().getInt("options.realtime.update");
+		int interval = getConfig().getInt("options.realtime.update");
 		if (!error){
-			Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new Runnable(){
-				@Override
-				public void run(){
-					dbupdate();
-				}
-			}, 20L, interval * 20L);
+			Bukkit.getScheduler().scheduleSyncRepeatingTask(this, this::dbupdate, 20L, interval * 20L);
 		}
 	}
 
@@ -164,8 +158,8 @@ public class TeamSpeak extends JavaPlugin{
 
 	// Default QueryPort / and Default Teamspeak3 Port
 	public void startBstat(Metrics metrics){
-	   new Bstats(this).customCharts(metrics);;
-	}
+	   new Bstats(this).customCharts(metrics);
+    }
 
 	// Retrun Instance
 	public static TeamSpeak getInstance(){
