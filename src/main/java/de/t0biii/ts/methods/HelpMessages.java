@@ -179,7 +179,7 @@ public class HelpMessages {
           prefixsend(p);
         }
       } catch (Exception e) {
-        p.sendMessage(ChatColor.AQUA + "Online: §2- of -");
+        p.sendMessage(ChatColor.AQUA + "Online: "+ ChatColor.DARK_GREEN +"- of -");
         p.sendMessage(ChatColor.AQUA + "List of People:");
         p.sendMessage(ChatColor.RED + "Not enough Teamspeak3 permissions");
         prefixsend(p);
