@@ -11,9 +11,7 @@ import de.t0biii.ts.methods.files.Filter;
 import de.t0biii.ts.methods.files.Messages;
 import net.gravitydevelopment.updater.Updater.UpdateResult;
 
-/**
- * Created by T0biii on 21.07.2017.
- */
+/** Created by T0biii on 21.07.2017. */
 public class HelpMessages {
 
   private static final YamlConfiguration cfg = Messages.getcfg();
@@ -38,8 +36,9 @@ public class HelpMessages {
       if (pl.updater.getResult() == UpdateResult.UPDATE_AVAILABLE) {
         prefixsend(p);
         p.sendMessage("");
-        p.sendMessage(ChatColor.translateAlternateColorCodes('&',
-            "&4&l" + cfg.getString("messages.update-info")));
+        p.sendMessage(
+            ChatColor.translateAlternateColorCodes(
+                '&', "&4&l" + cfg.getString("messages.update-info")));
         p.sendMessage("&2Download Link:");
         p.sendMessage(ChatColor.BLUE + pl.updater.getLatestFileLink());
         p.sendMessage("");
@@ -49,7 +48,10 @@ public class HelpMessages {
         p.sendMessage("");
         JsonMessage jm = new JsonMessage();
         jm.append(ChatColor.translateAlternateColorCodes('&', cfg.getString("messages.no-update")))
-            .setClickAsURL(updateSite).setHoverAsTooltip(updateSite).save().send(p);
+            .setClickAsURL(updateSite)
+            .setHoverAsTooltip(updateSite)
+            .save()
+            .send(p);
         p.sendMessage("");
         prefixsend(p);
       }
@@ -63,7 +65,9 @@ public class HelpMessages {
       JsonMessage jm = new JsonMessage();
       jm.append(ChatColor.translateAlternateColorCodes('&', cfg.getString("messages.getIP")))
           .setClickAsSuggestCmd(ChatColor.translateAlternateColorCodes('&', tsip))
-          .setHoverAsTooltip(ChatColor.translateAlternateColorCodes('&', tsip)).save().send(p);
+          .setHoverAsTooltip(ChatColor.translateAlternateColorCodes('&', tsip))
+          .save()
+          .send(p);
     }
     p.sendMessage("");
     prefixsend(p);
@@ -90,14 +94,15 @@ public class HelpMessages {
         pl.saveConfig();
         prefixsend(p);
         p.sendMessage("");
-        p.sendMessage(ChatColor.DARK_AQUA + "Live data "+ ChatColor.DARK_GREEN +"activated.");
-        p.sendMessage(ChatColor.DARK_AQUA + "Cache "+ ChatColor.RED +"disabled.");
+        p.sendMessage(ChatColor.DARK_AQUA + "Live data " + ChatColor.DARK_GREEN + "activated.");
+        p.sendMessage(ChatColor.DARK_AQUA + "Cache " + ChatColor.RED + "disabled.");
         p.sendMessage("");
         prefixsend(p);
       } else {
         prefixsend(p);
         p.sendMessage("");
-        p.sendMessage(ChatColor.DARK_AQUA + "Live data is already "+ ChatColor.DARK_GREEN +"activated.");
+        p.sendMessage(
+            ChatColor.DARK_AQUA + "Live data is already " + ChatColor.DARK_GREEN + "activated.");
         p.sendMessage("");
         prefixsend(p);
       }
@@ -114,13 +119,13 @@ public class HelpMessages {
         prefixsend(p);
         p.sendMessage("");
         p.sendMessage(ChatColor.DARK_AQUA + "Live data " + ChatColor.RED + "disabled.");
-        p.sendMessage(ChatColor.DARK_AQUA+ "Cache " + ChatColor.DARK_GREEN + "activated.");
+        p.sendMessage(ChatColor.DARK_AQUA + "Cache " + ChatColor.DARK_GREEN + "activated.");
         p.sendMessage("");
         prefixsend(p);
       } else {
         prefixsend(p);
         p.sendMessage("");
-        p.sendMessage(ChatColor.DARK_AQUA + "Live data is already "+ ChatColor.RED +"disabled.");
+        p.sendMessage(ChatColor.DARK_AQUA + "Live data is already " + ChatColor.RED + "disabled.");
         p.sendMessage("");
         prefixsend(p);
       }
@@ -136,7 +141,8 @@ public class HelpMessages {
       {
         JsonMessage jm = new JsonMessage();
         jm.append(ChatColor.translateAlternateColorCodes('&', cfg.getString("messages.cachenew")))
-            .save().send(p);
+            .save()
+            .send(p);
       }
       prefixsend(p);
     }
@@ -157,7 +163,8 @@ public class HelpMessages {
         if (!pl.getConfig().getBoolean("options.realtime.activated")) {
           prefixsend(p);
           p.sendMessage(ChatColor.AQUA + "Teamspeak: " + tsip + ChatColor.RED + " Cached");
-          p.sendMessage(ChatColor.AQUA + "Online: " + ChatColor.DARK_GREEN + (anzahl) + " of " + max);
+          p.sendMessage(
+              ChatColor.AQUA + "Online: " + ChatColor.DARK_GREEN + (anzahl) + " of " + max);
           p.sendMessage(ChatColor.AQUA + "List of People: ");
           for (String Users : cachelist) {
             if (!filter.contains(Users)) {
@@ -168,8 +175,13 @@ public class HelpMessages {
         } else {
           prefixsend(p);
           p.sendMessage(ChatColor.AQUA + "Teamspeak: " + tsip + ChatColor.DARK_GREEN + " Realtime");
-          p.sendMessage(ChatColor.AQUA + "Online: " + ChatColor.DARK_GREEN + (pl.api.getClients().size()) + " of "
-              + pl.api.getHostInfo().getTotalMaxClients());
+          p.sendMessage(
+              ChatColor.AQUA
+                  + "Online: "
+                  + ChatColor.DARK_GREEN
+                  + (pl.api.getClients().size())
+                  + " of "
+                  + pl.api.getHostInfo().getTotalMaxClients());
           p.sendMessage(ChatColor.AQUA + "List of People:");
           for (Client c : pl.api.getClients()) {
             if (!filter.contains(c.getNickname())) {
@@ -179,7 +191,7 @@ public class HelpMessages {
           prefixsend(p);
         }
       } catch (Exception e) {
-        p.sendMessage(ChatColor.AQUA + "Online: "+ ChatColor.DARK_GREEN +"- of -");
+        p.sendMessage(ChatColor.AQUA + "Online: " + ChatColor.DARK_GREEN + "- of -");
         p.sendMessage(ChatColor.AQUA + "List of People:");
         p.sendMessage(ChatColor.RED + "Not enough Teamspeak3 permissions");
         prefixsend(p);
@@ -197,80 +209,131 @@ public class HelpMessages {
       {
         JsonMessage jm = new JsonMessage();
         jm.append(
-            ChatColor.YELLOW + Tab.fFS("/ts", tabSize) + ChatColor.GRAY + "| The TS IP appears")
-            .setHoverAsTooltip("/ts").setClickAsExecuteCmd("/ts").save().send(p);
+                ChatColor.YELLOW + Tab.fFS("/ts", tabSize) + ChatColor.GRAY + "| The TS IP appears")
+            .setHoverAsTooltip("/ts")
+            .setClickAsExecuteCmd("/ts")
+            .save()
+            .send(p);
       }
       // p.sendMessage(ChatColor.YELLOW+"/ts help" + ChatColor.GRAY +" |
       // Shows you this Page");
       {
         JsonMessage jm = new JsonMessage();
-        jm.append(ChatColor.YELLOW + Tab.fFS("/ts help", tabSize) + ChatColor.GRAY
-            + "| Shows you this Page").setHoverAsTooltip("/ts help")
-            .setClickAsExecuteCmd("/ts help").save().send(p);
+        jm.append(
+                ChatColor.YELLOW
+                    + Tab.fFS("/ts help", tabSize)
+                    + ChatColor.GRAY
+                    + "| Shows you this Page")
+            .setHoverAsTooltip("/ts help")
+            .setClickAsExecuteCmd("/ts help")
+            .save()
+            .send(p);
       }
       // p.sendeMessage(ChatColor.YELLOW+"/ts getIP"+ ChatColor.GRAY+" |
       // This shows the IP in the Chat");
       {
         JsonMessage jm = new JsonMessage();
-        jm.append(ChatColor.YELLOW + Tab.fFS("/ts getIP", tabSize) + ChatColor.GRAY
-            + "| This shows the IP in the Chat").setHoverAsTooltip("/ts getIP")
-            .setClickAsExecuteCmd("/ts getIP").save().send(p);
+        jm.append(
+                ChatColor.YELLOW
+                    + Tab.fFS("/ts getIP", tabSize)
+                    + ChatColor.GRAY
+                    + "| This shows the IP in the Chat")
+            .setHoverAsTooltip("/ts getIP")
+            .setClickAsExecuteCmd("/ts getIP")
+            .save()
+            .send(p);
       }
       // p.sendMessage(ChatColor.YELLOW+"/ts reload" + ChatColor.GRAY +" |
       // Config Reload");
       {
         JsonMessage jm = new JsonMessage();
         jm.append(
-            ChatColor.YELLOW + Tab.fFS("/ts rl", tabSize) + ChatColor.GRAY + "| Config Reload")
-            .setHoverAsTooltip("/ts rl").setClickAsExecuteCmd("/ts rl").save().send(p);
+                ChatColor.YELLOW + Tab.fFS("/ts rl", tabSize) + ChatColor.GRAY + "| Config Reload")
+            .setHoverAsTooltip("/ts rl")
+            .setClickAsExecuteCmd("/ts rl")
+            .save()
+            .send(p);
       }
       // p.sendMessage(ChatColor.YELLOW+"/ts update" + ChatColor.GRAY +" |
       // Get Update Link");
       {
         JsonMessage jm = new JsonMessage();
-        jm.append(ChatColor.YELLOW + Tab.fFS("/ts update", tabSize) + ChatColor.GRAY
-            + "| Get Update Link").setHoverAsTooltip("/ts update")
-            .setClickAsSuggestCmd("/ts update").save().send(p);
+        jm.append(
+                ChatColor.YELLOW
+                    + Tab.fFS("/ts update", tabSize)
+                    + ChatColor.GRAY
+                    + "| Get Update Link")
+            .setHoverAsTooltip("/ts update")
+            .setClickAsSuggestCmd("/ts update")
+            .save()
+            .send(p);
       }
       // p.sendMessage(ChatColor.YELLOW+"/ts List" + ChatColor.Gray + " |
       // Online List");
       {
         JsonMessage jm = new JsonMessage();
         jm.append(
-            ChatColor.YELLOW + Tab.fFS("/ts list", tabSize) + ChatColor.GRAY + "| Online List")
-            .setHoverAsTooltip("/ts list").setClickAsExecuteCmd("/ts list").save().send(p);
+                ChatColor.YELLOW + Tab.fFS("/ts list", tabSize) + ChatColor.GRAY + "| Online List")
+            .setHoverAsTooltip("/ts list")
+            .setClickAsExecuteCmd("/ts list")
+            .save()
+            .send(p);
       }
       // p.sendMessage(ChatColor.YELLOW+"/ts rl-filter" + ChatColor.GRAY +
       // " | Reload the Filter list");
       {
         JsonMessage jm = new JsonMessage();
-        jm.append(ChatColor.YELLOW + Tab.fFS("/ts rl-filter", tabSize) + ChatColor.GRAY
-            + "| Reload the Filter list").setClickAsExecuteCmd("/ts rl-filter")
-            .setHoverAsTooltip("/ts rl-filter").save().send(p);
+        jm.append(
+                ChatColor.YELLOW
+                    + Tab.fFS("/ts rl-filter", tabSize)
+                    + ChatColor.GRAY
+                    + "| Reload the Filter list")
+            .setClickAsExecuteCmd("/ts rl-filter")
+            .setHoverAsTooltip("/ts rl-filter")
+            .save()
+            .send(p);
       }
       // p.sendMessage(ChatColor.YELLOW+"/ts cache-off" + ChatColor.GRAY +
       // " | Disable the cache");
       {
         JsonMessage jm = new JsonMessage();
-        jm.append(ChatColor.YELLOW + Tab.fFS("/ts cache-off", tabSize) + ChatColor.GRAY
-            + "| Disable the cache").setClickAsExecuteCmd("/ts cache-off")
-            .setHoverAsTooltip("/ts cache-off").save().send(p);
+        jm.append(
+                ChatColor.YELLOW
+                    + Tab.fFS("/ts cache-off", tabSize)
+                    + ChatColor.GRAY
+                    + "| Disable the cache")
+            .setClickAsExecuteCmd("/ts cache-off")
+            .setHoverAsTooltip("/ts cache-off")
+            .save()
+            .send(p);
       }
       // p.sendMessage(ChatColor.YELLOW+"/ts cache-on" + ChatColor.GRAY +
       // " | Activated the cache");
       {
         JsonMessage jm = new JsonMessage();
-        jm.append(ChatColor.YELLOW + Tab.fFS("/ts cache-on", tabSize) + ChatColor.GRAY
-            + "| Activated the cache").setClickAsExecuteCmd("/ts cache-on")
-            .setHoverAsTooltip("/ts cache-on").save().send(p);
+        jm.append(
+                ChatColor.YELLOW
+                    + Tab.fFS("/ts cache-on", tabSize)
+                    + ChatColor.GRAY
+                    + "| Activated the cache")
+            .setClickAsExecuteCmd("/ts cache-on")
+            .setHoverAsTooltip("/ts cache-on")
+            .save()
+            .send(p);
       }
       // p.sendMessage(ChatColor.YELLOW+"/ts cache" + ChatColor.GRAY + " |
       // Renew the cache");
       {
         JsonMessage jm = new JsonMessage();
         jm.append(
-            ChatColor.YELLOW + Tab.fFS("/ts cache", tabSize) + ChatColor.GRAY + "| Renew the cache")
-            .setClickAsExecuteCmd("/ts cache").setHoverAsTooltip("/ts cache").save().send(p);
+                ChatColor.YELLOW
+                    + Tab.fFS("/ts cache", tabSize)
+                    + ChatColor.GRAY
+                    + "| Renew the cache")
+            .setClickAsExecuteCmd("/ts cache")
+            .setHoverAsTooltip("/ts cache")
+            .save()
+            .send(p);
       }
       p.sendMessage("");
       prefixsend(p);
@@ -280,8 +343,15 @@ public class HelpMessages {
   }
 
   private static void prefixsend(Player p) {
-    p.sendMessage(ChatColor.YELLOW + "[]================" + ChatColor.GOLD + ChatColor.BOLD
-        + " TeamSpeak " + ChatColor.RESET + ChatColor.YELLOW + "===============[]");
+    p.sendMessage(
+        ChatColor.YELLOW
+            + "[]================"
+            + ChatColor.GOLD
+            + ChatColor.BOLD
+            + " TeamSpeak "
+            + ChatColor.RESET
+            + ChatColor.YELLOW
+            + "===============[]");
   }
 
   public static void tsipsend(Player p, String tsip) {
@@ -291,7 +361,9 @@ public class HelpMessages {
       JsonMessage jm = new JsonMessage();
       jm.append(ChatColor.translateAlternateColorCodes('&', cfg.getString("messages.ts3")))
           .setHoverAsTooltip(ChatColor.translateAlternateColorCodes('&', tsip))
-          .setClickAsSuggestCmd(ChatColor.translateAlternateColorCodes('&', tsip)).save().send(p);
+          .setClickAsSuggestCmd(ChatColor.translateAlternateColorCodes('&', tsip))
+          .save()
+          .send(p);
     }
     p.sendMessage("");
     prefixsend(p);
