@@ -90,13 +90,14 @@ public class HelpMessages {
         pl.saveConfig();
         prefixsend(p);
         p.sendMessage("");
-        p.sendMessage("§3Live data &2activated. \n§3Cache &cdisabled.");
+        p.sendMessage(ChatColor.DARK_AQUA + "Live data "+ ChatColor.DARK_GREEN +"activated.");
+        p.sendMessage(ChatColor.DARK_AQUA + "Cache "+ ChatColor.RED +"disabled.");
         p.sendMessage("");
         prefixsend(p);
       } else {
         prefixsend(p);
         p.sendMessage("");
-        p.sendMessage("§3Live data is already §2activated");
+        p.sendMessage(ChatColor.DARK_AQUA + "Live data is already "+ ChatColor.DARK_GREEN +"activated");
         p.sendMessage("");
         prefixsend(p);
       }
@@ -112,13 +113,14 @@ public class HelpMessages {
         pl.saveConfig();
         prefixsend(p);
         p.sendMessage("");
-        p.sendMessage("§3Live data &cdisabled. \n§3Cache &§activated.");
+        p.sendMessage(ChatColor.DARK_AQUA + "Live data &cdisabled.");
+        p.sendMessage(ChatColor.DARK_AQUA+ "Cache " + ChatColor.DARK_GREEN + "activated.");
         p.sendMessage("");
         prefixsend(p);
       } else {
         prefixsend(p);
         p.sendMessage("");
-        p.sendMessage("§3Live data is already §cdisabled");
+        p.sendMessage(ChatColor.DARK_AQUA + "Live data is already "+ ChatColor.RED +"disabled.s");
         p.sendMessage("");
         prefixsend(p);
       }
@@ -142,7 +144,7 @@ public class HelpMessages {
 
   public static void sendList(Player p, TeamSpeak pl, String tsip) {
     if (pl.error) {
-      p.sendMessage("§cTeamspeak is unreachable!");
+      p.sendMessage(ChatColor.RED + "Teamspeak is unreachable!");
     } else {
       try {
         // Get Values from Database
@@ -165,13 +167,13 @@ public class HelpMessages {
           prefixsend(p);
         } else {
           prefixsend(p);
-          p.sendMessage(ChatColor.AQUA + "Teamspeak: " + tsip + " §2Realtime");
+          p.sendMessage(ChatColor.AQUA + "Teamspeak: " + tsip + ChatColor.DARK_GREEN + " Realtime");
           p.sendMessage(ChatColor.AQUA + "Online: " + ChatColor.DARK_GREEN + (pl.api.getClients().size()) + " of "
               + pl.api.getHostInfo().getTotalMaxClients());
           p.sendMessage(ChatColor.AQUA + "List of People:");
           for (Client c : pl.api.getClients()) {
             if (!filter.contains(c.getNickname())) {
-              p.sendMessage("§2" + c.getNickname());
+              p.sendMessage(ChatColor.DARK_GREEN + c.getNickname());
             }
           }
           prefixsend(p);
