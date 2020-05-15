@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.logging.Logger;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import com.github.theholywaffle.teamspeak3.TS3Api;
@@ -28,7 +29,7 @@ public class TeamSpeak extends JavaPlugin{
 	 * TS3 Prefix and Updater id
 	 */
 	public String prefix = "[TeamSpeakIP] ";
-	public String Prefix = "§8[§6§lTeamSpeakIP§r§8] §f";
+	public String Prefix = ChatColor.DARK_GRAY + "[" + ChatColor.GOLD + ChatColor.BOLD + "TeamSpeakIP"+ ChatColor.RESET + ChatColor.DARK_GREEN +"] " + ChatColor.WHITE;
 	public Updater updater;
 
 	public static TeamSpeak instance;
