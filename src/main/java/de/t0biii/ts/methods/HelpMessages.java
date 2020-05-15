@@ -97,7 +97,7 @@ public class HelpMessages {
       } else {
         prefixsend(p);
         p.sendMessage("");
-        p.sendMessage(ChatColor.DARK_AQUA + "Live data is already "+ ChatColor.DARK_GREEN +"activated");
+        p.sendMessage(ChatColor.DARK_AQUA + "Live data is already "+ ChatColor.DARK_GREEN +"activated.");
         p.sendMessage("");
         prefixsend(p);
       }
