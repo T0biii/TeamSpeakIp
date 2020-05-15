@@ -28,8 +28,8 @@ public class Messages {
       }
     }
     cfg.options().copyDefaults(true);
-    /**
-     * Messages
+    /*
+      Messages
      */
     cfg.addDefault("messages.reload", "&3Reload Erfolgreich!");
     cfg.addDefault("messages.reloadfilter", "&3Reload von Filter Erfolgreich!");
@@ -39,7 +39,7 @@ public class Messages {
     cfg.addDefault("messages.no-permission", "&4Du Hast keine Rechte dafuer!");
     cfg.addDefault("messages.update-info", "Neues Update ist verfuegbar!");
     cfg.addDefault("messages.no-update", "&aDu hast bereits die neuste Version!");
-    cfg.addDefault("messages.cachenew", "&2&lDer Cache wurde neu befüllt");
+    cfg.addDefault("messages.cachenew", "&2&lDer Cache wurde neu befuellt");
     cfg.addDefault("messages.getIP", "&3&lClick This");
     // Save
     save(file, cfg);

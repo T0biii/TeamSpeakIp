@@ -19,7 +19,7 @@ public class PlayerJoin implements Listener {
     this.pl = pl;
   }
 
-  YamlConfiguration cfg = Messages.getcfg();
+  final YamlConfiguration cfg = Messages.getcfg();
 
   @EventHandler
   public void onJoin(PlayerJoinEvent e) {
