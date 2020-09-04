@@ -141,7 +141,7 @@ public class TeamSpeak extends JavaPlugin {
      * Updater
      */
     int uid = 70774;
-    updater = new Updater(this, uid, getFile(), UpdateType.NO_DOWNLOAD, true);
+    updater = new Updater(this, uid, UpdateType.NO_DOWNLOAD);
 
     /*
      * Start Auto Chache
