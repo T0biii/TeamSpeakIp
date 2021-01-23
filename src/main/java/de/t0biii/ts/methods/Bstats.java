@@ -2,6 +2,7 @@ package de.t0biii.ts.methods;
 
 import org.bstats.bukkit.Metrics;
 import de.t0biii.ts.TeamSpeak;
+import org.bstats.charts.SimplePie;
 
 public class Bstats {
   private final TeamSpeak plugin;
@@ -15,7 +16,7 @@ public class Bstats {
     final int ts3port = plugin.getConfig().getInt("ts3.port");
 
     bstats.addCustomChart(
-        new Metrics.SimplePie(
+        new SimplePie(
             "realtime_data",
             () -> {
               String realtime = plugin.getConfig().getString("options.realtime.activated");
@@ -26,7 +27,7 @@ public class Bstats {
             }));
 
     bstats.addCustomChart(
-        new Metrics.SimplePie(
+        new SimplePie(
             "default_query_port",
             () -> {
               if (queryport == 10011) {
@@ -37,7 +38,7 @@ public class Bstats {
             }));
 
     bstats.addCustomChart(
-        new Metrics.SimplePie(
+        new SimplePie(
             "default_voice_port",
             () -> {
               if (ts3port == 9987) {
@@ -48,7 +49,7 @@ public class Bstats {
             }));
 
     bstats.addCustomChart(
-        new Metrics.SimplePie(
+        new SimplePie(
             "update-info",
             () -> {
               String updateinfo = plugin.getConfig().getString("options.Update-info");
@@ -59,7 +60,7 @@ public class Bstats {
             }));
 
     bstats.addCustomChart(
-        new Metrics.SimplePie(
+        new SimplePie(
             "default_queryname",
             () -> {
               String queryname = plugin.getConfig().getString("ts3.queryname");
