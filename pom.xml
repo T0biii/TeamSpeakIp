@@ -7,7 +7,7 @@
     <groupId>de.t0biii.ts</groupId>
     <artifactId>TeamSpeak</artifactId>
     <name>TeamSpeakIP</name>
-    <version>5.7.3</version>
+    <version>5.8.0</version>
     <packaging>jar</packaging>
     <description>TeamSpeak IP</description>
     <url>https://tsip.t0biii.de/</url>
