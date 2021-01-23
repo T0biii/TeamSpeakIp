@@ -1,13 +1,13 @@
-name: TeamSpeakIP
+name: ${project.name}
 author: T0biii
 version: ${project.version}
 website: http://dev.bukkit.org/bukkit-plugins/teamspeak-ip/
-description: Shows you the Teamspeak3IP
+description: ${project.description}
 prefix: TeamSpeakIP 
 
 main: de.t0biii.ts.TeamSpeak
 api-version: "1.13"
 commands:
   ts:
-    description: Shows the TS IP
+    description: ${project.description}
     aliases: [teamspeak, ts3, teamspeakip]
