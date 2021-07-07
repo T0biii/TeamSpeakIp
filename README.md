@@ -1,5 +1,5 @@
 
-# TeamSpeakIP [![Java CI](https://github.com/T0biii/TeamSpeakIp/workflows/Java%20CI/badge.svg)](https://github.com/T0biii/JoinMusic/actions?query=workflow%3A%22Java+CI%22) [![bStats Servers](https://img.shields.io/bstats/servers/203)](https://bstats.org/plugin/bukkit/TeamSpeakIP)  [![bStats Players](https://img.shields.io/bstats/players/203)](https://bstats.org/plugin/bukkit/TeamSpeakIP) [![Spiget Version](https://img.shields.io/spiget/version/25086?label=Version)](https://www.spigotmc.org/resources/teamspeak-ip.25086/)
+# TeamSpeakIP [![Java CI](https://github.com/T0biii/TeamSpeakIp/workflows/Java%20CI/badge.svg)](https://github.com/T0biii/JoinMusic/actions?query=workflow%3A%22Java+CI%22) [![bStats Servers](https://img.shields.io/bstats/servers/203)](https://bstats.org/plugin/bukkit/TeamSpeakIP)  [![bStats Players](https://img.shields.io/bstats/players/203)](https://bstats.org/plugin/bukkit/TeamSpeakIP) [![Spiget Version](https://img.shields.io/spiget/version/25086?label=Version)](https://www.spigotmc.org/resources/teamspeak-ip.25086/) [![Discord](https://img.shields.io/badge/Discord-7289DA?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/qKskYDBAMW)
 
 
 This is a Bukkit Plugin for more information go to:
