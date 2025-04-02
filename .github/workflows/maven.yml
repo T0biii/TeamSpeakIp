@@ -8,19 +8,23 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        java: [8, 17, 21]
 
     steps:
     - uses: actions/checkout@v4
-    - name: Set up JDK 1.8
+    - name: Set up JDK ${{ matrix.java }}
       uses: actions/setup-java@v4
       with:
-        java-version: 1.8
+        java-version: ${{ matrix.java }}
+        distribution: 'adopt'
     - name: Build with Maven
       run: mvn -B package --file pom.xml
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
         # Artifact name
-        name: TeamSpeakIP
+        name: TeamSpeakIP-Java${{ matrix.java }}
         # Directory containing files to upload
         path: target/TeamSpeak.jar
